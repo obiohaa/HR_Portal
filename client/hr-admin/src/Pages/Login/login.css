@@ -1,0 +1,138 @@
+/* LOGIN CSS START */
+.signupFrm {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.form {
+  background-color: var(--clr-white);
+  width: 410px;
+  border-radius: 8px;
+  padding: 20px 40px;
+  box-shadow: 0 10px 25px rgba(92, 99, 105, 0.2);
+}
+
+.logo {
+  width: 160px;
+  margin: 0.9rem auto;
+}
+
+.inputContainer {
+  /* position: relative; */
+  height: auto;
+  width: 100%;
+}
+
+.input {
+  height: 100%;
+  min-height: 42px;
+  width: 100%;
+  border: 1px solid #caced1;
+  color: var(--clr-grey-5);
+  border-radius: 7px;
+  font-size: 15px;
+  padding: 0 15px;
+  outline: none;
+  background: none;
+  cursor: pointer;
+  appearance: none;
+}
+
+.userDetails {
+  margin-bottom: 15px;
+}
+
+.input:focus {
+  border: 1px solid var(--clr-grey-2);
+}
+
+.submitBtn {
+  display: block;
+  padding: 8px 30px;
+  border: none;
+  background-color: var(--clr-primary-2);
+  color: var(--clr-white);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 18px;
+  width: 100%;
+  transition: all 0.3s ease-in-out;
+}
+
+button:disabled,
+button[disabled] {
+  background-color: var(--clr-primary-5);
+  color: white;
+  cursor: not-allowed;
+}
+
+::placeholder {
+  color: var(--clr-grey-5);
+}
+
+input:invalid:not(:placeholder-shown) {
+  border: 1px solid var(--clr-primary-1);
+}
+
+.error {
+  color: rgb(240, 19, 19);
+  padding-left: 3px;
+  font-size: 13px;
+}
+
+.forgot {
+  float: right;
+  font-size: 15px;
+  font-weight: 400;
+  padding-bottom: 10px;
+  color: var(--clr-grey-5);
+  cursor: pointer;
+}
+
+.forgot:hover {
+  text-decoration: none;
+  color: var(--clr-primary-2);
+}
+
+.reset {
+  text-align: center;
+  font-size: 15px;
+  padding-bottom: 10px;
+}
+
+.signup {
+  text-align: center;
+  font-size: 15px;
+  padding-top: 10px;
+}
+
+.signup .signUpButton {
+  color: var(--clr-primary-2);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.userDetails .eyeIcon {
+  position: relative;
+}
+
+.userDetails .eyeIcon .eye {
+  position: absolute;
+  top: 12px;
+  right: 20px;
+  cursor: pointer;
+  color: var(--clr-grey-5);
+  font-size: 18px;
+}
+
+/* LOGIN CSS ENDS */
+/* REACT TOAST */
+.toastBad,
+.toastGood {
+  width: auto;
+  padding: 0 30px;
+}
+
+/* END REACT TOAST */

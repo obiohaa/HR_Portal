@@ -1,0 +1,12 @@
+.generalContainer {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100vh;
+}
+
+.userContainer {
+  width: 100%;
+  height: 100vh;
+  background-color: var(--clr-grey-8);
+}

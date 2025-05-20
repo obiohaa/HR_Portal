@@ -1,0 +1,161 @@
+/*
+=============== 
+Fonts
+===============
+*/
+@import url("https://fonts.googleapis.com/css?family=Open+Sans|Roboto:400,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
+/*
+=============== 
+Variables
+===============
+*/
+
+:root {
+  /* dark shades of primary color*/
+  --clr-primary-1: hsl(0, 100%, 35%);
+  --clr-primary-2: hsl(0, 100%, 45%);
+  --clr-primary-3: hsl(0, 100%, 55%);
+  --clr-primary-4: hsl(0, 100%, 65%);
+
+  /* lighter shades of primary color */
+  --clr-primary-5: hsl(0, 100%, 70%);
+  --clr-primary-6: hsl(0, 100%, 75%);
+  --clr-primary-7: hsl(0, 100%, 82%);
+  --clr-primary-8: hsl(0, 100%, 85%);
+  --clr-primary-9: hsl(0, 100%, 95%);
+
+  /* darkest grey  */
+
+  --clr-grey-1: hsl(0, 0%, 22%);
+  --clr-grey-2: hsl(0, 0%, 34%);
+  --clr-grey-3: hsl(0, 0%, 42%);
+  --clr-grey-4: hsl(0, 0%, 50%);
+
+  /* Light grey  */
+  --clr-grey-5: hsl(0, 0%, 58%);
+  --clr-grey-6: hsl(0, 0%, 66%);
+  --clr-grey-7: hsl(0, 0%, 74%);
+  --clr-grey-8: hsl(0, 0%, 82%);
+  --clr-grey-9: hsl(0, 0%, 90%);
+  --clr-grey-10: hsl(0, 0%, 98%);
+
+  /* Green for active button */
+  --Clr-green-1: hsl(120, 100%, 30%);
+  --Clr-green-2: hsl(120, 100%, 42%);
+  --Clr-green-3: hsl(120, 100%, 70%);
+
+  --clr-gold-6: hsl(50.6, 100%, 50%);
+  --clr-gold-6: hsl(50.6, 100%, 40%);
+  --clr-gold-6: hsl(50.6, 100%, 30%);
+
+  --Clr-black: #000000;
+  --clr-white: #fff;
+  --ff-primary: "Roboto", sans-serif;
+  --ff-secondary: "Open Sans", sans-serif;
+  --transition: all 0.5s linear;
+  --spacing: 0.25rem;
+  --radius: 0.5rem;
+  --light-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  --dark-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  --max-width: 1170px;
+}
+
+#notfound {
+  position: relative;
+  height: 100vh;
+}
+
+#notfound .notfound {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.notfound {
+  max-width: 920px;
+  width: 100%;
+  line-height: 1.4;
+  text-align: center;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.notfound .notfound-404 {
+  position: absolute;
+  height: 100px;
+  top: 0;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  transform: translateX(-50%);
+  z-index: -1;
+}
+
+.notfound .notfound-404 h1 {
+  font-family: "Maven Pro", sans-serif;
+  color: #ececec;
+  font-weight: 900;
+  font-size: 276px;
+  margin: 0px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.notfound h2 {
+  font-family: "Maven Pro", sans-serif;
+  font-size: 46px;
+  color: #000;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin: 0px;
+}
+
+.notfound p {
+  font-family: "Maven Pro", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+  text-transform: uppercase;
+  margin-top: 15px;
+  padding: 20px 0;
+}
+
+.notfound a {
+  font-family: "Maven Pro", sans-serif;
+  font-size: 14px;
+  text-decoration: none;
+  text-transform: uppercase;
+  background: var(--clr-primary-2);
+  display: inline-block;
+  padding: 16px 38px;
+  border: 2px solid transparent;
+  border-radius: 40px;
+  color: #fff;
+  font-weight: 400;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+}
+
+.notfound a:hover {
+  background-color: #fff;
+  border-color: var(--clr-primary-2);
+  color: var(--clr-primary-2);
+}
+
+@media only screen and (max-width: 480px) {
+  .notfound .notfound-404 h1 {
+    font-size: 162px;
+  }
+  .notfound h2 {
+    font-size: 26px;
+  }
+}

@@ -1,0 +1,268 @@
+.side-nav-container {
+  background-color: #2c3e50;
+  width: 300px;
+  height: 100vh;
+  position: relative;
+  color: white;
+  transition: 0.1s ease;
+}
+
+.side-nav-container-close {
+  width: 85px;
+}
+
+.nav-upper,
+.nav-heading,
+.nav-menu,
+.menu-item {
+  display: grid;
+}
+
+.nav-heading {
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 1fr;
+  height: 75px;
+  margin-top: 40px;
+}
+
+.nav-brand {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1px;
+}
+
+.nav-brand img {
+  width: 100px;
+}
+
+.nav-brand h4 {
+  font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+  font-size: 14px;
+  color: white;
+  line-height: normal;
+  letter-spacing: 0;
+  font-weight: bold;
+}
+
+.hamburger {
+  position: absolute;
+  right: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin: auto -23px;
+  background-color: rgb(129, 10, 10);
+  border: 2px solid hsl(0, 0%, 82%);
+  padding: 3px;
+  border-radius: 90px;
+  height: 45px;
+  width: 48px;
+}
+
+.hamburger span {
+  display: block;
+  margin: 4px 0 0 7px;
+  background-color: white;
+  border-radius: 15px;
+  height: 3px;
+  width: 25px;
+  transition: 0.4s;
+}
+
+.barGroup {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 8px 4px 0;
+}
+
+.hamburger-in:hover span:nth-child(1) {
+  width: 25px;
+  transform: translate(-3px, 8px) rotate(30deg);
+}
+
+.hamburger-in:hover span:nth-child(2) {
+  display: none;
+}
+
+.hamburger-in:hover span:nth-child(3) {
+  width: 25px;
+  transform: translate(-3px, -8px) rotate(-30deg);
+}
+
+.hamburger-out:hover span:nth-child(1) {
+  width: 25px;
+  transform: translate(0px, 8px) rotate(-30deg);
+}
+
+.hamburger-out:hover span:nth-child(2) {
+  display: none;
+}
+
+.hamburger-out:hover span:nth-child(3) {
+  width: 25px;
+  transform: translate(0px, -8px) rotate(30deg);
+}
+
+.hamburger:hover span {
+  margin: auto;
+}
+
+.line {
+  width: 100%;
+  height: 2px;
+  background-color: hsl(0, 0%, 82%);
+  margin-top: 20px;
+}
+
+.nav-menu {
+  margin-top: 25px;
+}
+
+/*  */
+
+.rotate {
+  transform: rotate(90deg);
+}
+
+a .dropdown {
+  position: absolute;
+  right: 0;
+  margin: 4px 20px 0 0;
+  transition: var(--fast-transition);
+}
+
+.blockSubMenu {
+  display: block;
+  margin: 0 auto;
+  padding: 15px 0 0 70px;
+  height: 50px;
+  width: 16em;
+  border-radius: 10px;
+  transition: height 0.2s linear;
+}
+
+.subMenu {
+  display: none;
+  overflow: hidden;
+  transition: height 0.2s ease;
+}
+
+.anchor {
+  text-decoration: none;
+  color: white;
+  font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+  font-size: 14px;
+  text-transform: capitalize;
+  border-radius: 10px;
+}
+
+.blockSubMenu:hover {
+  background-color: #34495e;
+}
+
+/*  */
+
+.menu-item {
+  z-index: 2;
+  height: 57px;
+  width: 17em;
+  display: flex;
+  color: white;
+  text-decoration: none;
+  font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+  font-size: 15px;
+  text-transform: capitalize;
+  margin: auto 20px;
+  padding-top: 17px;
+  border-radius: 10px;
+  position: relative;
+}
+
+.menu-item:hover {
+  background-color: #34495e;
+}
+
+.menu-item .icon-img {
+  padding: 0 27px;
+  font-size: 20px;
+}
+
+.menu-item-close {
+  margin: auto;
+  width: 4.5em;
+}
+
+.menu-item:hover > .tooltip {
+  display: block;
+}
+
+.tooltip {
+  display: none;
+  position: absolute;
+  font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+  font-size: 15px;
+  left: 99%;
+  bottom: 88%;
+  width: auto;
+  padding: 4px 8px;
+  border-radius: 15px 15px 15px 0;
+  white-space: nowrap;
+  border: 2px solid white;
+  background-color: #34495e;
+}
+
+.nav-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: #34495e;
+}
+
+.nav-details {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.nav-footer-info {
+  display: flex;
+  padding-left: 10px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.nav-footer-user-name {
+  font-size: 15px;
+  font-weight: 900;
+  font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+  padding-bottom: 5px;
+}
+
+.nav-footer-user-position {
+  font-size: 15px;
+  font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+
+  margin-top: -10px;
+  color: gray;
+}
+
+.power-icon {
+  font-size: 24px;
+  padding: 20px;
+  border-radius: 50%;
+}
+
+.power-icon:hover {
+  color: white;
+  cursor: pointer;
+}
+
+/* EXTERNAL */
+
+/* END EXTERNAL */

@@ -1,0 +1,7 @@
+.trackerContainer {
+  width: 90%;
+  height: 150px;
+  margin: 40px auto;
+  border-radius: 10px;
+  background-color: white !important;
+}
