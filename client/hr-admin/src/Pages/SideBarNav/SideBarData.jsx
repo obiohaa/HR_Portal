@@ -1,18 +1,26 @@
 import React from "react";
-import { FaHouse, FaKey, FaUserGear, FaPowerOff, FaAngleRight } from "react-icons/fa6";
+import {
+  FaHouse,
+  FaKey,
+  FaUser,
+  FaClipboardList,
+  FaAngleRight,
+  FaFilePowerpoint,
+  FaHandshake,
+} from "react-icons/fa6";
 
 const AdminSideBar = [
   {
     id: 1,
     url: "/dashboard",
     text: "Dashboard",
-    icon: <FaHouse />,
+    icon: <FaClipboardList />,
   },
   {
     id: 2,
     url: "#",
     text: "Users",
-    icon: <FaHouse />,
+    icon: <FaUser />,
     iconClosed: <FaAngleRight />,
     subNav: [
       {
@@ -33,13 +41,13 @@ const AdminSideBar = [
     id: 3,
     url: "/profiles",
     text: "Profiles",
-    icon: <FaHouse />,
+    icon: <FaFilePowerpoint />,
   },
   {
     id: 4,
     url: "/openings",
     text: "Job Opening",
-    icon: <FaHouse />,
+    icon: <FaHandshake />,
   },
 ];
 

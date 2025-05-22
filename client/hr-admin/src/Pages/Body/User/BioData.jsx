@@ -1,4 +1,6 @@
+import React from "react";
+
 const BioData = () => {
-  return <div>Bio_data</div>;
+  return <div className="bioDataContainer">BIO DATA</div>;
 };
 export default BioData;
