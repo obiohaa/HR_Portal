@@ -154,11 +154,90 @@
 /* FORM SECTION */
 .formsContainerBody {
   width: 100%;
-  height: inherit;
+  height: 450px;
   margin: 0 auto;
   border-radius: 10px;
-  padding: 1rem 2rem;
-  background-color: gray !important;
+  padding: 1rem 0rem;
+  background-color: white !important;
+}
+
+.formContainer {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  column-gap: 1px;
+  row-gap: 75px;
+  justify-content: center;
+  transition: all 0.5s ease-in-out;
+}
+
+.formBioData {
+  position: relative;
+  font-size: 1rem;
+}
+
+.selectFormBioData::after {
+  margin-top: 18px;
+  --size: 0.3rem;
+  position: absolute;
+  content: "";
+  right: 2.5rem;
+  pointer-events: none;
+}
+
+.selectFormBioData::after {
+  border-left: var(--size) solid transparent;
+  border-right: var(--size) solid transparent;
+  border-top: var(--size) solid black;
+  top: 55%;
+}
+
+.form_input {
+  position: absolute;
+  appearance: none;
+  top: 0;
+  left: 0;
+  width: 95%;
+  height: 40px;
+  font-size: 1rem;
+  border: 1px solid gray;
+  border-radius: 4px;
+  color: black;
+  outline: none;
+  padding: 0 1.1rem;
+  background: none;
+  transition: all 0.3s ease-in;
+}
+
+.form_input:focus {
+  border-color: var(--clr-primary-2);
+}
+
+.form_label {
+  position: absolute;
+  left: 1rem;
+  top: 0.5rem;
+  padding: 0 0.5rem;
+  color: gray;
+  cursor: text;
+  transition: top 20ms ease-in, left 20ms ease-in, color 20ms ease-in, font-size 20ms ease-in;
+  background-color: white;
+}
+
+.form_input:focus ~ .form_label {
+  top: -0.5rem;
+  left: 0.8rem;
+  font-size: 0.8rem;
+  color: var(--clr-primary-2);
+}
+
+.form_input:focus ~ .form_label,
+.form_input:not(:placeholder-shown).form_input:not(:focus) ~ .form_label {
+  top: -0.5rem;
+  left: 0.8rem;
+  font-size: 0.8rem;
+  transition: all 0.3s ease-in;
 }
 
 /* END FORM SECTION */
