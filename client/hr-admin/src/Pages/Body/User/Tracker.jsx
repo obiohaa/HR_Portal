@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import UserShell from "./UserShell";
+import BioData from "./BioData";
 import { FaUserPlus, FaUsers, FaFileCircleXmark, FaUserSecret } from "react-icons/fa6";
 import Progress from "./Progress";
 
@@ -31,7 +31,7 @@ const Tracker = () => {
         </div>
       </div>
       <div className="formsContainer">
-        <UserShell step={step} totalSteps={totalSteps} setStep={setStep} />
+        <BioData step={step} totalSteps={totalSteps} setStep={setStep} />
       </div>
     </div>
   );

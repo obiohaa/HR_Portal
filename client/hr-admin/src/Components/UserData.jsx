@@ -245,13 +245,14 @@ const maritalStatus = [
 ];
 
 const levelOfEducation = [
-  { id: 1, level: "Primary" },
-  { id: 2, level: "Secondary" },
-  { id: 3, level: "Trade or Business School" },
-  { id: 4, level: "OND Or Equivalent" },
-  { id: 5, level: "Bachelors Or Equivalent" },
-  { id: 5, level: "Masters Or Equivalent" },
-  { id: 5, level: "Doctorate Or Equivalent" },
+  { id: 0, level: "Education Level", value: "" },
+  { id: 1, level: "Primary", value: "Primary" },
+  { id: 2, level: "Secondary", value: "Secondary" },
+  { id: 3, level: "Trade or Business School", value: "Trade or Business School" },
+  { id: 4, level: "OND Or Equivalent", value: "OND Or Equivalent" },
+  { id: 5, level: "Bachelors Or Equivalent", value: "Bachelors Or Equivalent" },
+  { id: 6, level: "Masters Or Equivalent", value: "Masters Or Equivalent" },
+  { id: 7, level: "Doctorate Or Equivalent", value: "Doctorate Or Equivalent" },
 ];
 
 const pension = [
