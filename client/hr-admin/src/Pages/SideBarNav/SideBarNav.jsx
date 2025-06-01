@@ -6,7 +6,7 @@ import { useGlobalContext } from "../../Context/userContext";
 import Loading from "../../Components/Loading";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import axiosFetch from "../../Utils/axiosFetch";
+import { axiosFetch } from "../../Utils/axiosFetch";
 import SideBarContent from "./SideBarContent";
 import { AdminSideBar, EmployeeSideBar } from "./SideBarData";
 import "./SideBarNav.css";

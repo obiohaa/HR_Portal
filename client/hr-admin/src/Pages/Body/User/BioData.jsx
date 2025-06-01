@@ -1,5 +1,8 @@
 import React, { useState } from "react";
+import { axiosFetchFormData } from "../../../Utils/axiosFetch";
 import { useForm } from "react-hook-form";
+import { useGlobalContext } from "../../../Context/userContext";
+import capitalizeFirstLetter from "../../../Components/ToUpperCase";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
 
 import {
@@ -9,13 +12,15 @@ import {
   pension,
   levelOfEducation,
 } from "../../../Components/UserData";
-// import { useForm } from "react-hook-form";
+
+//When i have onChange in a select field, the react-hook-form validation does not work, i guess because it uses onChange function too. To validate i used my custom validation.
 
 const BioData = ({ step, totalSteps, setStep }) => {
-  const [fileName, setFileName] = useState("No file selected");
+  const [fileName, setFileName] = useState(null);
+  const [fileError, setFileError] = useState({ msg: "" });
   const [marriageStatus, setMarriageStatus] = useState("");
   const [pensionStatus, setPensionStatus] = useState("");
-
+  const { user } = useGlobalContext();
   const {
     register,
     reset,
@@ -25,10 +30,26 @@ const BioData = ({ step, totalSteps, setStep }) => {
   } = useForm();
 
   const onSubmit = async (values) => {
+    console.log("he click submit");
     try {
-      values.files = fileName;
-      console.log(values);
-      // reset();
+      if (fileName === null) {
+        setFileError({ msg: "CV is required" });
+      } else if (fileName.size > 5000000) {
+        setFileError({ msg: "File size must be less than 5MB" });
+      } else {
+        console.log(values);
+        const formData = new FormData();
+        formData.append("file", fileName);
+        formData.append("body", JSON.stringify(values));
+        console.log(formData);
+        axiosFetchFormData
+          .post("/users/bioData", formData)
+          .then((res) => {
+            console.log(res);
+          })
+          .catch((err) => console.log(err));
+        // reset();
+      }
     } catch (error) {
       console.log(error);
       //To place an error so that it does not belong to any field we use root and not email or password or any field name
@@ -39,6 +60,7 @@ const BioData = ({ step, totalSteps, setStep }) => {
   };
 
   const handleChange = (event) => {
+    console.log(event.target.value);
     setMarriageStatus(event.target.value);
   };
 
@@ -62,7 +84,7 @@ const BioData = ({ step, totalSteps, setStep }) => {
     <div className="formsContainerBody">
       <form
         action=""
-        // className="formContainer"
+        encType="multipart/form-data"
         onSubmit={handleSubmit(onSubmit)}
         autoComplete="off"
         noValidate>
@@ -73,25 +95,27 @@ const BioData = ({ step, totalSteps, setStep }) => {
               id="firstName"
               className="form_input"
               placeholder=" "
+              disabled
+              value={user ? `${capitalizeFirstLetter(user.firstName)}` : ""}
               autoComplete="off"
               formNoValidate
-              {...register("firstName", {
-                required: "First Name is required!",
-                minLength: {
-                  value: 2,
-                  message: "Minimum characters of 2 letters.",
-                },
-                maxLength: {
-                  value: 20,
-                  message: "Maximum characters of 20 letters.",
-                },
-                pattern: {
-                  value: /^[A-Za-z]+$/i,
-                  message: "Alphabets only!",
-                },
-              })}
+              // {...register("firstName", {
+              //   required: "First Name is required!",
+              //   minLength: {
+              //     value: 2,
+              //     message: "Minimum characters of 2 letters.",
+              //   },
+              //   maxLength: {
+              //     value: 20,
+              //     message: "Maximum characters of 20 letters.",
+              //   },
+              //   pattern: {
+              //     value: /^[A-Za-z]+$/i,
+              //     message: "Alphabets only!",
+              //   },
+              // })}
             />
-            {errors.firstName && <p className="error">{errors.firstName.message}</p>}
+            {/* {errors.firstName && <p className="bioError">{errors.firstName.message}</p>} */}
             <label htmlFor="firstName" className="form_label">
               First Name
             </label>
@@ -105,7 +129,7 @@ const BioData = ({ step, totalSteps, setStep }) => {
               autoComplete="off"
               formNoValidate
               {...register("middleName", {
-                required: "Middle Name is required!",
+                // required: "Middle Name is required!",
                 minLength: {
                   value: 2,
                   message: "Minimum characters of 2 letters.",
@@ -120,7 +144,7 @@ const BioData = ({ step, totalSteps, setStep }) => {
                 },
               })}
             />
-            {errors.middleName && <p className="error">{errors.middleName.message}</p>}
+            {errors.middleName && <p className="bioError">{errors.middleName.message}</p>}
             <label htmlFor="middleName" className="form_label">
               Middle Name
             </label>
@@ -131,25 +155,27 @@ const BioData = ({ step, totalSteps, setStep }) => {
               id="lastName"
               className="form_input"
               placeholder=" "
+              disabled
+              value={user ? `${capitalizeFirstLetter(user.lastName)}` : ""}
               autoComplete="off"
               formNoValidate
-              {...register("lastName", {
-                required: "Last Name is required!",
-                minLength: {
-                  value: 2,
-                  message: "Minimum characters of 2 letters.",
-                },
-                maxLength: {
-                  value: 20,
-                  message: "Maximum characters of 20 letters.",
-                },
-                pattern: {
-                  value: /^[A-Za-z]+$/i,
-                  message: "Alphabets only!",
-                },
-              })}
+              // {...register("lastName", {
+              //   required: "Last Name is required!",
+              //   minLength: {
+              //     value: 2,
+              //     message: "Minimum characters of 2 letters.",
+              //   },
+              //   maxLength: {
+              //     value: 20,
+              //     message: "Maximum characters of 20 letters.",
+              //   },
+              //   pattern: {
+              //     value: /^[A-Za-z]+$/i,
+              //     message: "Alphabets only!",
+              //   },
+              // })}
             />
-            {errors.lastName && <p className="error">{errors.lastName.message}</p>}
+            {/* {errors.lastName && <p className="bioError">{errors.lastName.message}</p>} */}
             <label htmlFor="lastName" className="form_label">
               Last Name
             </label>
@@ -170,7 +196,7 @@ const BioData = ({ step, totalSteps, setStep }) => {
                 },
               })}
             />
-            {errors.date && <p className="error">{errors.date.message}</p>}
+            {errors.date && <p className="bioError">{errors.date.message}</p>}
             <label htmlFor="dateOfBirth" className="form_label">
               Date of Birth
             </label>
@@ -195,7 +221,7 @@ const BioData = ({ step, totalSteps, setStep }) => {
                 </option>
               ))}
             </select>
-            {errors.state_of_origin && <p className="error">{errors.state_of_origin.message}</p>}
+            {errors.state_of_origin && <p className="bioError">{errors.state_of_origin.message}</p>}
             <label htmlFor="dateOfBirth" className="form_label">
               State of Origin
             </label>
@@ -221,7 +247,7 @@ const BioData = ({ step, totalSteps, setStep }) => {
                 );
               })}
             </select>
-            {errors.gender && <p className="error">{errors.gender.message}</p>}
+            {errors.gender && <p className="bioError">{errors.gender.message}</p>}
             <label htmlFor="gender" className="form_label">
               Gender
             </label>
@@ -234,6 +260,11 @@ const BioData = ({ step, totalSteps, setStep }) => {
               placeholder="Select an option"
               {...register("maritalStatus", {
                 required: "Marital status is required!",
+                validate: {
+                  isValidState: () =>
+                    maritalStatus.some((status) => status.status === status.value) ||
+                    "Invalid Marital status selected",
+                },
               })}
               onChange={handleChange}>
               {maritalStatus.map((status) => {
@@ -244,7 +275,7 @@ const BioData = ({ step, totalSteps, setStep }) => {
                 );
               })}
             </select>
-            {errors.maritalStatus && <p className="error">{errors.maritalStatus.message}</p>}
+            {errors.maritalStatus && <p className="bioError">{errors.maritalStatus.message}</p>}
             <label htmlFor="gender" className="form_label">
               Marital Status
             </label>
@@ -270,7 +301,7 @@ const BioData = ({ step, totalSteps, setStep }) => {
                   },
                 })}
               />
-              {errors.spouseName && <p className="error">{errors.spouseName.message}</p>}
+              {errors.spouseName && <p className="bioError">{errors.spouseName.message}</p>}
               <label htmlFor="spouseName" className="form_label">
                 Spouse Name
               </label>
@@ -296,7 +327,7 @@ const BioData = ({ step, totalSteps, setStep }) => {
                 },
               })}
             />
-            {errors.houseAddress && <p className="error">{errors.houseAddress.message}</p>}
+            {errors.houseAddress && <p className="bioError">{errors.houseAddress.message}</p>}
             <label htmlFor="houseAddress" className="form_label">
               House Address
             </label>
@@ -325,7 +356,7 @@ const BioData = ({ step, totalSteps, setStep }) => {
                 },
               })}
             />
-            {errors.phoneNumber && <p className="error">{errors.phoneNumber.message}</p>}
+            {errors.phoneNumber && <p className="bioError">{errors.phoneNumber.message}</p>}
             <label htmlFor="phoneNumber" className="form_label">
               Phone Number
             </label>
@@ -336,6 +367,8 @@ const BioData = ({ step, totalSteps, setStep }) => {
               type="email"
               id="emailAddress"
               className="form_input"
+              disabled
+              value={user ? `${capitalizeFirstLetter(user.email)}` : ""}
               placeholder=" "
               autoComplete="off"
             />
@@ -363,7 +396,7 @@ const BioData = ({ step, totalSteps, setStep }) => {
                 },
               })}
             />
-            {errors.bankName && <p className="error">{errors.bankName.message}</p>}
+            {errors.bankName && <p className="bioError">{errors.bankName.message}</p>}
             <label htmlFor="bankName" className="form_label">
               Bank Name
             </label>
@@ -393,7 +426,7 @@ const BioData = ({ step, totalSteps, setStep }) => {
               })}
             />
             {errors.bankAccountNumber && (
-              <p className="error">{errors.bankAccountNumber.message}</p>
+              <p className="bioError">{errors.bankAccountNumber.message}</p>
             )}
             <label htmlFor="bankAccountNumber" className="form_label">
               Bank Account Number
@@ -434,7 +467,7 @@ const BioData = ({ step, totalSteps, setStep }) => {
                     message: "Minimum characters of 2 letters.",
                   },
                   maxLength: {
-                    value: 30,
+                    value: 50,
                     message: "Maximum characters of 20 letters.",
                   },
                   pattern: {
@@ -443,7 +476,7 @@ const BioData = ({ step, totalSteps, setStep }) => {
                   },
                 })}
               />
-              {errors.pensionCompany && <p className="error">{errors.pensionCompany.message}</p>}
+              {errors.pensionCompany && <p className="bioError">{errors.pensionCompany.message}</p>}
               <label htmlFor="pensionCompany" className="form_label">
                 Pension Company
               </label>
@@ -474,7 +507,7 @@ const BioData = ({ step, totalSteps, setStep }) => {
                   },
                 })}
               />
-              {errors.pensionPin && <p className="error">{errors.pensionPin.message}</p>}
+              {errors.pensionPin && <p className="bioError">{errors.pensionPin.message}</p>}
               <label htmlFor="pensionPin" className="form_label">
                 Pension Pin
               </label>
@@ -502,7 +535,9 @@ const BioData = ({ step, totalSteps, setStep }) => {
                 );
               })}
             </select>
-            {errors.levelOfEducation && <p className="error">{errors.levelOfEducation.message}</p>}
+            {errors.levelOfEducation && (
+              <p className="bioError">{errors.levelOfEducation.message}</p>
+            )}
             <label htmlFor="levelOfEducation" className="form_label">
               Level of Education
             </label>
@@ -515,16 +550,21 @@ const BioData = ({ step, totalSteps, setStep }) => {
               <MdCloudUpload className="uploadIcon" />
             </div>
             <div className="fileName">
-              {fileName}{" "}
-              {fileName === "No file selected" ? (
+              {/* {fileName}{" "} */}
+              {fileName === null ? (
                 ""
               ) : (
-                <MdDelete
-                  className="deleteUpload"
-                  onClick={() => {
-                    setFileName("No file selected");
-                  }}
-                />
+                <div>
+                  {fileName.name}
+                  {
+                    <MdDelete
+                      className="deleteUpload"
+                      onClick={() => {
+                        setFileName(null);
+                      }}
+                    />
+                  }
+                </div>
               )}
             </div>
             <input
@@ -532,33 +572,29 @@ const BioData = ({ step, totalSteps, setStep }) => {
               type="file"
               name="file"
               className="upload_Doc"
+              // accept=".png, .jpeg, .jpg"
               accept=".pdf, .docx, .docx, .odt"
-              // hidden
-              {...register("file", {
-                validate: {
-                  required: (value) => value.length > 0 || "File is required",
-                  fileSize: (value) =>
-                    value[0].size < 1000000 || "File size should be less than 1MB",
-                  fileType: (value) =>
-                    ["application/pdf", "image/png"].includes(value[0].type) ||
-                    "Only JPEG and PNG files are allowed",
-                },
-              })}
+              required
+              hidden
               onChange={({ target: { files } }) => {
-                console.log(files);
+                setFileError({ msg: "" });
                 files[0] && setFileName(files[0]);
               }}
             />
-            {errors.file && <p className="error">{errors.file.message}</p>}
+            {fileError.msg !== "" && <p className="bioError">{fileError.msg}</p>}
           </div>
         </div>
         <div className="btns">
-          <button className={`${step <= 1 ? "disabled" : "btn"}`} onClick={handlePrev}>
+          <button
+            className={`${step <= 1 ? "disabled" : "btn"}`}
+            onClick={handlePrev}
+            disabled={step <= 1 && true}>
             Prev
           </button>
           <button
             type="submit"
             className={`${step === totalSteps ? "disabled" : "btn"}`}
+            disabled={isSubmitting && step >= 4 ? true : false}
             onClick={handleNext}>
             Next
           </button>

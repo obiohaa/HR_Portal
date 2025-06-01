@@ -5,7 +5,7 @@ import Loading from "../../Components/Loading";
 import PageLoading from "../../Components/PageLoading";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import axiosFetch from "../../Utils/axiosFetch";
+import { axiosFetch } from "../../Utils/axiosFetch";
 import { useGlobalContext } from "../../Context/userContext";
 import "./Login.css";
 import logo from "/logo.svg";

@@ -8,6 +8,12 @@ const app = express();
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const fileUpload = require("express-fileupload");
+const cloudinary = require("cloudinary").v2;
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 const rateLimiter = require("express-rate-limit");
 const helmet = require("helmet");
 const xss = require("xss-clean");
@@ -48,12 +54,15 @@ app.use(mongoSanitize());
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
 
+//making the public folder publicly available
 app.use(express.static("./public"));
-app.use(fileUpload());
+app.use(fileUpload({ useTempFiles: true }));
 
+//app routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 
+//error handlers
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 

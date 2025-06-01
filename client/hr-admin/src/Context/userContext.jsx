@@ -1,7 +1,7 @@
 import React from "react";
 import { createContext, useState, useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
-import axiosFetch from "../Utils/axiosFetch";
+import { axiosFetch } from "../Utils/axiosFetch";
 
 const AppContext = createContext();
 

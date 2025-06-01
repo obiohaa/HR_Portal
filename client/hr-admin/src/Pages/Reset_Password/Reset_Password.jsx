@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import Loading from "../../Components/Loading";
 import { useMutation } from "@tanstack/react-query";
-import axiosFetch from "../../Utils/axiosFetch";
+import { axiosFetch } from "../../Utils/axiosFetch";
 import { toast } from "react-toastify";
 import "../Login/Login.css";
 import logo from "/logo.svg";
