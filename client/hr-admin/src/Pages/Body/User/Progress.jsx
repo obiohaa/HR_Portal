@@ -1,5 +1,5 @@
-const Progress = ({ totalSteps, step }) => {
-  const progress = ((step - 1) / (totalSteps - 1)) * 100;
+const Progress = ({ totalSteps, steps }) => {
+  const progress = ((steps - 1) / (totalSteps - 1)) * 100;
 
   return (
     <div

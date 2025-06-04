@@ -1,5 +1,7 @@
 const User = require("../models/User");
 const BioData = require("../models/BioData");
+const StepState = require("../models/StepState");
+const NextOfKin = require("../models/NextOfKin");
 const { StatusCodes } = require("http-status-codes");
 const path = require("path");
 const CustomError = require("../errors");
@@ -77,7 +79,7 @@ const bioData = async (req, res) => {
     pensionCompany,
     pensionPin,
   } = JSON.parse(req.body.body);
-
+  console.log(JSON.parse(req.body.body));
   if (
     !dateOfBirth ||
     !state_of_origin ||
@@ -94,7 +96,7 @@ const bioData = async (req, res) => {
   }
   let userBioData = JSON.parse(req.body.body);
 
-  //LOCAL FILE FUNCTIONALITY
+  // FILE FUNCTIONALITY
   if (!req.files) {
     throw new CustomError.BadRequestError("No File Uploaded");
   }
@@ -107,41 +109,151 @@ const bioData = async (req, res) => {
     throw new CustomError.BadRequestError("Please upload file smaller than 5MB");
   }
 
-  //move to a local folder
-  // const filePath = path.join(__dirname, "../public/fileUploads/" + `${userFile.name}`);
-  // await userFile.mv(filePath);
-  // return res.status(StatusCodes.OK).json({ file: { src: `/fileUploads/${userFile.name}` } });
+  try {
+    //move to a local folder
+    // const filePath = path.join(__dirname, "../public/fileUploads/" + `${userFile.name}`);
+    // await userFile.mv(filePath);
+    // return res.status(StatusCodes.OK).json({ file: { src: `/fileUploads/${userFile.name}` } });
 
-  //Upload to cloudinary
-  const result = await cloudinary.uploader.upload(req.files.file.tempFilePath, {
-    use_filename: true,
-    folder: "HR_ADMIN_PORTAL",
-  });
-  //unlink/delete the file
-  fs.unlinkSync(req.files.file.tempFilePath);
+    //Upload to cloudinary
+    const result = await cloudinary.uploader.upload(req.files.file.tempFilePath, {
+      use_filename: true,
+      folder: "HR_ADMIN_PORTAL",
+    });
+    //unlink/delete the file
+    fs.unlinkSync(req.files.file.tempFilePath);
 
-  const mainUserBioData = {
-    ...userBioData,
-    UserFileUrl: result.secure_url,
-    firstName: req.user.firstName,
-    lastName: req.user.lastName,
-    email: req.user.email,
-    user: req.user.userId,
-    step: 2,
-    completed: false,
-  };
-  // userBioData.UserFileUrl = result.secure_url;
-  // userBioData.firstName = req.user.firstName;
-  // userBioData.lastName = req.user.lastName;
-  // userBioData.email = req.user.email;
-  // userBioData.user = req.user.userId;
-  // userBioData.step = 2;
-  // userBioData.completed = false;
-  console.log(mainUserBioData);
-  //Add do database
-  const UserBioData = await BioData.create(mainUserBioData);
-  // console.log(UserBioData);
-  return res.status(StatusCodes.OK).json({ file: { src: result.secure_url } });
+    const mainUserBioData = {
+      ...userBioData,
+      UserFileUrl: result.secure_url,
+      firstName: req.user.firstName,
+      lastName: req.user.lastName,
+      email: req.user.email,
+      user: req.user.userId,
+    };
+
+    const user = await BioData.findOne({ email: req.user.email });
+    if (user) {
+      throw new CustomError.BadRequestError("Bio Data already exist");
+    }
+    //Add do database
+    const UserBioData = await BioData.create(mainUserBioData);
+    if (UserBioData.createdAt) {
+      //User steps update
+      const userStepState = {
+        currentStep: 2,
+        nextStep: 3,
+        completed: false,
+        completedStep: 1,
+      };
+
+      const updateUserStepState = await StepState.findOneAndUpdate(
+        { user: req.user.userId },
+        {
+          currentStep: userStepState.currentStep,
+          nextStep: userStepState.nextStep,
+          completed: userStepState.completed,
+          completedStep: userStepState.completedStep,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+    }
+
+    return res.status(StatusCodes.OK).json({
+      steps: {
+        msg: "Bio Data created",
+      },
+    });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
+  }
+};
+
+//get bioData step, step status and completed
+const getBioDataStatus = async (req, res) => {
+  const bioDataStep = await BioData.findOne({ email: req.user.email }).select(
+    "step nextStep completed"
+  );
+  res.status(StatusCodes.OK).json({ bioDataStep });
+};
+
+//View user current step
+const userStepState = async (req, res) => {
+  const currentUserStepState = await StepState.findOne({ user: req.user.userId });
+  res.status(StatusCodes.OK).json({ currentUserStepState });
+};
+
+//Update user current step
+const updateUserStepState = async (req, res) => {
+  const currentUserStepState = await StepState.findOne({ user: req.user.userId });
+  console.log(currentUserStepState);
+  if (currentUserStepState) {
+    const updateStepState = await StepState.findOneAndUpdate(
+      { user: req.user.userId },
+      {
+        currentStep: currentUserStepState.currentStep - 1,
+        nextStep: currentUserStepState.nextStep - 1,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    res.status(StatusCodes.OK).json({ updateStepState });
+  }
+};
+
+const nextOfKinData = async (req, res) => {
+  const { nextOfKinFirstName, nextOfKinLastName, houseAddress, nextOfKinRelationship } = req.body;
+
+  if (!nextOfKinFirstName || !nextOfKinLastName || !houseAddress || !nextOfKinRelationship) {
+    throw new CustomError.BadRequestError("Please provide all values");
+  }
+
+  req.body.user = req.user.userId;
+
+  try {
+    const user = await NextOfKin.findOne({ user: req.user.userId });
+    if (user) {
+      throw new CustomError.BadRequestError("Next ok Kin already exist");
+    }
+    //Add do database
+    const UserBioData = await NextOfKin.create(req.body);
+    if (UserBioData.createdAt) {
+      //User steps update
+      const userStepState = {
+        currentStep: 3,
+        nextStep: 4,
+        completed: false,
+        completedStep: 2,
+      };
+
+      const updateUserStepState = await StepState.findOneAndUpdate(
+        { user: req.user.userId },
+        {
+          currentStep: userStepState.currentStep,
+          nextStep: userStepState.nextStep,
+          completed: userStepState.completed,
+          completedStep: userStepState.completedStep,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+    }
+
+    return res.status(StatusCodes.OK).json({
+      steps: {
+        msg: "Next of Kin created",
+      },
+    });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
+  }
 };
 
 module.exports = {
@@ -151,6 +263,10 @@ module.exports = {
   updateUser,
   updateUserPassword,
   bioData,
+  getBioDataStatus,
+  userStepState,
+  updateUserStepState,
+  nextOfKinData,
 };
 
 // update user with findOneAndUpdate

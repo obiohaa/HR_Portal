@@ -31,7 +31,7 @@ const AdminSideBar = [
       },
       {
         id: 3,
-        url: "/employee-user",
+        url: "/user",
         text: "Employees",
         icon: <FaHouse />,
       },

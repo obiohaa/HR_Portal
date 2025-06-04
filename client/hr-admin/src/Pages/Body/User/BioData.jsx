@@ -4,6 +4,9 @@ import { useForm } from "react-hook-form";
 import { useGlobalContext } from "../../../Context/userContext";
 import capitalizeFirstLetter from "../../../Components/ToUpperCase";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
+import { toast } from "react-toastify";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import PageLoading from "../../../Components/PageLoading";
 
 import {
   stateCapital,
@@ -15,12 +18,14 @@ import {
 
 //When i have onChange in a select field, the react-hook-form validation does not work, i guess because it uses onChange function too. To validate i used my custom validation.
 
-const BioData = ({ step, totalSteps, setStep }) => {
+const BioData = ({ steps, totalSteps, setSteps }) => {
   const [fileName, setFileName] = useState(null);
   const [fileError, setFileError] = useState({ msg: "" });
   const [marriageStatus, setMarriageStatus] = useState("");
   const [pensionStatus, setPensionStatus] = useState("");
-  const { user } = useGlobalContext();
+
+  const { user, userStepState } = useGlobalContext();
+  console.log(userStepState);
   const {
     register,
     reset,
@@ -28,6 +33,41 @@ const BioData = ({ step, totalSteps, setStep }) => {
     handleSubmit,
     setError,
   } = useForm();
+
+  //Using react query to handle the API call
+  const queryClient = useQueryClient();
+  const { mutate: bioDataUser, isLoading } = useMutation({
+    mutationFn: async (bioDataUser) => axiosFetchFormData.post("/users/bioData", bioDataUser),
+    onSuccess: (data) => {
+      console.log(data);
+      queryClient.invalidateQueries({ queryKey: ["bioDataKey"] });
+      toast.success(data.data.steps.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastGood",
+      });
+      // reset();
+      // setFileName(null);
+      // setStep(data.data.steps.nextStep);
+    },
+    onError: (error) => {
+      toast.error(error.response.data.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastBad",
+      });
+    },
+  });
 
   const onSubmit = async (values) => {
     console.log("he click submit");
@@ -37,17 +77,11 @@ const BioData = ({ step, totalSteps, setStep }) => {
       } else if (fileName.size > 5000000) {
         setFileError({ msg: "File size must be less than 5MB" });
       } else {
-        console.log(values);
         const formData = new FormData();
         formData.append("file", fileName);
         formData.append("body", JSON.stringify(values));
-        console.log(formData);
-        axiosFetchFormData
-          .post("/users/bioData", formData)
-          .then((res) => {
-            console.log(res);
-          })
-          .catch((err) => console.log(err));
+        bioDataUser(formData);
+
         // reset();
       }
     } catch (error) {
@@ -68,17 +102,21 @@ const BioData = ({ step, totalSteps, setStep }) => {
     setPensionStatus(event.target.value);
   };
 
-  const handleNext = () => {
-    if (step < 4) {
-      setStep(step + 1);
-    }
-  };
+  // const handleNext = () => {
+  //   if (step < 4) {
+  //     setStep(step + 1);
+  //   }
+  // };
 
-  const handlePrev = () => {
-    if (step > 1) {
-      setStep(step - 1);
-    }
-  };
+  // const handlePrev = () => {
+  //   if (step > 1) {
+  //     setStep(step - 1);
+  //   }
+  // };
+
+  if (isLoading) {
+    return <PageLoading />;
+  }
 
   return (
     <div className="formsContainerBody">
@@ -470,10 +508,6 @@ const BioData = ({ step, totalSteps, setStep }) => {
                     value: 50,
                     message: "Maximum characters of 20 letters.",
                   },
-                  pattern: {
-                    value: /^[A-Za-z]+$/i,
-                    message: "Alphabets only!",
-                  },
                 })}
               />
               {errors.pensionCompany && <p className="bioError">{errors.pensionCompany.message}</p>}
@@ -586,16 +620,15 @@ const BioData = ({ step, totalSteps, setStep }) => {
         </div>
         <div className="btns">
           <button
-            className={`${step <= 1 ? "disabled" : "btn"}`}
-            onClick={handlePrev}
-            disabled={step <= 1 && true}>
+            className={`${steps <= 1 ? "disabled" : "btn"}`}
+            // onClick={handlePrev}
+            disabled>
             Prev
           </button>
           <button
             type="submit"
-            className={`${step === totalSteps ? "disabled" : "btn"}`}
-            disabled={isSubmitting && step >= 4 ? true : false}
-            onClick={handleNext}>
+            className={`${steps === totalSteps ? "disabled" : "btn"}`}
+            disabled={isSubmitting && steps >= 4 ? true : false}>
             Next
           </button>
         </div>

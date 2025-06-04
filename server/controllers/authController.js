@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const StepState = require("../models/StepState");
 const Token = require("../models/Token");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
@@ -37,7 +38,16 @@ const register = async (req, res) => {
   // const host = req.get('host'); //where the request to coming to, i.e server
   // const forwardedHost = req.get('x-forwarded-host'); //where the request is really coming from without proxy
   // const forwardedProtocol = req.get('x-forwarded-proto'); //protocol without proxy
+  //Create the user Step State
+  const userStepState = {
+    currentStep: 1,
+    nextStep: 2,
+    completed: false,
+    completedStep: 0,
+    user: user._id,
+  };
 
+  await StepState.create(userStepState);
   //send email
   await sendVerificationEmail({
     firstName: user.firstName,

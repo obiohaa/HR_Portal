@@ -2,6 +2,8 @@ import React from "react";
 import { createContext, useState, useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { axiosFetch } from "../Utils/axiosFetch";
+// import { toast } from "react-toastify";
+// import PageLoading from "../Components/PageLoading";
 
 const AppContext = createContext();
 
@@ -9,6 +11,7 @@ const AppProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isBarOpen, setIsBarOpen] = useState(true);
   const [DropDownOpen, setDropDownOpen] = useState(false);
+  const [userStepState, setUserStepState] = useState();
 
   const saveUser = (user) => {
     setUser(user);
@@ -44,6 +47,8 @@ const AppProvider = ({ children }) => {
         isBarOpen,
         setIsBarOpen,
         DropDownOpen,
+        setUserStepState,
+        userStepState,
       }}>
       {children}
     </AppContext.Provider>

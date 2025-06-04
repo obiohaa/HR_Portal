@@ -134,6 +134,12 @@
   margin-top: 25px;
 }
 
+.NOKbtns {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 70px;
+}
+
 .btn {
   outline: none;
   border: none;

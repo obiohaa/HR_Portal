@@ -38,8 +38,6 @@ const BioDataSchema = new mongoose.Schema(
     },
     spouseName: {
       type: String,
-      minlength: 2,
-      maxlength: 50,
     },
     houseAddress: {
       type: String,
@@ -75,12 +73,6 @@ const BioDataSchema = new mongoose.Schema(
     UserFileUrl: {
       type: String,
       required: [true, "Please provide file URL"],
-    },
-    step: {
-      type: Number,
-    },
-    completed: {
-      type: Boolean,
     },
     user: {
       type: mongoose.Types.ObjectId,
