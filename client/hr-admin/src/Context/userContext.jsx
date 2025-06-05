@@ -11,6 +11,7 @@ const AppProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isBarOpen, setIsBarOpen] = useState(true);
   const [DropDownOpen, setDropDownOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [userStepState, setUserStepState] = useState();
 
   const saveUser = (user) => {
@@ -23,6 +24,14 @@ const AppProvider = ({ children }) => {
 
   const toggleNavbar = () => {
     setDropDownOpen(!DropDownOpen);
+  };
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   useQuery({
@@ -49,6 +58,9 @@ const AppProvider = ({ children }) => {
         DropDownOpen,
         setUserStepState,
         userStepState,
+        openModal,
+        closeModal,
+        isModalOpen,
       }}>
       {children}
     </AppContext.Provider>

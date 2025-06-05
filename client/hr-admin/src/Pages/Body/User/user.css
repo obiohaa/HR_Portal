@@ -20,7 +20,7 @@
 .formsContainer {
   width: 90%;
   overflow-y: auto;
-  max-height: 700px;
+  height: 600px;
   margin-top: 10px;
   margin-bottom: 20px;
   border-radius: 10px;

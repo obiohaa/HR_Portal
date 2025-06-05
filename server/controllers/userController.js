@@ -60,7 +60,7 @@ const updateUserPassword = async (req, res) => {
   await user.save();
   res.status(StatusCodes.OK).json({ msg: "Success! Password Updated." });
 };
-
+/////////////////////////////////////////////////////////////////////////////////////
 //Bio Data
 const bioData = async (req, res) => {
   const {
@@ -95,6 +95,11 @@ const bioData = async (req, res) => {
     throw new CustomError.BadRequestError("Please provide all values");
   }
   let userBioData = JSON.parse(req.body.body);
+
+  const user = await BioData.findOne({ email: req.user.email });
+  if (user) {
+    throw new CustomError.BadRequestError("Bio Data already exist");
+  }
 
   // FILE FUNCTIONALITY
   if (!req.files) {
@@ -132,10 +137,6 @@ const bioData = async (req, res) => {
       user: req.user.userId,
     };
 
-    const user = await BioData.findOne({ email: req.user.email });
-    if (user) {
-      throw new CustomError.BadRequestError("Bio Data already exist");
-    }
     //Add do database
     const UserBioData = await BioData.create(mainUserBioData);
     if (UserBioData.createdAt) {
@@ -186,16 +187,46 @@ const userStepState = async (req, res) => {
   res.status(StatusCodes.OK).json({ currentUserStepState });
 };
 
-//Update user current step
-const updateUserStepState = async (req, res) => {
+//Update user previous step
+const updateUserPrevStepState = async (req, res) => {
   const currentUserStepState = await StepState.findOne({ user: req.user.userId });
-  console.log(currentUserStepState);
-  if (currentUserStepState) {
+  if (!currentUserStepState) {
+    throw new CustomError.BadRequestError("This user does not exist");
+  }
+  if (currentUserStepState.currentStep === 1) {
+    throw new CustomError.BadRequestError("No previous page");
+  }
+  if (currentUserStepState && currentUserStepState.currentStep > 1) {
     const updateStepState = await StepState.findOneAndUpdate(
       { user: req.user.userId },
       {
         currentStep: currentUserStepState.currentStep - 1,
         nextStep: currentUserStepState.nextStep - 1,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    res.status(StatusCodes.OK).json({ updateStepState });
+  }
+};
+
+//Update user next step
+const updateUserNextStepState = async (req, res) => {
+  const currentUserStepState = await StepState.findOne({ user: req.user.userId });
+  if (!currentUserStepState) {
+    throw new CustomError.BadRequestError("This user does not exist");
+  }
+  if (currentUserStepState.currentStep === 4) {
+    throw new CustomError.BadRequestError("No Next page");
+  }
+  if (currentUserStepState && currentUserStepState.currentStep < 4) {
+    const updateStepState = await StepState.findOneAndUpdate(
+      { user: req.user.userId },
+      {
+        currentStep: currentUserStepState.currentStep + 1,
+        nextStep: currentUserStepState.nextStep + 1,
       },
       {
         new: true,
@@ -265,7 +296,8 @@ module.exports = {
   bioData,
   getBioDataStatus,
   userStepState,
-  updateUserStepState,
+  updateUserPrevStepState,
+  updateUserNextStepState,
   nextOfKinData,
 };
 

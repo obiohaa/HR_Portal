@@ -59,7 +59,7 @@ const Next_of_kin = ({ steps, totalSteps }) => {
   //API CALL FOR CHANGING STEP VIEW
   const { mutate: previousStep } = useMutation({
     mutationFn: async (previousStep) =>
-      axiosFetch.post("/users/updateUserStepState", { previousStep }),
+      axiosFetch.post("/users/updateUserPrevStepState", { previousStep }),
     onSuccess: (data) => {
       console.log(data);
       queryClient.invalidateQueries({ queryKey: ["bioDataKey"] });

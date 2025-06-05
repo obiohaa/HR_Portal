@@ -16,12 +16,12 @@ const Tracker = () => {
   const [steps, setSteps] = useState(null);
   const totalSteps = 4;
 
-  const { data, isLoading } = useQuery({
+  const { isLoading } = useQuery({
     queryKey: ["bioDataKey"],
-    refetchOnMount: false,
+    refetchOnMount: true,
     queryFn: async () => {
       const { data } = await axiosFetch.get("/users/userStepState");
-      const { completed, completedStep, currentStep, nextStep } = data.currentUserStepState;
+      const { currentStep } = data.currentUserStepState;
       setSteps(currentStep);
       setUserStepState(data.currentUserStepState);
       console.log(data);
