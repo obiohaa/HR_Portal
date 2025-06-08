@@ -1,0 +1,83 @@
+const mongoose = require("mongoose");
+const validator = require("validator");
+const bcrypt = require("bcryptjs");
+
+const GuarantorSchema = new mongoose.Schema(
+  {
+    guarantorOneEmail: {
+      type: String,
+      unique: true,
+      validate: {
+        validator: validator.isEmail,
+        message: "Please provide valid email",
+      },
+    },
+    guarantorTwoEmail: {
+      type: String,
+      unique: true,
+      validate: {
+        validator: validator.isEmail,
+        message: "Please provide valid email",
+      },
+    },
+    verificationToken: {
+      type: String,
+    },
+    isCompleted: {
+      type: Boolean,
+      default: false,
+    },
+    user: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    fullName: {
+      type: String,
+      minlength: 2,
+      maxlength: 50,
+    },
+    address: {
+      type: String,
+    },
+    phoneNumber: {
+      type: Number,
+    },
+    occupation: {
+      type: String,
+    },
+    employer: {
+      type: String,
+    },
+    employerAddress: {
+      type: String,
+    },
+    employeeFullName: {
+      type: String,
+    },
+    employeeDesignation: {
+      type: String,
+    },
+    outletEmployed: {
+      type: String,
+    },
+    passport: {
+      type: String,
+    },
+    identificationCard: {
+      type: String,
+    },
+    ageRange: {
+      type: Boolean,
+    },
+    uniformedPublicServant: {
+      type: Boolean,
+    },
+    signedPolicy: {
+      type: Boolean,
+    },
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model("Guarantor", GuarantorSchema);

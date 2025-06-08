@@ -19,7 +19,7 @@ import {
 
 //When i have onChange in a select field, the react-hook-form validation does not work, i guess because it uses onChange function too. To validate i used my custom validation.
 
-const BioData = ({ steps, totalSteps }) => {
+const BioData = () => {
   const [fileName, setFileName] = useState(null);
   const [fileError, setFileError] = useState({ msg: "" });
   const [marriageStatus, setMarriageStatus] = useState("");
@@ -30,7 +30,7 @@ const BioData = ({ steps, totalSteps }) => {
   const {
     register,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     handleSubmit,
     setError,
   } = useForm();
@@ -52,9 +52,8 @@ const BioData = ({ steps, totalSteps }) => {
         progress: undefined,
         className: "toastGood",
       });
-      // reset();
-      // setFileName(null);
-      // setStep(data.data.steps.nextStep);
+      reset();
+      setFileName(null);
     },
     onError: (error) => {
       toast.error(error.response.data.msg, {
@@ -112,7 +111,7 @@ const BioData = ({ steps, totalSteps }) => {
 
   return (
     <div className="formsContainerBody">
-      {userStepState && userStepState.completedStep >= 2 ? (
+      {userStepState && userStepState.completedStep >= 1 ? (
         <Modal />
       ) : (
         <form

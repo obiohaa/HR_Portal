@@ -188,6 +188,17 @@
   transition: all 0.5s ease-in-out;
 }
 
+.formContainerGuarantor {
+  width: 100%;
+  height: auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 1px;
+  row-gap: 80px;
+  justify-content: center;
+  transition: all 0.5s ease-in-out;
+}
+
 .formBioData {
   position: relative;
   font-size: 1rem;

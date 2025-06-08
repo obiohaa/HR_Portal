@@ -1,12 +1,20 @@
 const User = require("../models/User");
 const BioData = require("../models/BioData");
 const StepState = require("../models/StepState");
+const Guarantor = require("../models/Guarantor");
 const NextOfKin = require("../models/NextOfKin");
 const { StatusCodes } = require("http-status-codes");
 const path = require("path");
 const CustomError = require("../errors");
-const { createTokenUser, attachCookiesToResponse, checkPermissions } = require("../utils");
+const {
+  createTokenUser,
+  attachCookiesToResponse,
+  checkPermissions,
+  sendGuarantorEmailOne,
+  sendGuarantorEmailTwo,
+} = require("../utils");
 const cloudinary = require("cloudinary").v2;
+const crypto = require("crypto");
 const fs = require("fs");
 
 const getAllUsers = async (req, res) => {
@@ -287,6 +295,87 @@ const nextOfKinData = async (req, res) => {
   }
 };
 
+const guarantorUser = async (req, res) => {
+  console.log(req.body);
+
+  const { guarantorOneEmail, guarantorTwoEmail } = req.body;
+  if (!guarantorOneEmail || !guarantorTwoEmail) {
+    throw new CustomError.BadRequestError("Please provide all values");
+  }
+
+  try {
+    const user = req.user.userId;
+    const firstName = req.user.firstName;
+    const lastName = req.user.lastName;
+    const origin = "http://localhost:5173";
+
+    const emailOneAlreadyExists = await Guarantor.findOne({ guarantorOneEmail });
+    const emailTwoAlreadyExists = await Guarantor.findOne({ guarantorTwoEmail });
+
+    console.log(emailOneAlreadyExists);
+    console.log(emailTwoAlreadyExists);
+
+    if (emailOneAlreadyExists && emailOneAlreadyExists.isCompleted == false) {
+      console.log("email one exist but confirmed false");
+      //send email One
+      await sendGuarantorEmailOne({
+        firstName: firstName,
+        lastName: lastName,
+        email: emailOneAlreadyExists.guarantorOneEmail,
+        verificationToken: emailOneAlreadyExists.verificationToken,
+        origin,
+      });
+    }
+
+    if (emailTwoAlreadyExists && emailTwoAlreadyExists.isCompleted == false) {
+      console.log("email two exist but confirmed false");
+      //send email Two
+      await sendGuarantorEmailTwo({
+        firstName: firstName,
+        lastName: lastName,
+        email: emailTwoAlreadyExists.guarantorTwoEmail,
+        verificationToken: emailTwoAlreadyExists.verificationToken,
+        origin,
+      });
+    }
+
+    if (!emailOneAlreadyExists) {
+      const verificationToken = crypto.randomBytes(50).toString("hex");
+      const guarantorOne = await Guarantor.create({ guarantorOneEmail, user, verificationToken });
+      console.log(guarantorOne);
+      // send email One
+      await sendGuarantorEmailOne({
+        firstName: firstName,
+        lastName: lastName,
+        email: guarantorOne.guarantorOneEmail,
+        verificationToken: guarantorOne.verificationToken,
+        origin,
+      });
+    }
+
+    if (!emailOneAlreadyExists) {
+      const verificationToken = crypto.randomBytes(50).toString("hex");
+      const guarantorTwo = await Guarantor.create({ guarantorTwoEmail, user, verificationToken });
+      console.log(guarantorTwo);
+      // send email Two
+      await sendGuarantorEmailTwo({
+        firstName: firstName,
+        lastName: lastName,
+        email: guarantorTwo.guarantorTwoEmail,
+        verificationToken: guarantorTwo.verificationToken,
+        origin,
+      });
+    }
+
+    //send verification token only while testing in post man
+    res.status(StatusCodes.CREATED).json({
+      msg: "Success! Email sent to Guarantors",
+    });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
+  }
+};
+
 module.exports = {
   getAllUsers,
   getSingleUser,
@@ -299,6 +388,7 @@ module.exports = {
   updateUserPrevStepState,
   updateUserNextStepState,
   nextOfKinData,
+  guarantorUser,
 };
 
 // update user with findOneAndUpdate

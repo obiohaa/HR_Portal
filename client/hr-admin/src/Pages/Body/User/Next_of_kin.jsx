@@ -1,22 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
 import { axiosFetch } from "../../../Utils/axiosFetch";
 import { useForm } from "react-hook-form";
 import { useGlobalContext } from "../../../Context/userContext";
-import capitalizeFirstLetter from "../../../Components/ToUpperCase";
+// import capitalizeFirstLetter from "../../../Components/ToUpperCase";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
 import { toast } from "react-toastify";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import PageLoading from "../../../Components/PageLoading";
+import Modal from "../../../Components/Modal";
 
 //When i have onChange in a select field, the react-hook-form validation does not work, i guess because it uses onChange function too. To validate i used my custom validation.
 
-const Next_of_kin = ({ steps, totalSteps }) => {
+const Next_of_kin = () => {
   const { userStepState } = useGlobalContext();
   // console.log(userStepState);
   const {
     register,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     handleSubmit,
     setError,
   } = useForm();
@@ -38,9 +39,7 @@ const Next_of_kin = ({ steps, totalSteps }) => {
         progress: undefined,
         className: "toastGood",
       });
-      // reset();
-      // setFileName(null);
-      // setStep(data.data.steps.nextStep);
+      reset();
     },
     onError: (error) => {
       toast.error(error.response.data.msg, {
@@ -95,9 +94,8 @@ const Next_of_kin = ({ steps, totalSteps }) => {
 
   const onSubmit = async (values) => {
     try {
-      console.log(values);
+      // console.log(values);
       nextOfKinUser(values);
-      // reset();
     } catch (error) {
       console.log(error);
       //To place an error so that it does not belong to any field we use root and not email or password or any field name
@@ -125,137 +123,141 @@ const Next_of_kin = ({ steps, totalSteps }) => {
 
   return (
     <div className="formsContainerBody">
-      <form
-        action=""
-        encType="multipart/form-data"
-        onSubmit={handleSubmit(onSubmit)}
-        autoComplete="off"
-        noValidate>
-        <div className="formContainer">
-          <div className="formBioData">
-            <input
-              type="text"
-              id="nextOfKinFirstName"
-              className="form_input"
-              placeholder=" "
-              autoComplete="off"
-              formNoValidate
-              {...register("nextOfKinFirstName", {
-                required: "Next of Kin's first name is required!",
-                minLength: {
-                  value: 2,
-                  message: "Minimum characters of 2 letters.",
-                },
-                maxLength: {
-                  value: 20,
-                  message: "Maximum characters of 20 letters.",
-                },
-                pattern: {
-                  value: /^[A-Za-z]+$/i,
-                  message: "Alphabets only!",
-                },
-              })}
-            />
-            {errors.nextOfKinFirstName && (
-              <p className="bioError">{errors.nextOfKinFirstName.message}</p>
-            )}
-            <label htmlFor="nextOfKinFirstName" className="form_label">
-              NOK First Name
-            </label>
+      {userStepState && userStepState.completedStep >= 2 ? (
+        <Modal />
+      ) : (
+        <form
+          action=""
+          encType="multipart/form-data"
+          onSubmit={handleSubmit(onSubmit)}
+          autoComplete="off"
+          noValidate>
+          <div className="formContainer">
+            <div className="formBioData">
+              <input
+                type="text"
+                id="nextOfKinFirstName"
+                className="form_input"
+                placeholder=" "
+                autoComplete="off"
+                formNoValidate
+                {...register("nextOfKinFirstName", {
+                  required: "Next of Kin's first name is required!",
+                  minLength: {
+                    value: 2,
+                    message: "Minimum characters of 2 letters.",
+                  },
+                  maxLength: {
+                    value: 20,
+                    message: "Maximum characters of 20 letters.",
+                  },
+                  pattern: {
+                    value: /^[A-Za-z]+$/i,
+                    message: "Alphabets only!",
+                  },
+                })}
+              />
+              {errors.nextOfKinFirstName && (
+                <p className="bioError">{errors.nextOfKinFirstName.message}</p>
+              )}
+              <label htmlFor="nextOfKinFirstName" className="form_label">
+                NOK First Name
+              </label>
+            </div>
+            <div className="formBioData">
+              <input
+                type="text"
+                id="nextOfKinLastName"
+                className="form_input"
+                placeholder=" "
+                autoComplete="off"
+                formNoValidate
+                {...register("nextOfKinLastName", {
+                  required: "Next of Kin's Last Name is required!",
+                  minLength: {
+                    value: 2,
+                    message: "Minimum characters of 2 letters.",
+                  },
+                  maxLength: {
+                    value: 20,
+                    message: "Maximum characters of 20 letters.",
+                  },
+                  pattern: {
+                    value: /^[A-Za-z]+$/i,
+                    message: "Alphabets only!",
+                  },
+                })}
+              />
+              {errors.nextOfKinLastName && (
+                <p className="bioError">{errors.nextOfKinLastName.message}</p>
+              )}
+              <label htmlFor="nextOfKinLastName" className="form_label">
+                NOK Last Name
+              </label>
+            </div>
+            <div className="formBioData">
+              <input
+                type="text"
+                id="houseAddress"
+                name="houseAddress"
+                className="form_input"
+                placeholder=" "
+                autoComplete="off"
+                {...register("houseAddress", {
+                  required: "House address is required!",
+                  minLength: {
+                    value: 3,
+                    message: "Minimum characters of 2 letters.",
+                  },
+                  maxLength: {
+                    value: 100,
+                    message: "Maximum characters of 20 letters.",
+                  },
+                })}
+              />
+              {errors.houseAddress && <p className="bioError">{errors.houseAddress.message}</p>}
+              <label htmlFor="houseAddress" className="form_label">
+                House Address
+              </label>
+            </div>
+            <div className="formBioData">
+              <input
+                type="text"
+                id="nextOfKinRelationship"
+                name="nextOfKinRelationship"
+                className="form_input"
+                placeholder=" "
+                autoComplete="off"
+                {...register("nextOfKinRelationship", {
+                  required: "NOK relationship is required!",
+                  minLength: {
+                    value: 3,
+                    message: "Minimum characters of 3 letters.",
+                  },
+                  maxLength: {
+                    value: 30,
+                    message: "Maximum characters of 30 letters.",
+                  },
+                })}
+              />
+              {errors.nextOfKinRelationship && (
+                <p className="bioError">{errors.nextOfKinRelationship.message}</p>
+              )}
+              <label htmlFor="bankName" className="form_label">
+                NOK Relationship
+              </label>
+            </div>
           </div>
-          <div className="formBioData">
-            <input
-              type="text"
-              id="nextOfKinLastName"
-              className="form_input"
-              placeholder=" "
-              autoComplete="off"
-              formNoValidate
-              {...register("nextOfKinLastName", {
-                required: "Next of Kin's Last Name is required!",
-                minLength: {
-                  value: 2,
-                  message: "Minimum characters of 2 letters.",
-                },
-                maxLength: {
-                  value: 20,
-                  message: "Maximum characters of 20 letters.",
-                },
-                pattern: {
-                  value: /^[A-Za-z]+$/i,
-                  message: "Alphabets only!",
-                },
-              })}
-            />
-            {errors.nextOfKinLastName && (
-              <p className="bioError">{errors.nextOfKinLastName.message}</p>
-            )}
-            <label htmlFor="nextOfKinLastName" className="form_label">
-              NOK Last Name
-            </label>
+          <div className="NOKbtns">
+            <button className="btn" onClick={goPrev}>
+              Prev
+            </button>
+            <button type="submit" className="btn">
+              Next
+            </button>
           </div>
-          <div className="formBioData">
-            <input
-              type="text"
-              id="houseAddress"
-              name="houseAddress"
-              className="form_input"
-              placeholder=" "
-              autoComplete="off"
-              {...register("houseAddress", {
-                required: "House address is required!",
-                minLength: {
-                  value: 3,
-                  message: "Minimum characters of 2 letters.",
-                },
-                maxLength: {
-                  value: 100,
-                  message: "Maximum characters of 20 letters.",
-                },
-              })}
-            />
-            {errors.houseAddress && <p className="bioError">{errors.houseAddress.message}</p>}
-            <label htmlFor="houseAddress" className="form_label">
-              House Address
-            </label>
-          </div>
-          <div className="formBioData">
-            <input
-              type="text"
-              id="nextOfKinRelationship"
-              name="nextOfKinRelationship"
-              className="form_input"
-              placeholder=" "
-              autoComplete="off"
-              {...register("nextOfKinRelationship", {
-                required: "NOK relationship is required!",
-                minLength: {
-                  value: 3,
-                  message: "Minimum characters of 3 letters.",
-                },
-                maxLength: {
-                  value: 30,
-                  message: "Maximum characters of 30 letters.",
-                },
-              })}
-            />
-            {errors.nextOfKinRelationship && (
-              <p className="bioError">{errors.nextOfKinRelationship.message}</p>
-            )}
-            <label htmlFor="bankName" className="form_label">
-              NOK Relationship
-            </label>
-          </div>
-        </div>
-        <div className="NOKbtns">
-          <button className="btn" onClick={goPrev} disabled={steps <= 1 && true}>
-            Prev
-          </button>
-          <button type="submit" className="btn">
-            Next
-          </button>
-        </div>
-      </form>
+        </form>
+      )}
     </div>
   );
 };
