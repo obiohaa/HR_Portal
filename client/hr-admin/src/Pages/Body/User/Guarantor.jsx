@@ -5,6 +5,7 @@ import { useGlobalContext } from "../../../Context/userContext";
 import { toast } from "react-toastify";
 import { axiosFetch } from "../../../Utils/axiosFetch";
 import PageLoading from "../../../Components/PageLoading";
+import Modal from "../../../Components/Modal";
 
 const Guarantor = () => {
   const { userStepState } = useGlobalContext();
