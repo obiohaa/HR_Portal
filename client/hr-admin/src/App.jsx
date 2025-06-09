@@ -9,6 +9,7 @@ import Verify_email from "./Pages/Login/Verify-email.jsx";
 import Dashboard from "./Pages/Body/Dashboard.jsx";
 import User from "./Pages/Body/User.jsx";
 import SideBarNav from "./Pages/SideBarNav/SideBarNav.jsx";
+import GuarantorMainForm from "./Pages/Body/User/GuarantorMainForm.jsx";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/user/reset_password" exact Component={Confirm_Password} />
         <Route path="/dashboard" exact Component={SideBarNav} />
         <Route path="/user" exact Component={User} />
+        <Route path="/guarantor" exact Component={GuarantorMainForm} />
       </Routes>
     </Router>
   );

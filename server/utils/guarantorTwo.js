@@ -1,7 +1,7 @@
 const sendEmail = require("./sendEmail");
 
 const sendGuarantorEmailTwo = async ({ firstName, lastName, email, verificationToken, origin }) => {
-  const verifyEmail = `${origin}/user/verify_email?token=${verificationToken}&email=${email}`;
+  const guarantorFormLink = `${origin}/user/verify_email?token=${verificationToken}&email=${email}`;
   //making the first work capital letter
   const first_Name = firstName.charAt(0).toUpperCase() + firstName.slice(1);
   const last_Name = lastName.charAt(0).toUpperCase() + lastName.slice(1);
@@ -61,7 +61,7 @@ I hope this message finds you well.
                 </p>
                 <p style="font-size: 15px;">
                   We would appreciate it if you could take a few moments to complete the guarantor form by clicking the link here:
-                  <a href="${verifyEmail}" style="text-decoration: none;">Verify Email</a>.
+                  <a href="${guarantorFormLink}" style="text-decoration: none;">Guarantor Form</a>.
                 </p>
                 <p>
                 Your support in this process is greatly appreciated. Should you have any questions or require further information, please do not hesitate to contact us HR@thaplce.com.ng

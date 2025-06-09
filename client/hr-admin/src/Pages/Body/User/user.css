@@ -193,7 +193,7 @@
   height: auto;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  column-gap: 1px;
+  column-gap: 20px;
   row-gap: 80px;
   justify-content: center;
   transition: all 0.5s ease-in-out;
@@ -227,7 +227,7 @@
   appearance: none;
   top: 0;
   left: 0;
-  width: 95%;
+  width: 100%;
   height: 40px;
   font-size: 1rem;
   border: 1px solid gray;
@@ -328,3 +328,73 @@ input[type="file"]::file-selector-button {
 /* END UPLOAD FILE */
 
 /* END FORM SECTION */
+/* START GUARANTOR MAIN FORM */
+.mainGuarantorContainer {
+  height: 100vh;
+  width: 100%;
+  background-color: var(--clr-grey-8);
+}
+
+.mainGuarantorBody {
+  height: 100vh;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  align-items: center;
+  margin: 0 auto;
+  background-color: #fff;
+  overflow: auto;
+  border-radius: 8px;
+  border-top: 4px solid var(--clr-primary-2);
+}
+
+.mainGuarantorHeader {
+  width: 100%;
+  margin: 10px auto;
+  text-align: center;
+}
+
+.guarantorLogo {
+  width: 170px;
+  margin: 10px auto;
+}
+
+.mainGuarantorHeader > h3 {
+  font-weight: bold;
+  font-size: 30px;
+  font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+  line-height: normal;
+}
+
+.longLine {
+  width: 100%;
+  background-color: var(--clr-grey-8);
+  height: 5px;
+}
+
+.mainGuarantorForm {
+  width: 95%;
+  height: 100vh;
+  margin-top: 40px;
+}
+.mainGuarantorFormBody {
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-content: space-between;
+  column-gap: 10px;
+  row-gap: 40px;
+  transition: all 0.5s ease-in-out;
+}
+
+.mainGuarantorFormField {
+  width: 100%;
+  margin: 0 auto;
+  /* height: auto; */
+  position: relative;
+  font-size: 1rem;
+}
+/* END GUARANTOR MAIN FORM */
