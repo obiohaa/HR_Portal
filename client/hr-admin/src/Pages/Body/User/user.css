@@ -128,6 +128,10 @@
   float: left;
 }
 
+.btnLeft {
+  float: right;
+}
+
 .btns {
   display: flex;
   justify-content: space-between;
@@ -143,7 +147,7 @@
 .guarantorBtns {
   display: flex;
   justify-content: space-between;
-  margin-top: 40px;
+  margin: 40px 0 20px 0;
 }
 
 .btn {
@@ -153,7 +157,8 @@
   font-size: 1rem;
   font-family: inherit;
   border-radius: 4px;
-  background-color: #43766c;
+  background-color: var(--clr-primary-2);
+  /* background-color: #43766c; */
   color: #fff;
   padding: 4px 40px;
 }

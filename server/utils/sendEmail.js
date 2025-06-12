@@ -1,17 +1,26 @@
+require("dotenv").config();
 const nodemailer = require("nodemailer");
+const sgMail = require("@sendgrid/mail");
 const mailConfig = require("./nodemailerConfig");
 
 const sendEmail = async ({ to, subject, html }) => {
   //   let testAccount = await nodemailer.createTestAccount();
+  // const transporter = nodemailer.createTransport(mailConfig);
+  const API_KEY = process.env.API_KEY;
+  sgMail.setApiKey(API_KEY);
 
-  const transporter = nodemailer.createTransport(mailConfig);
-
-  return transporter.sendMail({
-    from: "buzbuz2021@gmail.com", // sender address
-    to,
-    subject,
-    html,
-  });
+  return sgMail
+    .send({
+      from: {
+        name: "HR ADMIN PORTAL",
+        email: "hr.admin@theplace.com.ng",
+      }, // sender address
+      to,
+      subject,
+      html,
+    })
+    .then((response) => console.log("sent"))
+    .catch((error) => console.log(error.message));
 };
 
 module.exports = sendEmail;

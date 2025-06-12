@@ -23,7 +23,7 @@ function App() {
         <Route path="/user/reset_password" exact Component={Confirm_Password} />
         <Route path="/dashboard" exact Component={SideBarNav} />
         <Route path="/user" exact Component={User} />
-        <Route path="/guarantor" exact Component={GuarantorMainForm} />
+        <Route path="/employee_guarantor" exact Component={GuarantorMainForm} />
       </Routes>
     </Router>
   );

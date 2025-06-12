@@ -6,11 +6,7 @@ const InfoModal = () => {
   const { closeModal } = useGlobalContext();
   // console.log(userStepState);
   return (
-    <div
-      className="infoModal-container"
-      onClick={(e) => {
-        if (e.target.className === "infoModal-container") closeModal();
-      }}>
+    <div className="infoModal-container">
       <div className="infoModal">
         <div className="mainModal">
           <div className="modalContent">
@@ -39,6 +35,9 @@ const InfoModal = () => {
                   </li>
                 </ol>
               </div>
+              <button type="submit" className="btn btnLeft" onClick={closeModal}>
+                Close
+              </button>
             </div>
           </div>
         </div>

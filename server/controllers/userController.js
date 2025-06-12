@@ -376,6 +376,41 @@ const guarantorUser = async (req, res) => {
   }
 };
 
+const updateGuarantor = async (req, res) => {
+  const {
+    fullName,
+    houseAddress,
+    phoneNumber,
+    occupation,
+    employer,
+    employerAddress,
+    employeeFullName,
+    employeeDesignation,
+    outletEmployed,
+    ageRange,
+    uniformedPublicServant,
+    signedPolicy,
+  } = JSON.parse(req.body.body);
+  console.log(JSON.parse(req.body.body));
+  if (
+    !fullName ||
+    !houseAddress ||
+    !phoneNumber ||
+    !occupation ||
+    !employer ||
+    !employerAddress ||
+    !employeeFullName ||
+    !employeeDesignation ||
+    !outletEmployed ||
+    !ageRange ||
+    !uniformedPublicServant ||
+    !signedPolicy
+  ) {
+    throw new CustomError.BadRequestError("Please provide all values");
+  }
+  const guarantorUpdateData = JSON.parse(req.body.body);
+};
+
 module.exports = {
   getAllUsers,
   getSingleUser,
@@ -389,6 +424,7 @@ module.exports = {
   updateUserNextStepState,
   nextOfKinData,
   guarantorUser,
+  updateGuarantor,
 };
 
 // update user with findOneAndUpdate

@@ -1,7 +1,7 @@
 const sendEmail = require("./sendEmail");
 
 const sendGuarantorEmailTwo = async ({ firstName, lastName, email, verificationToken, origin }) => {
-  const guarantorFormLink = `${origin}/user/verify_email?token=${verificationToken}&email=${email}`;
+  const guarantorFormLink = `${origin}/employee_guarantor?token=${verificationToken}&email=${email}`;
   //making the first work capital letter
   const first_Name = firstName.charAt(0).toUpperCase() + firstName.slice(1);
   const last_Name = lastName.charAt(0).toUpperCase() + lastName.slice(1);

@@ -37,7 +37,7 @@ const GuarantorSchema = new mongoose.Schema(
       minlength: 2,
       maxlength: 50,
     },
-    address: {
+    houseAddress: {
       type: String,
     },
     phoneNumber: {

@@ -4,14 +4,19 @@ import logo from "/logo.svg";
 import { useForm } from "react-hook-form";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
 import InfoModal from "../../../Components/InfoModal";
-// import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useGlobalContext } from "../../../Context/userContext";
-// import { toast } from "react-toastify";
-// import { axiosFetch } from "../../../Utils/axiosFetch";
-// import PageLoading from "../../../Components/PageLoading";
+import { toast } from "react-toastify";
+import { axiosFetchFormData } from "../../../Utils/axiosFetch";
+import PageLoading from "../../../Components/PageLoading";
+import { useLocation, Link } from "react-router-dom";
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 
 const GuarantorMainForm = () => {
-  const { closeModal, openModal, isModalOpen } = useGlobalContext();
+  const query = useQuery();
+  const { openModal, isModalOpen } = useGlobalContext();
   const [fileName, setFileName] = useState(null);
   const [imgName, setImgName] = useState(null);
   const [fileError, setFileError] = useState({ msg: "" });
@@ -24,12 +29,39 @@ const GuarantorMainForm = () => {
     setError,
   } = useForm();
 
+  const { mutate: guarantorMain, isLoading } = useMutation({
+    mutationFn: async (guarantorMain) =>
+      axiosFetchFormData.patch("/users/updateGuarantor", guarantorMain),
+    onSuccess: (data) => {
+      console.log(data);
+      toast.success(data.data.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastGood",
+      });
+      // reset();
+    },
+    onError: (error) => {
+      toast.error(error.response.data.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastBad",
+      });
+    },
+  });
+
   const onSubmit = async (values) => {
     try {
-      console.log(values);
-      console.log(imgName);
-      console.log(fileName);
-
       if (imgName === null) {
         setImgError({ msg: "Passport is required" });
       }
@@ -45,6 +77,21 @@ const GuarantorMainForm = () => {
         setFileName(null);
         setFileError({ msg: "File size must be less than 5MB" });
       }
+      if (
+        imgName !== null &&
+        fileName !== null &&
+        imgName.size < 5000000 &&
+        fileName.size < 5000000
+      ) {
+        values.verificationToken = query.get("verificationToken");
+        values.email = query.get("email");
+        const formData = new FormData();
+        formData.append("file", fileName);
+        formData.append("file", imgName);
+        formData.append("body", JSON.stringify(values));
+        console.log(formData);
+        guarantorMain(formData);
+      }
     } catch (error) {
       console.log(error);
       //To place an error so that it does not belong to any field we use root and not email or password or any field name
@@ -53,6 +100,10 @@ const GuarantorMainForm = () => {
       });
     }
   };
+
+  if (isLoading) {
+    <PageLoading />;
+  }
 
   return (
     <div className="mainGuarantorContainer">
