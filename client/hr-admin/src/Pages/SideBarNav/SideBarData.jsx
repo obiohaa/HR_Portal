@@ -1,12 +1,14 @@
 import React from "react";
 import {
-  FaHouse,
+  FaFileZipper,
   FaKey,
   FaUser,
   FaClipboardList,
   FaAngleRight,
+  FaChessKing,
   FaFilePowerpoint,
   FaHandshake,
+  FaClipboardUser,
 } from "react-icons/fa6";
 
 const AdminSideBar = [
@@ -18,6 +20,12 @@ const AdminSideBar = [
   },
   {
     id: 2,
+    url: "/create-admins",
+    text: "Add Admins",
+    icon: <FaChessKing />,
+  },
+  {
+    id: 3,
     url: "#",
     text: "Users",
     icon: <FaUser />,
@@ -27,42 +35,75 @@ const AdminSideBar = [
         id: 1,
         url: "/admin-user",
         text: "Admins",
-        icon: <FaHouse />,
       },
       {
-        id: 3,
+        id: 2,
         url: "/user",
         text: "Employees",
-        icon: <FaHouse />,
       },
     ],
   },
   {
-    id: 3,
-    url: "/profiles",
+    id: 4,
+    url: "#",
     text: "Profiles",
     icon: <FaFilePowerpoint />,
+  },
+  {
+    id: 5,
+    url: "/openings",
+    text: "Job Opening",
+    icon: <FaHandshake />,
+  },
+];
+///////////////////////////////////////////////////
+const EmployeeSideBar = [
+  {
+    id: 1,
+    url: "/dashboard",
+    text: "Dashboard",
+    icon: <FaClipboardList />,
+  },
+  {
+    id: 2,
+    url: "/user",
+    text: "E - Form",
+    icon: <FaFileZipper />,
+  },
+  {
+    id: 3,
+    url: "#",
+    text: "E - Profile",
+    icon: <FaClipboardUser />,
+    iconClosed: <FaAngleRight />,
+    subNav: [
+      {
+        id: 1,
+        url: "/admin-user",
+        text: "My User",
+      },
+      {
+        id: 1,
+        url: "/admin-user",
+        text: "Bio Data",
+      },
+      {
+        id: 3,
+        url: "/user",
+        text: "Next of Kin",
+      },
+      {
+        id: 3,
+        url: "/user",
+        text: "NDA",
+      },
+    ],
   },
   {
     id: 4,
     url: "/openings",
     text: "Job Opening",
     icon: <FaHandshake />,
-  },
-];
-
-const EmployeeSideBar = [
-  {
-    id: 1,
-    url: "/employee-form",
-    text: "Employee Form",
-    icon: <FaHouse />,
-  },
-  {
-    id: 2,
-    url: "/employee-profile",
-    text: "Employee Profile",
-    icon: <FaKey />,
   },
 ];
 

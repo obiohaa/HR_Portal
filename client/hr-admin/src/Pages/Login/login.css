@@ -127,6 +127,13 @@ input:invalid:not(:placeholder-shown) {
   font-size: 18px;
 }
 
+.registerUploadImg {
+  position: relative;
+  font-size: 1rem;
+  width: 100%;
+  height: auto;
+  margin-bottom: 30px;
+}
 /* LOGIN CSS ENDS */
 /* REACT TOAST */
 .toastBad,

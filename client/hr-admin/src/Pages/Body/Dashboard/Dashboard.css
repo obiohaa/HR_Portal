@@ -1,0 +1,125 @@
+.employeeDashContainer {
+  width: 90%;
+  overflow-y: auto;
+  height: 95%;
+  margin: 10px auto;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  padding: 1rem 2rem;
+  background-color: white !important;
+}
+
+.employeeDashBody {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 10px;
+}
+
+.divider {
+  border: 2px solid var(--clr-grey-8);
+  width: 80%;
+  margin-top: 30px;
+}
+
+.employeeDashSingle {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.dashOne {
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 8px solid var(--clr-grey-8);
+}
+
+.dashTwo {
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 8px solid var(--clr-grey-8);
+}
+
+.dashThree {
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 8px solid var(--clr-grey-8);
+}
+
+.dashFour {
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 8px solid var(--clr-grey-8);
+}
+.dashFive {
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 8px solid var(--clr-grey-8);
+}
+
+.dashSix {
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 8px solid var(--clr-grey-8);
+}
+
+.dashIcon {
+  height: 70px;
+  width: 70px;
+  color: var(--clr-grey-8);
+}
+
+.dashCount {
+  font-size: 80px;
+  color: var(--clr-grey-8);
+}
+
+/* TOOLTIP */
+.employeeDashSingle .toolTipText {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 50%;
+  left: 50%;
+  margin-left: -60px;
+}
+
+.employeeDashSingle .toolTipText::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+}
+
+.employeeDashSingle:hover .toolTipText {
+  visibility: visible;
+}
+/* END TOOL TIP45 */

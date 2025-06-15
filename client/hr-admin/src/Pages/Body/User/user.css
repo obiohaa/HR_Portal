@@ -49,7 +49,7 @@
 
 .progress {
   position: absolute;
-  background-color: blue;
+  /* background-color: blue; */
   top: 50%;
   left: 0;
   transform: translateY(-50%);
@@ -71,7 +71,7 @@
 
 .circle.active {
   border-color: #ccc;
-  background-color: #43766c;
+  background-color: #2c3e50;
   color: #fff;
 }
 
@@ -86,7 +86,7 @@
 }
 
 .bioData.on {
-  color: #43766c;
+  color: #2c3e50;
 }
 
 .nextOfKin {
@@ -96,7 +96,7 @@
 }
 
 .nextOfKin.on {
-  color: #43766c;
+  color: #2c3e50;
 }
 
 .guarantor {
@@ -106,7 +106,7 @@
 }
 
 .guarantor.on {
-  color: #43766c;
+  color: #2c3e50;
 }
 
 .nda {
@@ -116,7 +116,7 @@
 }
 
 .nda.on {
-  color: #43766c;
+  color: #2c3e50;
 }
 
 .bioButtons {
@@ -129,6 +129,7 @@
 }
 
 .btnLeft {
+  margin-top: 20px;
   float: right;
 }
 
@@ -193,7 +194,7 @@
   height: auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  column-gap: 1px;
+  column-gap: 20px;
   row-gap: 80px;
   justify-content: center;
   transition: all 0.5s ease-in-out;
@@ -419,3 +420,50 @@ input[type="file"]::file-selector-button {
 }
 
 /* END GUARANTOR MAIN FORM */
+/* START NDA MAIN */
+.NDAContainer {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* overflow: auto; */
+  margin: 0 auto;
+  transition: all 0.5s ease-in-out;
+}
+
+.NDAContainer > h2 {
+  text-align: center;
+}
+
+strong {
+  font-weight: 900;
+  color: #000;
+}
+
+.NDAList {
+  width: 90%;
+  margin: 0 auto;
+}
+
+.NDAList > li {
+  margin-bottom: 10px;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.firstParagraph {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.secondParagraph,
+.secondParagraph > p {
+  margin-bottom: 10px;
+}
+/* END NDA MAIN */
+
+/* START SIDE BAR */
+
+/* END SIDE BAR */

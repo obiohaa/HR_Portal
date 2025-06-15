@@ -15,6 +15,7 @@ const {
   nextOfKinData,
   guarantorUser,
   updateGuarantor,
+  finalAgreement,
 } = require("../controllers/userController");
 
 router.route("/").get(authenticateUser, authorizePermissions("admin"), getAllUsers);
@@ -29,7 +30,8 @@ router.route("/userStepState").get(authenticateUser, userStepState);
 router.route("/updateUserPrevStepState").post(authenticateUser, updateUserPrevStepState);
 router.route("/updateUserNextStepState").post(authenticateUser, updateUserNextStepState);
 router.route("/guarantorUser").post(authenticateUser, guarantorUser);
-router.route("/updateGuarantor").patch(authenticateUser, updateGuarantor);
+router.route("/finalAgreement").post(authenticateUser, finalAgreement);
+router.route("/updateGuarantor").patch(updateGuarantor);
 
 router.route("/:id").get(authenticateUser, getSingleUser);
 

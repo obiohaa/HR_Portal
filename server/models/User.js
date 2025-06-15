@@ -31,8 +31,8 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["admin", "user"],
-    default: "user",
+    enum: ["admin", "employee"],
+    default: "employee",
   },
   verificationToken: {
     type: String,
@@ -50,6 +50,9 @@ const UserSchema = new mongoose.Schema({
 
   passwordTokenExpirationDate: {
     type: Date,
+  },
+  imgURL: {
+    type: String,
   },
 });
 

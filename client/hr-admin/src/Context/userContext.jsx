@@ -34,18 +34,18 @@ const AppProvider = ({ children }) => {
     setIsModalOpen(false);
   };
 
-  useQuery({
-    queryKey: ["currentUser"],
-    queryFn: async () => {
-      const { data } = await axiosFetch.get("/users/showMe");
-      saveUser(data.user);
-      return data;
-    },
-    onError: (error) => {
-      console.log(error);
-      removeUser();
-    },
-  });
+  // useQuery({
+  //   queryKey: ["currentUser"],
+  //   queryFn: async () => {
+  //     const { data } = await axiosFetch.get("/users/showMe");
+  //     saveUser(data.user);
+  //     return data;
+  //   },
+  //   onError: () => {
+  //     // console.log(error);
+  //     removeUser();
+  //   },
+  // });
 
   return (
     <AppContext.Provider

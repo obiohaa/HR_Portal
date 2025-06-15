@@ -3,6 +3,7 @@ const BioData = require("../models/BioData");
 const StepState = require("../models/StepState");
 const Guarantor = require("../models/Guarantor");
 const NextOfKin = require("../models/NextOfKin");
+const finalNDA = require("../models/FinalNDA");
 const { StatusCodes } = require("http-status-codes");
 const path = require("path");
 const CustomError = require("../errors");
@@ -118,7 +119,7 @@ const bioData = async (req, res) => {
     throw new CustomError.BadRequestError("Please upload a PDF or Doc File");
   }
   const maxSize = 5000000;
-  if (!userFile.size > maxSize) {
+  if (userFile.size > maxSize) {
     throw new CustomError.BadRequestError("Please upload file smaller than 5MB");
   }
 
@@ -390,8 +391,10 @@ const updateGuarantor = async (req, res) => {
     ageRange,
     uniformedPublicServant,
     signedPolicy,
+    verificationToken,
+    email,
   } = JSON.parse(req.body.body);
-  console.log(JSON.parse(req.body.body));
+  // console.log(JSON.parse(req.body.body));
   if (
     !fullName ||
     !houseAddress ||
@@ -404,11 +407,158 @@ const updateGuarantor = async (req, res) => {
     !outletEmployed ||
     !ageRange ||
     !uniformedPublicServant ||
-    !signedPolicy
+    !signedPolicy ||
+    !verificationToken ||
+    !email
   ) {
     throw new CustomError.BadRequestError("Please provide all values");
   }
   const guarantorUpdateData = JSON.parse(req.body.body);
+
+  const guarantorData = await Guarantor.findOne({
+    $or: [{ guarantorOneEmail: email }, { guarantorTwoEmail: email }],
+  });
+
+  if (guarantorData.isCompleted === 1) {
+    throw new CustomError.BadRequestError("Guarantor form already completed");
+  }
+
+  if (!guarantorData || guarantorData.verificationToken !== verificationToken) {
+    throw new CustomError.BadRequestError("Invalid verification token or email");
+  }
+
+  //FILE FUNCTIONALITY
+  if (!req.files || !req.files.file[0] || !req.files.file[1]) {
+    throw new CustomError.BadRequestError("No File Uploaded");
+  }
+
+  const IDFile = req.files.file[0];
+  const passportFile = req.files.file[1];
+
+  if (!IDFile.mimetype.startsWith("image") || !passportFile.mimetype.startsWith("image")) {
+    throw new CustomError.BadRequestError("Please upload an Image File");
+  }
+  const maxSize = 5000000;
+  if (IDFile.size > maxSize || passportFile.size > maxSize) {
+    throw new CustomError.BadRequestError("Please upload file smaller than 5MB");
+  }
+
+  //add file data to req,body
+  try {
+    //Upload to cloudinary
+    const resultIDFile = await cloudinary.uploader.upload(IDFile.tempFilePath, {
+      use_filename: true,
+      folder: "HR_ADMIN_PORTAL",
+    });
+    const resultPassportFile = await cloudinary.uploader.upload(passportFile.tempFilePath, {
+      use_filename: false,
+      folder: "HR_ADMIN_PORTAL",
+    });
+    //unlink/delete the file
+    fs.unlinkSync(IDFile.tempFilePath);
+    fs.unlinkSync(passportFile.tempFilePath);
+
+    const mainGuarantorData = {
+      ...guarantorUpdateData,
+      isCompleted: 1,
+      passport: resultIDFile.secure_url,
+      identificationCard: resultPassportFile.secure_url,
+    };
+
+    //UPDATE GUARANTOR FORM
+    const updatedGuarantor = await Guarantor.findOneAndUpdate(
+      { _id: guarantorData._id },
+      {
+        ...mainGuarantorData,
+        verificationToken: "",
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    console.log(updatedGuarantor);
+
+    if (updatedGuarantor) {
+      const checkGuarantorCompletion = await Guarantor.find({ user: guarantorData.user });
+      console.log(checkGuarantorCompletion);
+      const isGuarantorCompleted = checkGuarantorCompletion.map((item) => item.isCompleted);
+      console.log(isGuarantorCompleted);
+      const confirmGuarantorCompletion =
+        isGuarantorCompleted.filter((value) => value === 1).length > 1;
+      console.log(confirmGuarantorCompletion);
+      if (confirmGuarantorCompletion) {
+        //Update guarantor step to completed
+        const updateGuarantorStep = await StepState.findOneAndUpdate(
+          { user: guarantorData.user },
+          {
+            currentStep: 4,
+            nextStep: 5,
+            completed: true,
+            completedStep: 3,
+          },
+          {
+            new: true,
+            runValidators: true,
+          }
+        );
+      }
+    }
+
+    return res.status(StatusCodes.OK).json({
+      steps: {
+        msg: "Guarantor form updated successfully",
+      },
+    });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
+  }
+};
+
+const finalAgreement = async (req, res) => {
+  const { finalAgreement } = req.body;
+  if (!finalAgreement) {
+    throw new CustomError.BadRequestError("Please provide all values");
+  }
+
+  const userStepState = await StepState.findOne({ user: req.user.userId });
+  if (!userStepState) {
+    throw new CustomError.BadRequestError("This user does not exist");
+  }
+
+  try {
+    const finalUserAgreementData = { ...req.body, user: req.user.userId };
+
+    console.log(finalUserAgreementData);
+    const finalUserAgreement = await finalNDA.create(finalUserAgreementData);
+    if (!finalUserAgreement) {
+      throw new CustomError.BadRequestError("Final Agreement not created, try again");
+    }
+
+    //CREATE FINAL NDA FOR USER
+    const updateStepState = await StepState.findOneAndUpdate(
+      { user: req.user.userId },
+      {
+        completed: true,
+        completedStep: userStepState.completedStep + 1,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (updateStepState) {
+      res.status(StatusCodes.OK).json({
+        steps: {
+          msg: "Final Agreement completed",
+        },
+      });
+    }
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
+  }
 };
 
 module.exports = {
@@ -425,6 +575,7 @@ module.exports = {
   nextOfKinData,
   guarantorUser,
   updateGuarantor,
+  finalAgreement,
 };
 
 // update user with findOneAndUpdate

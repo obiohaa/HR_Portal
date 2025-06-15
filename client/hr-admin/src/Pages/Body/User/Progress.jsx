@@ -9,7 +9,7 @@ const Progress = ({ totalSteps, steps }) => {
         className="progress"
         style={{
           height: "4px",
-          background: "#43766c",
+          background: "#2c3e50",
           width: `${progress}%`,
           transition: "all 0.8s ease-in",
         }}></div>

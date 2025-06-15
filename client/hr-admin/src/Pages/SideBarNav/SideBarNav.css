@@ -1,6 +1,6 @@
 .side-nav-container {
   background-color: #2c3e50;
-  width: 300px;
+  width: 260px;
   height: 100vh;
   position: relative;
   color: white;
@@ -140,7 +140,7 @@ a .dropdown {
   margin: 0 auto;
   padding: 15px 0 0 70px;
   height: 50px;
-  width: 16em;
+  width: 14em;
   border-radius: 10px;
   transition: height 0.2s linear;
 }
@@ -169,7 +169,7 @@ a .dropdown {
 .menu-item {
   z-index: 2;
   height: 57px;
-  width: 17em;
+  width: 15em;
   display: flex;
   color: white;
   text-decoration: none;

@@ -83,9 +83,11 @@ const GuarantorMainForm = () => {
         imgName.size < 5000000 &&
         fileName.size < 5000000
       ) {
-        values.verificationToken = query.get("verificationToken");
-        values.email = query.get("email");
         const formData = new FormData();
+        values.verificationToken = query.get("token");
+        values.email = query.get("email");
+        console.log(values);
+
         formData.append("file", fileName);
         formData.append("file", imgName);
         formData.append("body", JSON.stringify(values));

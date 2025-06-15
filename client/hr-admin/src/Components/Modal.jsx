@@ -73,28 +73,27 @@ const Modal = () => {
           <div className="modalContent">
             <div className="contentM">
               <CheckMark />
-              {userStepState && userStepState.completedStep === 1 ? (
+              {userStepState && userStepState.currentStep === 1 ? (
                 <p>
                   This form has been filled and submitted, if you intend to view or edit your Bio
                   Data form, click here: or go to your user profile to view and edit your Bio Data
                   form.
                 </p>
-              ) : userStepState.completedStep === 2 ? (
+              ) : userStepState.currentStep === 2 ? (
                 <p>
                   This form has been filled and submitted, if you intend to view or edit your Next
                   of Kin form, click here: or go to your user profile to view and edit your Next of
                   Kin form.
                 </p>
-              ) : userStepState.completedStep === 3 ? (
+              ) : userStepState.currentStep === 3 ? (
                 <p>
-                  This form has been filled and submitted, if you intend to view or edit your Bio
-                  Data form, click here: or go to your user profile to view and edit your Bio Data
-                  form.
+                  This form has been filled and submitted, if you intend to view or edit your
+                  Guarantor's form, form, please contact your HR Admin for assistance
                 </p>
               ) : (
                 <p>
-                  This form has been filled and submitted, if you intend to view or edit your Bio
-                  Data form, click here: or go to your user profile to view and edit your Bio Data
+                  This agreement has been checked and submitted, if you intend to view or read the
+                  NDA form, click here: or go to your user profile to view and read the NDA form
                   form.
                 </p>
               )}

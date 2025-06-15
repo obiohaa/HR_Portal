@@ -24,8 +24,8 @@ const GuarantorSchema = new mongoose.Schema(
       type: String,
     },
     isCompleted: {
-      type: Boolean,
-      default: false,
+      type: Number,
+      default: 0,
     },
     user: {
       type: mongoose.Types.ObjectId,
@@ -68,13 +68,13 @@ const GuarantorSchema = new mongoose.Schema(
       type: String,
     },
     ageRange: {
-      type: Boolean,
+      type: String,
     },
     uniformedPublicServant: {
-      type: Boolean,
+      type: String,
     },
     signedPolicy: {
-      type: Boolean,
+      type: String,
     },
   },
   { timestamps: true }

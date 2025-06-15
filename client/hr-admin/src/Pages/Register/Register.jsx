@@ -3,14 +3,17 @@ import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import Loading from "../../Components/Loading";
-import { axiosFetch } from "../../Utils/axiosFetch";
+import { axiosFetchFormData } from "../../Utils/axiosFetch";
 import { toast } from "react-toastify";
 import "../Login/Login.css";
 import logo from "/logo.svg";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa6";
+import { MdCloudUpload, MdDelete } from "react-icons/md";
 
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
+  const [imgName, setImgName] = useState(null);
+  const [imgError, setImgError] = useState({ msg: "" });
   const togglePasswordVisibility = () => {
     setShowPassword((prevState) => !prevState);
   };
@@ -29,8 +32,10 @@ function Register() {
 
   //Using react query to handle the API call
   const { mutate: regUser, isLoading } = useMutation({
-    mutationFn: async (regUser) => axiosFetch.post("/auth/register", { ...regUser }),
+    mutationFn: async (regUser) => axiosFetchFormData.post("/auth/register", regUser),
     onSuccess: (data) => {
+      reset();
+      setImgName(null);
       toast.success(data.data.msg, {
         position: "top-center",
         autoClose: 8000,
@@ -58,10 +63,18 @@ function Register() {
 
   const onSubmit = async (values) => {
     try {
-      // await new Promise((resolve) => setTimeout(resolve, 2000));
-      console.log(values);
-      regUser(values);
-      reset();
+      if (imgName === null) {
+        setImgError({ msg: "Passport Image is required" });
+      } else if (imgName.size > 5000000) {
+        setImgError({ msg: "Passport size must be less than 5MB" });
+      } else {
+        const formData = new FormData();
+        formData.append("file", imgName);
+        formData.append("body", JSON.stringify(values));
+        console.log(formData);
+        regUser(formData);
+        // reset();
+      }
     } catch (error) {
       console.log(error);
       //To place an error so that it does not belong to any field we use root and not email or password or any field name
@@ -172,6 +185,47 @@ function Register() {
                 })}
               />
               {errors.password && <p className="error">{errors.password.message}</p>}
+            </div>
+            <div className="registerUploadImg">
+              <div
+                className="clickUpload"
+                onClick={() => document.querySelector(".upload_Doc").click()}>
+                <label className="uploadDoc">Upload Passport</label>
+                <MdCloudUpload className="uploadIcon" />
+              </div>
+              <div className="fileName">
+                {/* {fileName}{" "} */}
+                {imgName === null ? (
+                  ""
+                ) : (
+                  <div className="fileDetails">
+                    {imgName.name}
+                    {
+                      <MdDelete
+                        className="deleteUpload"
+                        onClick={() => {
+                          setImgName(null);
+                        }}
+                      />
+                    }
+                  </div>
+                )}
+              </div>
+              <input
+                id="file"
+                type="file"
+                name="file"
+                className="upload_Doc"
+                accept=".png, .jpeg, .jpg"
+                //accept=".pdf, .docx, .docx, .odt"
+                required
+                hidden
+                onChange={({ target: { files } }) => {
+                  setImgError({ msg: "" });
+                  files[0] && setImgName(files[0]);
+                }}
+              />
+              {imgError.msg !== "" && <p className="bioError">{imgError.msg}</p>}
             </div>
           </div>
           <button

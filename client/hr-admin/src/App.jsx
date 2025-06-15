@@ -21,7 +21,7 @@ function App() {
         <Route path="/user/verify_email" exact Component={Verify_email} />
         <Route path="/forgot_password" exact Component={Reset_Password} />
         <Route path="/user/reset_password" exact Component={Confirm_Password} />
-        <Route path="/dashboard" exact Component={SideBarNav} />
+        <Route path="/dashboard" exact Component={Dashboard} />
         <Route path="/user" exact Component={User} />
         <Route path="/employee_guarantor" exact Component={GuarantorMainForm} />
       </Routes>

@@ -10,11 +10,14 @@ const {
   sendResetPasswordEmail,
   createHash,
 } = require("../utils");
+const cloudinary = require("cloudinary").v2;
+const fs = require("fs");
 const crypto = require("crypto");
 
 const register = async (req, res) => {
   console.log(req.body);
-  const { firstName, lastName, email, password } = req.body;
+  console.log(req.files);
+  const { firstName, lastName, email, password } = JSON.parse(req.body.body);
 
   if (!firstName || !lastName || !email || !password) {
     throw new CustomError.BadRequestError("Please provide all values");
@@ -26,10 +29,40 @@ const register = async (req, res) => {
     throw new CustomError.BadRequestError("Email already exists");
   }
 
-  const role = "admin";
+  // FILE FUNCTIONALITY
+  if (!req.files) {
+    throw new CustomError.BadRequestError("Please upload passport Image");
+  }
+  const userImage = req.files.file;
+  if (!userImage.mimetype.startsWith("image")) {
+    throw new CustomError.BadRequestError("Please upload a PDF or Doc File");
+  }
+  const maxSize = 5000000;
+  if (userImage.size > maxSize) {
+    throw new CustomError.BadRequestError("Please upload file smaller than 5MB");
+  }
+
+  const result = await cloudinary.uploader.upload(userImage.tempFilePath, {
+    use_filename: true,
+    folder: "HR_ADMIN_PORTAL",
+  });
+  //unlink/delete the file
+  fs.unlinkSync(userImage.tempFilePath);
+  const imgURL = result.secure_url;
+
+  // const role = "admin";
+  const role = "employee";
 
   const verificationToken = crypto.randomBytes(40).toString("hex");
-  const user = await User.create({ firstName, lastName, email, password, role, verificationToken });
+  const user = await User.create({
+    firstName,
+    lastName,
+    email,
+    password,
+    role,
+    verificationToken,
+    imgURL,
+  });
   const origin = "http://localhost:5173";
   // const newOrigin = 'https://react-node-user-workflow-front-end.netlify.app'; //production
 
