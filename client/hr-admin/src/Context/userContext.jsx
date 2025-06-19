@@ -34,18 +34,24 @@ const AppProvider = ({ children }) => {
     setIsModalOpen(false);
   };
 
-  // useQuery({
-  //   queryKey: ["currentUser"],
-  //   queryFn: async () => {
-  //     const { data } = await axiosFetch.get("/users/showMe");
-  //     saveUser(data.user);
-  //     return data;
-  //   },
-  //   onError: () => {
-  //     // console.log(error);
-  //     removeUser();
-  //   },
-  // });
+  useQuery({
+    queryKey: ["currentUser"],
+    retryOnMount: true, //do not retry on mount
+    refetchOnWindowFocus: false, //do not refetch on window focus
+    refetchOnReconnect: false, //do not refetch on reconnect
+    refetchOnMount: true, //do not refetch on mount
+    refetchInterval: false, //do not refetch at intervals
+    refetchIntervalInBackground: false, //do not refetch in background
+    queryFn: async () => {
+      const { data } = await axiosFetch.get("/users/showMe");
+      saveUser(data.user);
+      return data;
+    },
+    onError: () => {
+      // console.log(error);
+      removeUser();
+    },
+  });
 
   return (
     <AppContext.Provider

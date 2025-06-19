@@ -126,7 +126,7 @@ const Guarantor = () => {
                 autoComplete="off"
                 formNoValidate
                 {...register("guarantorOneEmail", {
-                  required: "Email address is required!",
+                  // required: "Email address is required!",
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
                     message: "Invalid email address!",
@@ -149,7 +149,7 @@ const Guarantor = () => {
                 autoComplete="off"
                 formNoValidate
                 {...register("guarantorTwoEmail", {
-                  required: "Email address is required!",
+                  // required: "Email address is required!",
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
                     message: "Invalid email address!",

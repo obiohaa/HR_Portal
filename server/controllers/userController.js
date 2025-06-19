@@ -24,7 +24,8 @@ const getAllUsers = async (req, res) => {
 };
 
 const getSingleUser = async (req, res) => {
-  const user = await User.findOne({ _id: req.params.id }).select("-password");
+  console.log(req.params.id);
+  const user = await User.findOne({ _id: req.params.id });
   if (!user) {
     throw new CustomError.NotFoundError(`No user with id : ${req.params.id}`);
   }
@@ -481,6 +482,22 @@ const updateGuarantor = async (req, res) => {
     console.log(updatedGuarantor);
 
     if (updatedGuarantor) {
+      //UPDATE STEP STATUS guarantorStep BY ADDING ONE TO THE INITIAL ONE
+      const updateGuarantorStepForDash = await StepState.findOne({ user: guarantorData.user });
+      if (updateGuarantorStepForDash) {
+        const updateGuarantorStepForDashboard = await StepState.findOneAndUpdate(
+          { user: guarantorData.user },
+          {
+            guarantorStep: updateGuarantorStepForDash.guarantorStep + 1,
+          },
+          {
+            new: true,
+            runValidators: true,
+          }
+        );
+        console.log(updateGuarantorStepForDashboard);
+      }
+
       const checkGuarantorCompletion = await Guarantor.find({ user: guarantorData.user });
       console.log(checkGuarantorCompletion);
       const isGuarantorCompleted = checkGuarantorCompletion.map((item) => item.isCompleted);
@@ -489,7 +506,7 @@ const updateGuarantor = async (req, res) => {
         isGuarantorCompleted.filter((value) => value === 1).length > 1;
       console.log(confirmGuarantorCompletion);
       if (confirmGuarantorCompletion) {
-        //Update guarantor step to completed
+        //Update guarantor step to completed IF both guarantors have completed their form
         const updateGuarantorStep = await StepState.findOneAndUpdate(
           { user: guarantorData.user },
           {

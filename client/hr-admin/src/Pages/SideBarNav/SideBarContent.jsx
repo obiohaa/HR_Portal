@@ -9,8 +9,11 @@ const SideBarContent = ({ loginRole }) => {
     <div className="nav-menu">
       {loginRole.map((items, index) => {
         return (
-          <div className="menus" key={index} onClick={items.subNav && toggleNavbar}>
-            <Link to={items.url} className={isBarOpen ? "menu-item" : "menu-item menu-item-close"}>
+          <div className="menus" key={index}>
+            <Link
+              to={items.url}
+              className={isBarOpen ? "menu-item" : "menu-item menu-item-close"}
+              onClick={items.subNav && toggleNavbar}>
               <span className="icon-img">{items.icon}</span>
               {isBarOpen && <span className="menu-text">{items.text}</span>}
               {isBarOpen && (

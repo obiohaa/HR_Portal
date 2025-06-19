@@ -10,6 +10,10 @@ import Dashboard from "./Pages/Body/Dashboard.jsx";
 import User from "./Pages/Body/User.jsx";
 import SideBarNav from "./Pages/SideBarNav/SideBarNav.jsx";
 import GuarantorMainForm from "./Pages/Body/User/GuarantorMainForm.jsx";
+import bioDataProfile from "./Pages/Body/Profile/Bio Data/index.jsx";
+import nokProfile from "./Pages/Body/Profile/NOK/index.jsx";
+import myUserProfile from "./Pages/Body/Profile/MyUser/index.jsx";
+import ndaProfile from "./Pages/Body/Profile/NDA/index.jsx";
 
 function App() {
   return (
@@ -24,6 +28,10 @@ function App() {
         <Route path="/dashboard" exact Component={Dashboard} />
         <Route path="/user" exact Component={User} />
         <Route path="/employee_guarantor" exact Component={GuarantorMainForm} />
+        <Route path="/biodata" exact Component={bioDataProfile} />
+        <Route path="/nextofkin" exact Component={nokProfile} />
+        <Route path="/my_user" exact Component={myUserProfile} />
+        <Route path="/nda" exact Component={ndaProfile} />
       </Routes>
     </Router>
   );

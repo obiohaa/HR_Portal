@@ -60,7 +60,6 @@ const BioDataSchema = new mongoose.Schema(
     },
     pension: {
       type: String,
-      required: [true, "Please confirm pension status"],
     },
     pensionCompany: {
       type: String,

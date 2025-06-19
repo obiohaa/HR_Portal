@@ -10,6 +10,10 @@ const StepStateSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    guarantorStep: {
+      type: Number,
+      default: 0,
+    },
     completed: {
       type: Boolean,
       required: true,

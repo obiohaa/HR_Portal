@@ -26,6 +26,12 @@
   margin-top: 30px;
 }
 
+.dividerColoured {
+  border: 2px solid #2c3e50;
+  width: 80%;
+  margin-top: 30px;
+}
+
 .employeeDashSingle {
   position: relative;
   display: flex;
@@ -34,7 +40,7 @@
   align-items: center;
 }
 
-.dashOne {
+.dashNotColoured {
   height: 100%;
   width: 100%;
   border-radius: 10px;
@@ -42,49 +48,24 @@
   border: 8px solid var(--clr-grey-8);
 }
 
-.dashTwo {
+.dashColoured {
   height: 100%;
   width: 100%;
   border-radius: 10px;
   cursor: pointer;
-  border: 8px solid var(--clr-grey-8);
+  border: 8px solid #2c3e50;
 }
 
-.dashThree {
-  height: 100%;
-  width: 100%;
-  border-radius: 10px;
-  cursor: pointer;
-  border: 8px solid var(--clr-grey-8);
-}
-
-.dashFour {
-  height: 100%;
-  width: 100%;
-  border-radius: 10px;
-  cursor: pointer;
-  border: 8px solid var(--clr-grey-8);
-}
-.dashFive {
-  height: 100%;
-  width: 100%;
-  border-radius: 10px;
-  cursor: pointer;
-  border: 8px solid var(--clr-grey-8);
-}
-
-.dashSix {
-  height: 100%;
-  width: 100%;
-  border-radius: 10px;
-  cursor: pointer;
-  border: 8px solid var(--clr-grey-8);
-}
-
-.dashIcon {
+.dashIconNotColoured {
   height: 70px;
   width: 70px;
   color: var(--clr-grey-8);
+}
+
+.dashIconColoured {
+  height: 70px;
+  width: 70px;
+  color: #2c3e50;
 }
 
 .dashCount {
@@ -92,10 +73,15 @@
   color: var(--clr-grey-8);
 }
 
+.dashCountColoured {
+  font-size: 80px;
+  color: #2c3e50;
+}
+
 /* TOOLTIP */
 .employeeDashSingle .toolTipText {
   visibility: hidden;
-  width: 120px;
+  width: 180px;
   background-color: black;
   color: #fff;
   text-align: center;
@@ -104,7 +90,7 @@
   position: absolute;
   z-index: 1;
   bottom: 50%;
-  left: 50%;
+  left: 36%;
   margin-left: -60px;
 }
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Loading from "../../Components/Loading";
 import { axiosFetchFormData } from "../../Utils/axiosFetch";
 import { toast } from "react-toastify";
@@ -31,9 +31,11 @@ function Register() {
   });
 
   //Using react query to handle the API call
+  const queryClient = useQueryClient();
   const { mutate: regUser, isLoading } = useMutation({
     mutationFn: async (regUser) => axiosFetchFormData.post("/auth/register", regUser),
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["registerUser"] });
       reset();
       setImgName(null);
       toast.success(data.data.msg, {

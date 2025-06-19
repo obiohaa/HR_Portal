@@ -79,29 +79,29 @@ const EmployeeSideBar = [
     subNav: [
       {
         id: 1,
-        url: "/admin-user",
+        url: "/my_user",
         text: "My User",
       },
       {
         id: 1,
-        url: "/admin-user",
+        url: "/biodata",
         text: "Bio Data",
       },
       {
         id: 3,
-        url: "/user",
+        url: "/nextofkin",
         text: "Next of Kin",
       },
       {
         id: 3,
-        url: "/user",
+        url: "/nda",
         text: "NDA",
       },
     ],
   },
   {
     id: 4,
-    url: "/openings",
+    url: "/jobopenings",
     text: "Job Opening",
     icon: <FaHandshake />,
   },
