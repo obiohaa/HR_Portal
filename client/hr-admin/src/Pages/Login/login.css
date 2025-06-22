@@ -40,10 +40,6 @@
   appearance: none;
 }
 
-.userDetails {
-  margin-bottom: 15px;
-}
-
 .input:focus {
   border: 1px solid var(--clr-grey-2);
 }
@@ -112,6 +108,10 @@ input:invalid:not(:placeholder-shown) {
   color: var(--clr-primary-2);
   cursor: pointer;
   font-weight: 600;
+}
+
+.userDetails {
+  margin-bottom: 15px;
 }
 
 .userDetails .eyeIcon {

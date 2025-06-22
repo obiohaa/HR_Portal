@@ -115,6 +115,7 @@
 }
 
 .infoModal {
+  position: relative;
   border-radius: 8px;
   padding: 2rem;
   background-color: white;
@@ -219,3 +220,63 @@
 }
 
 /* END CHECK MARK */
+/* START EDIT USER MODAL */
+.signupFrmEdit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+}
+
+.formEdit {
+  background-color: var(--clr-white);
+  width: 410px;
+  border-radius: 8px;
+  padding: 20px 40px;
+  /* box-shadow: 0 10px 25px rgba(92, 99, 105, 0.2); */
+}
+
+.formContainerEdit {
+  width: 100%;
+  height: auto;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  row-gap: 70px;
+  justify-content: center;
+  transition: all 0.5s ease-in-out;
+}
+
+/* .editProfileBtn {
+  margin-top: 65px;
+} */
+
+.userDetails {
+  margin-bottom: 15px;
+}
+
+.formBioData .eyeIcon {
+  position: relative;
+  z-index: 2;
+}
+
+.formBioData .eyeIcon .eye {
+  position: absolute;
+  top: 12px;
+  right: 20px;
+  cursor: pointer;
+  color: var(--clr-grey-5);
+  font-size: 18px;
+}
+
+.cancelEdit {
+  position: absolute;
+  top: 20px;
+  left: 90%;
+  cursor: pointer;
+  color: var(--clr-grey-5);
+  font-size: 20px;
+}
+.cancelEdit:hover {
+  color: var(--clr-primary-2);
+}
+/* END EDIT USER MODAL */

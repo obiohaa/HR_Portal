@@ -3,7 +3,7 @@ import "../profile.css";
 import MyUser from "./MyUser";
 import SideBarNav from "../../../SideBarNav/SideBarNav";
 
-const index = () => {
+const Index = () => {
   return (
     <div className="generalContainer">
       <div className="sideBars">
@@ -15,4 +15,4 @@ const index = () => {
     </div>
   );
 };
-export default index;
+export default Index;

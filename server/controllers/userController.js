@@ -38,20 +38,54 @@ const showCurrentUser = async (req, res) => {
 };
 // update user with user.save()
 const updateUser = async (req, res) => {
-  const { email, name } = req.body;
-  if (!email || !name) {
+  const { firstName, lastName, email, password } = JSON.parse(req.body.body);
+  if (!firstName || !lastName || !email || !password) {
     throw new CustomError.BadRequestError("Please provide all values");
   }
   const user = await User.findOne({ _id: req.user.userId });
 
-  user.email = email;
-  user.name = name;
+  if (!user) {
+    throw new CustomError.BadRequestError("User does not exist");
+  }
 
-  await user.save();
+  if (!req.files) {
+    throw new CustomError.BadRequestError("No File Uploaded");
+  }
 
-  const tokenUser = createTokenUser(user);
-  attachCookiesToResponse({ res, user: tokenUser });
-  res.status(StatusCodes.OK).json({ user: tokenUser });
+  const UpdatedFile = req.files.file;
+
+  if (!UpdatedFile.mimetype.startsWith("image")) {
+    throw new CustomError.BadRequestError("Please upload an Image File");
+  }
+  const maxSize = 5000000;
+  if (UpdatedFile.size > maxSize) {
+    throw new CustomError.BadRequestError("Please upload file smaller than 5MB");
+  }
+
+  try {
+    //Upload to cloudinary
+    const resultUpdatedFile = await cloudinary.uploader.upload(UpdatedFile.tempFilePath, {
+      use_filename: true,
+      folder: "HR_ADMIN_PORTAL",
+    });
+
+    //unlink/delete the file
+    fs.unlinkSync(UpdatedFile.tempFilePath);
+
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.email = email;
+    user.password = password;
+    user.imgURL = resultUpdatedFile.secure_url;
+
+    await user.save();
+
+    const tokenUser = createTokenUser(user);
+    attachCookiesToResponse({ res, user: tokenUser });
+    res.status(StatusCodes.OK).json({ user: tokenUser });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
+  }
 };
 
 const updateUserPassword = async (req, res) => {
