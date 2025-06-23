@@ -4,7 +4,7 @@
   overflow-y: auto;
   height: 95%;
   margin: 10px auto;
-  margin-bottom: 10px;
+  /* margin-bottom: 10px; */
   border-radius: 10px;
   /* padding: 1rem 2rem; */
   background-color: white !important;
@@ -54,4 +54,76 @@
   margin-top: 20px;
 }
 /* END OF UPPER BACKGROUND IMAGE WITH PROFILE IMAGE IN USER PROFILE */
-/*  */
+/* START BIO DATA PROFILE */
+.bioDataProfileMainBody {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.bioDataProfileBody {
+  width: 100%;
+  height: auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 30px;
+  row-gap: 40px;
+  justify-content: space-around;
+  justify-items: center;
+  transition: all 0.5s ease-in-out;
+  padding: 50px 50px;
+}
+
+.singleProfile {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  justify-content: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.profileLine {
+  width: 100%;
+  border: 1px solid #34495e;
+}
+
+.longText {
+  height: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profileBtn {
+  padding: 0 50px;
+}
+
+.downloadCV {
+  height: auto;
+  width: 100%;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background-color: var(--clr-primary-2);
+}
+
+.downloadCV:active {
+  outline: none;
+  transform: scale(0.95);
+}
+
+.downCV,
+.CVprofileLabel {
+  color: #fff;
+  margin: 0 10px;
+}
+/* END BIO DATA PROFILE */

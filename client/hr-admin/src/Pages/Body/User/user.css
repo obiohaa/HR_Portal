@@ -161,7 +161,7 @@
   background-color: var(--clr-primary-2);
   /* background-color: #43766c; */
   color: #fff;
-  padding: 4px 40px;
+  padding: 6px 40px;
 }
 
 .btn:active {
