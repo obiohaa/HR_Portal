@@ -18,9 +18,9 @@ const AppProvider = ({ children }) => {
     setUser(user);
   };
 
-  const removeUser = () => {
-    setUser(null);
-  };
+  // const removeUser = () => {
+  //   setUser(null);
+  // };
 
   const toggleNavbar = () => {
     setDropDownOpen(!DropDownOpen);
@@ -50,7 +50,7 @@ const AppProvider = ({ children }) => {
     },
     onError: () => {
       // console.log(error);
-      removeUser();
+      // removeUser();
     },
   });
 

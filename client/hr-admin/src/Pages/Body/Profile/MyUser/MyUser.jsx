@@ -23,7 +23,7 @@ const MyUser = () => {
 
   return (
     <div className="bioDataProfileContainer">
-      {isModalOpen && <EditUserModal />}
+      {isModalOpen && <EditUserModal user={user} />}
       {!user ? (
         <PageLoading />
       ) : (

@@ -2,12 +2,39 @@ import React from "react";
 import { FaDownload } from "react-icons/fa6";
 import { useGlobalContext } from "../../../../Context/userContext";
 import ProfileModal from "../../../../Components/ProfileModal";
+import EditBioDataModal from "../../../../Components/EditBioDataModal";
+import { useQuery } from "@tanstack/react-query";
+import { axiosFetch } from "../../../../Utils/axiosFetch";
+import PageLoading from "../../../../Components/PageLoading";
 
 const BioData = () => {
-  const { user, userStepState } = useGlobalContext();
-  console.log(userStepState);
-  console.log(user);
-  const testForAddress = "Solomon charles is close by to my house and u need to see him";
+  const { user, userStepState, openModal, isModalOpen } = useGlobalContext();
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["currentUser", "bioDataKey"],
+    retryOnMount: true, //retry on mount
+    refetchOnWindowFocus: false, //do not refetch on window focus
+    refetchOnReconnect: false, //do not refetch on reconnect
+    refetchOnMount: true, // refetch on mount
+    refetchInterval: false, //do not refetch at intervals
+    refetchIntervalInBackground: false, //do not refetch in background
+    queryFn: async () => {
+      const { data } = await axiosFetch.get(`/users/getSingleBioData/${user.userId}`);
+      // console.log(data.userBio);
+      return data;
+    },
+  });
+
+  console.log(error);
+
+  // console.log(data.userBio.bankName);
+  if (data && data.userBio) {
+    var bioURL = data.userBio.UserFileUrl;
+  }
+
+  if (isLoading) {
+    <PageLoading />;
+  }
 
   return (
     <div className="bioDataProfileContainer">
@@ -15,103 +42,138 @@ const BioData = () => {
         <ProfileModal />
       ) : (
         <div>
+          {isModalOpen && <EditBioDataModal />}
           <div className="bioDataProfileMainBody">
             <div className="bioDataProfileBody">
               <div className="singleProfile">
                 <p className="profileLabel">First Name</p>
-                <h4 className="profileName">Chukwuebuka</h4>
+                <h4 className="profileName">
+                  {data && data.userBio ? data.userBio.firstName : "First Name"}
+                </h4>
                 <div className="profileLine"></div>
               </div>
               <div className="singleProfile">
                 <p className="profileLabel">Middle Name</p>
-                <h4 className="profileName">Emmanuel</h4>
+                <h4 className="profileName">
+                  {data && data.userBio ? data.userBio.middleName : "Middle Name"}
+                </h4>
                 <div className="profileLine"></div>
               </div>
               <div className="singleProfile">
                 <p className="profileLabel">Last Name</p>
-                <h4 className="profileName">Obi</h4>
+                <h4 className="profileName">
+                  {data && data.userBio ? data.userBio.lastName : "Last Name"}
+                </h4>
                 <div className="profileLine"></div>
               </div>
 
               <div className="singleProfile">
                 <p className="profileLabel">Email Address</p>
-                <h4 className="profileName">chukwuebuka.emmanuel@gmail.com</h4>
+                <h4 className="profileName">
+                  {data && data.userBio && data.userBio.email.length > 22
+                    ? data.userBio.email.substring(0, 25) + "..."
+                    : data.userBio.email}
+                </h4>
                 <div className="profileLine"></div>
               </div>
               <div className="singleProfile">
                 <p className="profileLabel">Date of Birth</p>
-                <h4 className="profileName">2025-05-26</h4>
+                <h4 className="profileName">
+                  {data && data.userBio ? data.userBio.dateOfBirth.split("T")[0] : "Date of Birth"}
+                </h4>
                 <div className="profileLine"></div>
               </div>
               <div className="singleProfile">
                 <p className="profileLabel">State of Origin</p>
-                <h4 className="profileName">Imo State</h4>
+                <h4 className="profileName">
+                  {data && data.userBio ? data.userBio.state_of_origin : "Origin"} State
+                </h4>
                 <div className="profileLine"></div>
               </div>
               <div className="singleProfile">
                 <p className="profileLabel">Gender</p>
-                <h4 className="profileName">Male</h4>
+                <h4 className="profileName">
+                  {data && data.userBio ? data.userBio.gender : "Gender"}
+                </h4>
                 <div className="profileLine"></div>
               </div>
               <div className="singleProfile">
                 <p className="profileLabel">Marital Status</p>
-                <h4 className="profileName">Married</h4>
+                <h4 className="profileName">
+                  {data && data.userBio ? data.userBio.maritalStatus : "Marital Status"}
+                </h4>
                 <div className="profileLine"></div>
               </div>
               <div className="singleProfile">
                 <p className="profileLabel">Spouse Name</p>
-                <h4 className="profileName">Nneoma</h4>
+                <h4 className="profileName">
+                  {data && data.userBio ? data.userBio.spouseName : "Marital Status"}
+                </h4>
                 <div className="profileLine"></div>
               </div>
               <div className="singleProfile">
                 <p className="profileLabel">House Address</p>
                 <h4 className="profileName">
                   {" "}
-                  {testForAddress.length > 20
-                    ? testForAddress.substring(0, 30) + "..."
-                    : testForAddress}
+                  {data && data.userBio && data.userBio.houseAddress.length > 20
+                    ? data.userBio.houseAddress.substring(0, 30) + "..."
+                    : data.userBio.houseAddress}
                 </h4>
                 <div className="profileLine"></div>
               </div>
               <div className="singleProfile">
                 <p className="profileLabel">Phone Number</p>
-                <h4 className="profileName">08033655891</h4>
+                <h4 className="profileName">
+                  {data && data.userBio ? data.userBio.phoneNumber : "Phone Number"}
+                </h4>
                 <div className="profileLine"></div>
               </div>
               <div className="singleProfile">
                 <p className="profileLabel">Bank Name</p>
-                <h4 className="profileName">Fidelity Bank</h4>
+                <h4 className="profileName">
+                  {data && data.userBio ? data.userBio.bankName : "Bank Name"}
+                </h4>
                 <div className="profileLine"></div>
               </div>
               <div className="singleProfile">
                 <p className="profileLabel">Bank Account Number</p>
-                <h4 className="profileName">6989665748</h4>
+                <h4 className="profileName">
+                  {data && data.userBio ? data.userBio.bankAccountNumber : "Bank Account Number"}
+                </h4>
                 <div className="profileLine"></div>
               </div>
               <div className="singleProfile">
                 <p className="profileLabel">Pension</p>
-                <h4 className="profileName">No</h4>
+                <h4 className="profileName">
+                  {data && data.userBio ? data.userBio.pension : "Pension"}
+                </h4>
                 <div className="profileLine"></div>
               </div>
               <div className="singleProfile">
                 <p className="profileLabel">Pension Name</p>
-                <h4 className="profileName">Fidelity Pension</h4>
+                <h4 className="profileName">
+                  {data && data.userBio ? data.userBio.pensionCompany : "Pension Company"}
+                </h4>
                 <div className="profileLine"></div>
               </div>
               <div className="singleProfile">
                 <p className="profileLabel">Pension Account Number</p>
-                <h4 className="profileName">Fidelity Bank</h4>
+                <h4 className="profileName">
+                  {data && data.userBio ? data.userBio.pensionPin : "Pension Pin"}
+                </h4>
                 <div className="profileLine"></div>
               </div>
-              <div className=" downloadCV">
+              <div className=" downloadCV" onClick={() => window.open(bioURL, "_blank")}>
                 <FaDownload className="downCV" />
                 <p className="CVprofileLabel">Download CV</p>
               </div>
             </div>
           </div>
           <div className="btns profileBtn">
-            <button className="btn ">Download</button>
-            <button className="btn ">Edit</button>
+            <button className="btn">Download</button>
+            <button className="btn" onClick={openModal}>
+              Edit
+            </button>
           </div>
         </div>
       )}

@@ -41,7 +41,7 @@ const BioData = () => {
     mutationFn: async (bioDataUser) => axiosFetchFormData.post("/users/bioData", bioDataUser),
     onSuccess: (data) => {
       console.log(data);
-      queryClient.invalidateQueries({ queryKey: ["bioDataKey"] });
+      queryClient.invalidateQueries({ queryKey: ["bioDataKey", "currentUser"] });
       toast.success(data.data.steps.msg, {
         position: "top-center",
         autoClose: 5000,

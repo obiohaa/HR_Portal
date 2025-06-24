@@ -51,7 +51,7 @@ const AdminSideBar = [
   },
   {
     id: 5,
-    url: "/openings",
+    url: "/job_opening",
     text: "Job Opening",
     icon: <FaHandshake />,
   },
@@ -101,7 +101,7 @@ const EmployeeSideBar = [
   },
   {
     id: 4,
-    url: "/jobopenings",
+    url: "/job_opening",
     text: "Job Opening",
     icon: <FaHandshake />,
   },

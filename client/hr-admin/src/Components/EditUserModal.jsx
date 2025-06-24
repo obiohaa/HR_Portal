@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./component.css";
 import PageLoading from "./PageLoading";
 import { toast } from "react-toastify";
@@ -10,7 +10,7 @@ import { axiosFetchFormData } from "../Utils/axiosFetch";
 import { FaRegEyeSlash, FaRegEye, FaX } from "react-icons/fa6";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
 
-const EditUserModal = () => {
+const EditUserModal = ({ user }) => {
   const { closeModal, saveUser } = useGlobalContext();
   const [showPassword, setShowPassword] = useState(false);
   const [imgName, setImgName] = useState(null);
@@ -26,7 +26,7 @@ const EditUserModal = () => {
     formState: { errors },
     handleSubmit,
     setError,
-  } = useForm();
+  } = useForm({});
 
   //Using react query to handle the API call
   const queryClient = useQueryClient();
@@ -38,7 +38,7 @@ const EditUserModal = () => {
       reset();
       setImgName(null);
       closeModal();
-      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.invalidateQueries({ queryKey: ["currentUser", "bioDataKey"] });
       toast.success(data.data.steps.msg, {
         position: "top-center",
         autoClose: 5000,
@@ -68,9 +68,7 @@ const EditUserModal = () => {
 
   const onSubmit = async (values) => {
     try {
-      if (imgName === null) {
-        setImgError({ msg: "Passport Image is required" });
-      } else if (imgName.size > 5000000) {
+      if (imgName && imgName.size > 5000000) {
         setImgError({ msg: "Passport size must be less than 5MB" });
       } else {
         const formData = new FormData();
@@ -88,6 +86,15 @@ const EditUserModal = () => {
       });
     }
   };
+
+  useEffect(() => {
+    reset({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      password: "",
+    });
+  }, [reset, user]);
 
   if (isLoading) {
     return <PageLoading />;
@@ -173,6 +180,7 @@ const EditUserModal = () => {
                         placeholder=" "
                         autoComplete="off"
                         formNoValidate
+                        disabled
                         {...register("email", {
                           required: "Email address is required!",
                           pattern: {

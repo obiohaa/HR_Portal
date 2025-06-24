@@ -1,11 +1,49 @@
 import React from "react";
 import "../Dashboard.css";
+import PageLoading from "../../../../Components/PageLoading";
+import { useQuery } from "@tanstack/react-query";
+import { axiosFetch } from "../../../../Utils/axiosFetch";
 import { useGlobalContext } from "../../../../Context/userContext";
 import { FaChessKing, FaUsers, FaFileCircleXmark, FaUserSecret, FaUser } from "react-icons/fa6";
 
 const EmployeeMainDash = () => {
-  const { userStepState, user } = useGlobalContext();
+  const { userStepState, user, saveUser, setUserStepState } = useGlobalContext();
   // console.log(user);
+
+  // Fetch the current user data
+  useQuery({
+    queryKey: ["currentUser"],
+    retryOnMount: true, //do not retry on mount
+    refetchOnWindowFocus: false, //do not refetch on window focus
+    refetchOnReconnect: false, //do not refetch on reconnect
+    refetchOnMount: true, //do not refetch on mount
+    refetchInterval: false, //do not refetch at intervals
+    refetchIntervalInBackground: false, //do not refetch in background
+    queryFn: async () => {
+      const { data } = await axiosFetch.get("/users/showMe");
+      saveUser(data.user);
+      console.log(data.user);
+      return data;
+    },
+    onError: () => {},
+  });
+
+  const { isLoading: stepLoading } = useQuery({
+    queryKey: ["bioDataKey"],
+    refetchOnMount: true,
+    queryFn: async () => {
+      const { data } = await axiosFetch.get("/users/userStepState");
+      // const { currentStep } = data.currentUserStepState;
+      setUserStepState(data.currentUserStepState);
+      console.log(data);
+      return data;
+    },
+    onError: () => {},
+  });
+
+  if (stepLoading) {
+    return <PageLoading />;
+  }
 
   return (
     <div className="employeeDashContainer">

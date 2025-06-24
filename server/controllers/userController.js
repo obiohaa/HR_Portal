@@ -33,6 +33,14 @@ const getSingleUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ user });
 };
 
+const getSingleBioData = async (req, res) => {
+  const userBio = await BioData.findOne({ user: req.params.id });
+  if (!userBio) {
+    throw new CustomError.NotFoundError(`No user with id : ${req.params.id}`);
+  }
+  res.status(StatusCodes.OK).json({ userBio });
+};
+
 const showCurrentUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ user: req.user });
 };
@@ -48,41 +56,75 @@ const updateUser = async (req, res) => {
     throw new CustomError.BadRequestError("User does not exist");
   }
 
-  if (!req.files) {
-    throw new CustomError.BadRequestError("No File Uploaded");
-  }
-
-  const UpdatedFile = req.files.file;
-
-  if (!UpdatedFile.mimetype.startsWith("image")) {
-    throw new CustomError.BadRequestError("Please upload an Image File");
-  }
-  const maxSize = 5000000;
-  if (UpdatedFile.size > maxSize) {
-    throw new CustomError.BadRequestError("Please upload file smaller than 5MB");
-  }
-
   try {
-    //Upload to cloudinary
-    const resultUpdatedFile = await cloudinary.uploader.upload(UpdatedFile.tempFilePath, {
-      use_filename: true,
-      folder: "HR_ADMIN_PORTAL",
-    });
+    //IF FILES/IMAGE IS UPLOADED
+    if (req.files) {
+      const UpdatedFile = req.files.file;
 
-    //unlink/delete the file
-    fs.unlinkSync(UpdatedFile.tempFilePath);
+      if (!UpdatedFile.mimetype.startsWith("image")) {
+        throw new CustomError.BadRequestError("Please upload an Image File");
+      }
+      const maxSize = 5000000;
+      if (UpdatedFile.size > maxSize) {
+        throw new CustomError.BadRequestError("Please upload file smaller than 5MB");
+      }
 
-    user.firstName = firstName;
-    user.lastName = lastName;
-    user.email = email;
-    user.password = password;
-    user.imgURL = resultUpdatedFile.secure_url;
+      //Upload to cloudinary
+      const resultUpdatedFile = await cloudinary.uploader.upload(UpdatedFile.tempFilePath, {
+        use_filename: true,
+        folder: "HR_ADMIN_PORTAL",
+      });
 
-    await user.save();
+      //unlink/delete the file
+      fs.unlinkSync(UpdatedFile.tempFilePath);
 
-    const tokenUser = createTokenUser(user);
-    attachCookiesToResponse({ res, user: tokenUser });
-    res.status(StatusCodes.OK).json({ user: tokenUser });
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.email = email;
+      user.password = password;
+      user.imgURL = resultUpdatedFile.secure_url;
+
+      await user.save();
+
+      await BioData.findOneAndUpdate(
+        { user: req.user.userId },
+        {
+          firstName: firstName,
+          lastName: lastName,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
+      const tokenUser = createTokenUser(user);
+      attachCookiesToResponse({ res, user: tokenUser });
+      res.status(StatusCodes.OK).json({ user: tokenUser });
+    } else {
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.email = email;
+      user.password = password;
+
+      await user.save();
+
+      await BioData.findOneAndUpdate(
+        { user: req.user.userId },
+        {
+          firstName: firstName,
+          lastName: lastName,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
+      const tokenUser = createTokenUser(user);
+      attachCookiesToResponse({ res, user: tokenUser });
+      res.status(StatusCodes.OK).json({ user: tokenUser });
+    }
   } catch (error) {
     throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
   }
@@ -627,6 +669,7 @@ module.exports = {
   guarantorUser,
   updateGuarantor,
   finalAgreement,
+  getSingleBioData,
 };
 
 // update user with findOneAndUpdate
