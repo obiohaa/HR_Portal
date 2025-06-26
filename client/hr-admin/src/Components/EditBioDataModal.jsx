@@ -9,16 +9,22 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { axiosFetchFormData } from "../Utils/axiosFetch";
 import { FaRegEyeSlash, FaRegEye, FaX } from "react-icons/fa6";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
+// import capitalizeFirstLetter from "../Components/ToUpperCase";
 
-const EditBioDataModal = ({ user }) => {
+import {
+  stateCapital,
+  genderOptions,
+  maritalStatus,
+  pension,
+  levelOfEducation,
+} from "../Components/UserData";
+
+const EditBioDataModal = ({ userBio }) => {
   const { closeModal, saveUser } = useGlobalContext();
-  const [showPassword, setShowPassword] = useState(false);
-  const [imgName, setImgName] = useState(null);
-  const [imgError, setImgError] = useState({ msg: "" });
-  const togglePasswordVisibility = () => {
-    setShowPassword((prevState) => !prevState);
-  };
-  // console.log(userStepState);
+  const [fileName, setFileName] = useState(null);
+  const [fileError, setFileError] = useState({ msg: "" });
+  const [marriageStatus, setMarriageStatus] = useState("");
+  const [pensionStatus, setPensionStatus] = useState("");
 
   const {
     register,
@@ -30,16 +36,17 @@ const EditBioDataModal = ({ user }) => {
 
   //Using react query to handle the API call
   const queryClient = useQueryClient();
-  const { mutate: updateUserProfile, isLoading } = useMutation({
-    mutationFn: async (updateUserProfile) =>
-      axiosFetchFormData.patch("/users/updateUser", updateUserProfile),
+  const { mutate: updateBioData, isLoading } = useMutation({
+    mutationFn: async (updateBioData) =>
+      axiosFetchFormData.patch("/users/updateBioData", updateBioData),
     onSuccess: (data) => {
+      console.log(data.data.user);
       saveUser(data.data.user);
       reset();
-      setImgName(null);
+      setFileName(null);
       closeModal();
-      queryClient.invalidateQueries({ queryKey: ["currentUser", "bioDataKey"] });
-      toast.success(data.data.steps.msg, {
+      queryClient.invalidateQueries({ queryKey: ["bioDataKey", "currentUser"] });
+      toast.success(data.data.updateBio.msg, {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: true,
@@ -68,14 +75,14 @@ const EditBioDataModal = ({ user }) => {
 
   const onSubmit = async (values) => {
     try {
-      if (imgName && imgName.size > 5000000) {
-        setImgError({ msg: "Passport size must be less than 5MB" });
+      if (fileName && fileName.size > 5000000) {
+        setFileError({ msg: "File size must be less than 5MB" });
       } else {
         const formData = new FormData();
-        formData.append("file", imgName);
+        formData.append("file", fileName);
         formData.append("body", JSON.stringify(values));
         console.log(formData);
-        updateUserProfile(formData);
+        updateBioData(formData);
         // reset();
       }
     } catch (error) {
@@ -87,14 +94,38 @@ const EditBioDataModal = ({ user }) => {
     }
   };
 
-  //   useEffect(() => {
-  //     reset({
-  //       firstName: user.firstName,
-  //       lastName: user.lastName,
-  //       email: user.email,
-  //       password: "",
-  //     });
-  //   }, [reset, user]);
+  useEffect(() => {
+    reset({
+      firstName: userBio.firstName,
+      lastName: userBio.lastName,
+      middleName: userBio.middleName,
+      bankAccountNumber: userBio.bankAccountNumber,
+      bankName: userBio.bankName,
+      dateOfBirth: userBio.dateOfBirth,
+      email: userBio.email,
+      gender: userBio.gender,
+      houseAddress: userBio.houseAddress,
+      maritalStatus: userBio.maritalStatus,
+      pension: userBio.pension,
+      phoneNumber: userBio.phoneNumber,
+      state_of_origin: userBio.state_of_origin,
+      spouseName: userBio.spouseName,
+      pensionCompany: userBio.pensionCompany,
+      pensionPin: userBio.pensionPin,
+      levelOfEducation: userBio.levelOfEducation,
+    });
+  }, [reset, userBio]);
+
+  //handles marriage status state
+  const handleChange = (event) => {
+    console.log(event.target.value);
+    setMarriageStatus(event.target.value);
+  };
+
+  //handles pension status
+  const handlePensionChange = (event) => {
+    setPensionStatus(event.target.value);
+  };
 
   if (isLoading) {
     return <PageLoading />;
@@ -102,12 +133,538 @@ const EditBioDataModal = ({ user }) => {
 
   return (
     <div className="infoModal-container">
-      <div className="infoModal">
+      <div className="bioModal">
         <FaX className="cancelEdit" onClick={closeModal} />
         <div className="mainModal">
           <div className="modalContent">
             <div className="contentM">
-              <div className="signupFrmEdit">HELLO</div>
+              <form
+                action=""
+                encType="multipart/form-data"
+                onSubmit={handleSubmit(onSubmit)}
+                autoComplete="off"
+                noValidate>
+                <div className="formContainer">
+                  <div className="formBioData">
+                    <input
+                      type="text"
+                      id="firstName"
+                      className="form_input"
+                      placeholder=" "
+                      autoComplete="off"
+                      formNoValidate
+                      {...register("firstName", {
+                        required: "First Name is required!",
+                        minLength: {
+                          value: 2,
+                          message: "Minimum characters of 2 letters.",
+                        },
+                        maxLength: {
+                          value: 20,
+                          message: "Maximum characters of 20 letters.",
+                        },
+                        pattern: {
+                          value: /^[A-Za-z]+$/i,
+                          message: "Alphabets only!",
+                        },
+                      })}
+                    />
+                    {errors.firstName && <p className="bioError">{errors.firstName.message}</p>}
+                    <label htmlFor="firstName" className="form_label">
+                      First Name
+                    </label>
+                  </div>
+                  <div className="formBioData">
+                    <input
+                      type="text"
+                      id="middleName"
+                      className="form_input"
+                      placeholder=" "
+                      autoComplete="off"
+                      formNoValidate
+                      {...register("middleName", {
+                        //   required: "Middle Name is required!",
+                        minLength: {
+                          value: 2,
+                          message: "Minimum characters of 2 letters.",
+                        },
+                        maxLength: {
+                          value: 20,
+                          message: "Maximum characters of 20 letters.",
+                        },
+                        pattern: {
+                          value: /^[A-Za-z]+$/i,
+                          message: "Alphabets only!",
+                        },
+                      })}
+                    />
+                    {errors.middleName && <p className="bioError">{errors.middleName.message}</p>}
+                    <label htmlFor="middleName" className="form_label">
+                      Middle Name
+                    </label>
+                  </div>
+                  <div className="formBioData">
+                    <input
+                      type="text"
+                      id="lastName"
+                      className="form_input"
+                      placeholder=" "
+                      autoComplete="off"
+                      formNoValidate
+                      {...register("lastName", {
+                        required: "Last Name is required!",
+                        minLength: {
+                          value: 2,
+                          message: "Minimum characters of 2 letters.",
+                        },
+                        maxLength: {
+                          value: 20,
+                          message: "Maximum characters of 20 letters.",
+                        },
+                        pattern: {
+                          value: /^[A-Za-z]+$/i,
+                          message: "Alphabets only!",
+                        },
+                      })}
+                    />
+                    {errors.lastName && <p className="bioError">{errors.lastName.message}</p>}
+                    <label htmlFor="lastName" className="form_label">
+                      Last Name
+                    </label>
+                  </div>
+                  <div className="formBioData">
+                    <input
+                      type="date"
+                      id="dateOfBirth"
+                      className="form_input"
+                      placeholder=" "
+                      autoComplete="off"
+                      formNoValidate
+                      {...register("dateOfBirth", {
+                        // required: "Date of Birth is required!",
+                        // validate: {
+                        //   isFutureDate: (value) =>
+                        //     new Date(value) < new Date() || "Date must be in the past",
+                        // },
+                      })}
+                    />
+                    {errors.date && <p className="bioError">{errors.date.message}</p>}
+                    <label htmlFor="dateOfBirth" className="form_label">
+                      Date of Birth
+                    </label>
+                  </div>
+                  <div className="formBioData selectFormBioData">
+                    <select
+                      name="state_of_origin"
+                      id="state_of_origin"
+                      className="form_input"
+                      autoComplete="off"
+                      {...register("state_of_origin", {
+                        required: "State of Origin is required!",
+                        validate: {
+                          isValidState: () =>
+                            stateCapital.some((state) => state.state === state.value) ||
+                            "Invalid state selected",
+                        },
+                      })}>
+                      {stateCapital.map((state) => (
+                        <option key={state.id} value={state.value}>
+                          {state.state}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.state_of_origin && (
+                      <p className="bioError">{errors.state_of_origin.message}</p>
+                    )}
+                    <label htmlFor="dateOfBirth" className="form_label">
+                      State of Origin
+                    </label>
+                  </div>
+                  <div className="formBioData selectFormBioData">
+                    <select
+                      name="gender"
+                      id="gender"
+                      className="form_input"
+                      {...register("gender", {
+                        required: "Gender is required!",
+                        validate: {
+                          isValidState: () =>
+                            genderOptions.some((gender) => gender.gender === gender.value) ||
+                            "Invalid gender selected",
+                        },
+                      })}>
+                      {genderOptions.map((gender) => {
+                        return (
+                          <option key={gender.id} value={gender.value}>
+                            {gender.gender}
+                          </option>
+                        );
+                      })}
+                    </select>
+                    {errors.gender && <p className="bioError">{errors.gender.message}</p>}
+                    <label htmlFor="gender" className="form_label">
+                      Gender
+                    </label>
+                  </div>
+                  <div className="formBioData selectFormBioData">
+                    <select
+                      name="maritalStatus"
+                      id="maritalStatus"
+                      className="form_input"
+                      placeholder="Select an option"
+                      {...register("maritalStatus", {
+                        required: "Marital status is required!",
+                        validate: {
+                          isValidState: () =>
+                            maritalStatus.some((status) => status.status === status.value) ||
+                            "Invalid Marital status selected",
+                        },
+                      })}
+                      onChange={handleChange}>
+                      {maritalStatus.map((status) => {
+                        return (
+                          <option key={status.id} value={status.value}>
+                            {status.status}
+                          </option>
+                        );
+                      })}
+                    </select>
+                    {errors.maritalStatus && (
+                      <p className="bioError">{errors.maritalStatus.message}</p>
+                    )}
+                    <label htmlFor="gender" className="form_label">
+                      Marital Status
+                    </label>
+                  </div>
+                  {marriageStatus === "Married" && (
+                    <div className="formBioData">
+                      <input
+                        type="text"
+                        id="spouseName"
+                        name="spouseName"
+                        className="form_input"
+                        placeholder=" "
+                        autoComplete="off"
+                        {...register("spouseName", {
+                          required: "Spouse name is required!",
+                          minLength: {
+                            value: 2,
+                            message: "Minimum characters of 2 letters.",
+                          },
+                          maxLength: {
+                            value: 20,
+                            message: "Maximum characters of 20 letters.",
+                          },
+                        })}
+                      />
+                      {errors.spouseName && <p className="bioError">{errors.spouseName.message}</p>}
+                      <label htmlFor="spouseName" className="form_label">
+                        Spouse Name
+                      </label>
+                    </div>
+                  )}
+                  <div className="formBioData">
+                    <input
+                      type="text"
+                      id="houseAddress"
+                      name="houseAddress"
+                      className="form_input"
+                      placeholder=" "
+                      autoComplete="off"
+                      {...register("houseAddress", {
+                        required: "House address is required!",
+                        minLength: {
+                          value: 3,
+                          message: "Minimum characters of 2 letters.",
+                        },
+                        maxLength: {
+                          value: 100,
+                          message: "Maximum characters of 20 letters.",
+                        },
+                      })}
+                    />
+                    {errors.houseAddress && (
+                      <p className="bioError">{errors.houseAddress.message}</p>
+                    )}
+                    <label htmlFor="houseAddress" className="form_label">
+                      House Address
+                    </label>
+                  </div>
+                  <div className="formBioData">
+                    <input
+                      type="number"
+                      id="phoneNumber"
+                      name="phoneNumber"
+                      className="form_input"
+                      placeholder=" "
+                      autoComplete="off"
+                      {...register("phoneNumber", {
+                        required: "Phone number is required!",
+                        minLength: {
+                          value: 10,
+                          message: "Minimum characters of 10 numbers.",
+                        },
+                        maxLength: {
+                          value: 14,
+                          message: "Maximum characters of 14 numbers.",
+                        },
+                        pattern: {
+                          value: /^[0-9]*$/,
+                          message: "Numbers only!",
+                        },
+                      })}
+                    />
+                    {errors.phoneNumber && <p className="bioError">{errors.phoneNumber.message}</p>}
+                    <label htmlFor="phoneNumber" className="form_label">
+                      Phone Number
+                    </label>
+                  </div>
+                  <div className="formBioData">
+                    <input
+                      name="email"
+                      type="email"
+                      id="email"
+                      className="form_input"
+                      placeholder=" "
+                      autoComplete="off"
+                      disabled
+                      {...register("email", {
+                        required: "Email address is required!",
+                        pattern: {
+                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                          message: "Invalid email address!",
+                        },
+                      })}
+                    />
+                    <label htmlFor="email" className="form_label">
+                      Email Address
+                    </label>
+                  </div>
+                  <div className="formBioData">
+                    <input
+                      type="text"
+                      id="bankName"
+                      name="bankName"
+                      className="form_input"
+                      placeholder=" "
+                      autoComplete="off"
+                      {...register("bankName", {
+                        required: "Bank name is required!",
+                        minLength: {
+                          value: 3,
+                          message: "Minimum characters of 3 letters.",
+                        },
+                        maxLength: {
+                          value: 30,
+                          message: "Maximum characters of 30 letters.",
+                        },
+                      })}
+                    />
+                    {errors.bankName && <p className="bioError">{errors.bankName.message}</p>}
+                    <label htmlFor="bankName" className="form_label">
+                      Bank Name
+                    </label>
+                  </div>
+
+                  <div className="formBioData">
+                    <input
+                      type="number"
+                      id="bankAccountNumber"
+                      className="form_input"
+                      placeholder=" "
+                      autoComplete="off"
+                      {...register("bankAccountNumber", {
+                        required: "Bank account number is required!",
+                        minLength: {
+                          value: 11,
+                          message: "Minimum characters of 11 letters.",
+                        },
+                        maxLength: {
+                          value: 11,
+                          message: "Maximum characters of 11 letters.",
+                        },
+                        pattern: {
+                          value: /^[0-9]*$/,
+                          message: "Numbers only!",
+                        },
+                      })}
+                    />
+                    {errors.bankAccountNumber && (
+                      <p className="bioError">{errors.bankAccountNumber.message}</p>
+                    )}
+                    <label htmlFor="bankAccountNumber" className="form_label">
+                      Bank Account Number
+                    </label>
+                  </div>
+                  <div className="formBioData selectFormBioData">
+                    <select
+                      name="pension"
+                      id="pension"
+                      className="form_input"
+                      placeholder="Select an option"
+                      {...register("pension", {
+                        required: "Pension is required!",
+                        validate: {
+                          isValidState: () =>
+                            pension.some((pen) => pen.pension === pen.value) ||
+                            "Invalid Marital status selected",
+                        },
+                      })}
+                      onChange={handlePensionChange}>
+                      {pension.map((pen) => {
+                        return (
+                          <option key={pen.id} value={pen.value}>
+                            {pen.pension}
+                          </option>
+                        );
+                      })}
+                    </select>
+                    {errors.pension && <p className="bioError">{errors.pension.message}</p>}
+                    <label htmlFor="gender" className="form_label">
+                      Pension
+                    </label>
+                  </div>
+                  {pensionStatus === "Yes" && (
+                    <div className="formBioData">
+                      <input
+                        type="text"
+                        id="pensionCompany"
+                        name="pensionCompany"
+                        className="form_input"
+                        placeholder=" "
+                        autoComplete="off"
+                        {...register("pensionCompany", {
+                          required: "Pension Company is required!",
+                          minLength: {
+                            value: 2,
+                            message: "Minimum characters of 2 letters.",
+                          },
+                          maxLength: {
+                            value: 50,
+                            message: "Maximum characters of 20 letters.",
+                          },
+                        })}
+                      />
+                      {errors.pensionCompany && (
+                        <p className="bioError">{errors.pensionCompany.message}</p>
+                      )}
+                      <label htmlFor="pensionCompany" className="form_label">
+                        Pension Company
+                      </label>
+                    </div>
+                  )}
+                  {pensionStatus === "Yes" && (
+                    <div className="formBioData">
+                      <input
+                        type="number"
+                        id="pensionPin"
+                        name="pensionPin"
+                        className="form_input"
+                        placeholder=" "
+                        autoComplete="off"
+                        {...register("pensionPin", {
+                          required: "Pension PIN number is required!",
+                          minLength: {
+                            value: 5,
+                            message: "Minimum characters of 5 letters.",
+                          },
+                          maxLength: {
+                            value: 20,
+                            message: "Maximum characters of 20 letters.",
+                          },
+                          pattern: {
+                            value: /^[0-9]*$/,
+                            message: "Numbers only!",
+                          },
+                        })}
+                      />
+                      {errors.pensionPin && <p className="bioError">{errors.pensionPin.message}</p>}
+                      <label htmlFor="pensionPin" className="form_label">
+                        Pension Pin
+                      </label>
+                    </div>
+                  )}
+                  <div className="formBioData selectFormBioData">
+                    <select
+                      name="levelOfEducation"
+                      id="levelOfEducation"
+                      className="form_input"
+                      {...register("levelOfEducation", {
+                        required: "Level of Education is required!",
+                        validate: {
+                          isValidState: () =>
+                            levelOfEducation.some(
+                              (levelOfEducation) =>
+                                levelOfEducation.level === levelOfEducation.value
+                            ) || "Invalid Level of Education selected",
+                        },
+                      })}>
+                      {levelOfEducation.map((edu) => {
+                        return (
+                          <option key={edu.id} value={edu.value}>
+                            {edu.level}
+                          </option>
+                        );
+                      })}
+                    </select>
+                    {errors.levelOfEducation && (
+                      <p className="bioError">{errors.levelOfEducation.message}</p>
+                    )}
+                    <label htmlFor="levelOfEducation" className="form_label">
+                      Level of Education
+                    </label>
+                  </div>
+                  <div className="formBioData">
+                    <div
+                      className="clickUpload"
+                      onClick={() => document.querySelector(".upload_Doc").click()}>
+                      <label className="uploadDoc">Upload CV</label>
+                      <MdCloudUpload className="uploadIcon" />
+                    </div>
+                    <div className="fileName">
+                      {/* {fileName}{" "} */}
+                      {fileName === null ? (
+                        ""
+                      ) : (
+                        <div>
+                          {fileName.name}
+                          {
+                            <MdDelete
+                              className="deleteUpload"
+                              onClick={() => {
+                                setFileName(null);
+                              }}
+                            />
+                          }
+                        </div>
+                      )}
+                    </div>
+                    <input
+                      id="file"
+                      type="file"
+                      name="file"
+                      className="upload_Doc"
+                      // accept=".png, .jpeg, .jpg"
+                      accept=".pdf, .docx, .docx, .odt"
+                      required
+                      hidden
+                      onChange={({ target: { files } }) => {
+                        setFileError({ msg: "" });
+                        files[0] && setFileName(files[0]);
+                      }}
+                    />
+                    {fileError.msg !== "" && <p className="bioError">{fileError.msg}</p>}
+                  </div>
+                </div>
+                <div className="btns">
+                  <button className="btn" disabled>
+                    Prev
+                  </button>
+                  <button type="submit" className="btn">
+                    UPDATE
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>

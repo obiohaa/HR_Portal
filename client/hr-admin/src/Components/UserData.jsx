@@ -256,8 +256,9 @@ const levelOfEducation = [
 ];
 
 const pension = [
-  { id: 1, pension: "No, i don't have a pension account" },
-  { id: 2, pension: "Yes, i have a pension account" },
+  { id: 0, pension: "Pension account", value: "" },
+  { id: 1, pension: "No", value: "No" },
+  { id: 2, pension: "Yes", value: "Yes" },
 ];
 
 export { stateCapital, genderOptions, maritalStatus, levelOfEducation, pension };

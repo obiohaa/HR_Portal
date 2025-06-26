@@ -8,26 +8,29 @@ import { axiosFetch } from "../../../../Utils/axiosFetch";
 import PageLoading from "../../../../Components/PageLoading";
 
 const BioData = () => {
-  const { user, userStepState, openModal, isModalOpen } = useGlobalContext();
+  const { userStepState, openModal, isModalOpen } = useGlobalContext();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["currentUser", "bioDataKey"],
-    retryOnMount: true, //retry on mount
-    refetchOnWindowFocus: false, //do not refetch on window focus
-    refetchOnReconnect: false, //do not refetch on reconnect
-    refetchOnMount: true, // refetch on mount
-    refetchInterval: false, //do not refetch at intervals
-    refetchIntervalInBackground: false, //do not refetch in background
+    queryKey: ["bioDataKey", "currentUser"],
+    retryOnMount: true, //do not retry on mount
+    refetchOnWindowFocus: true, //do not refetch on window focus
+    refetchOnReconnect: true, //do not refetch on reconnect
+    refetchOnMount: true, //do not refetch on mount
+    refetchInterval: true, //do not refetch at intervals
+    refetchIntervalInBackground: true, //do not refetch in background
     queryFn: async () => {
-      const { data } = await axiosFetch.get(`/users/getSingleBioData/${user.userId}`);
-      // console.log(data.userBio);
+      const { data } = await axiosFetch.get("/users/getSingleBioData");
+      console.log(data);
+      console.log(data.userBio);
       return data;
     },
   });
 
   console.log(error);
+  console.log(data);
+  // console.log(userData);
 
-  // console.log(data.userBio.bankName);
+  // PREPARING THE USER BIO FILE FOR DOWNLOAD
   if (data && data.userBio) {
     var bioURL = data.userBio.UserFileUrl;
   }
@@ -42,7 +45,7 @@ const BioData = () => {
         <ProfileModal />
       ) : (
         <div>
-          {isModalOpen && <EditBioDataModal />}
+          {isModalOpen && <EditBioDataModal userBio={data.userBio} />}
           <div className="bioDataProfileMainBody">
             <div className="bioDataProfileBody">
               <div className="singleProfile">
@@ -70,9 +73,10 @@ const BioData = () => {
               <div className="singleProfile">
                 <p className="profileLabel">Email Address</p>
                 <h4 className="profileName">
-                  {data && data.userBio && data.userBio.email.length > 22
+                  {data && data.userBio ? data.userBio.email : "Email"}
+                  {/* {data && data.userBio && data.userBio.email.length > 22
                     ? data.userBio.email.substring(0, 25) + "..."
-                    : data.userBio.email}
+                    : data.userBio.email} */}
                 </h4>
                 <div className="profileLine"></div>
               </div>
@@ -114,10 +118,10 @@ const BioData = () => {
               <div className="singleProfile">
                 <p className="profileLabel">House Address</p>
                 <h4 className="profileName">
-                  {" "}
-                  {data && data.userBio && data.userBio.houseAddress.length > 20
+                  {data && data.userBio ? data.userBio.houseAddress : "House Address"}
+                  {/* {data && data.userBio && data.userBio.houseAddress.length > 20
                     ? data.userBio.houseAddress.substring(0, 30) + "..."
-                    : data.userBio.houseAddress}
+                    : data.userBio.houseAddress} */}
                 </h4>
                 <div className="profileLine"></div>
               </div>
@@ -150,7 +154,7 @@ const BioData = () => {
                 <div className="profileLine"></div>
               </div>
               <div className="singleProfile">
-                <p className="profileLabel">Pension Name</p>
+                <p className="profileLabel">Pension Company</p>
                 <h4 className="profileName">
                   {data && data.userBio ? data.userBio.pensionCompany : "Pension Company"}
                 </h4>
@@ -160,6 +164,13 @@ const BioData = () => {
                 <p className="profileLabel">Pension Account Number</p>
                 <h4 className="profileName">
                   {data && data.userBio ? data.userBio.pensionPin : "Pension Pin"}
+                </h4>
+                <div className="profileLine"></div>
+              </div>
+              <div className="singleProfile">
+                <p className="profileLabel">Level of Education</p>
+                <h4 className="profileName">
+                  {data && data.userBio ? data.userBio.levelOfEducation : "Level of Education"}
                 </h4>
                 <div className="profileLine"></div>
               </div>

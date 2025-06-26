@@ -16,7 +16,15 @@ const NextOfKinSchema = new mongoose.Schema(
     },
     houseAddress: {
       type: String,
-      required: [true, "Please provide home address"],
+      required: [true, "Next of Kin House Address needed"],
+    },
+    gender: {
+      type: String,
+      required: [true, "Next of Kin gender needed"],
+    },
+    phoneNumber: {
+      type: Number,
+      required: [true, "Next of Kin phone number needed"],
     },
     user: {
       type: mongoose.Types.ObjectId,

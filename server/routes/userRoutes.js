@@ -17,6 +17,9 @@ const {
   updateGuarantor,
   finalAgreement,
   getSingleBioData,
+  updateBioData,
+  getSingleNOK,
+  updateNOKData,
 } = require("../controllers/userController");
 
 router.route("/").get(authenticateUser, authorizePermissions("admin"), getAllUsers);
@@ -33,8 +36,11 @@ router.route("/updateUserNextStepState").post(authenticateUser, updateUserNextSt
 router.route("/guarantorUser").post(authenticateUser, guarantorUser);
 router.route("/finalAgreement").post(authenticateUser, finalAgreement);
 router.route("/updateGuarantor").patch(updateGuarantor);
+router.route("/updateBioData").patch(authenticateUser, updateBioData);
+router.route("/updateNOKData").patch(authenticateUser, updateNOKData);
 
-router.route("/getSingleBioData/:id").get(authenticateUser, getSingleBioData);
+router.route("/getSingleBioData").get(authenticateUser, getSingleBioData);
+router.route("/getSingleNOK").get(authenticateUser, getSingleNOK);
 router.route("/:id").get(authenticateUser, getSingleUser);
 
 module.exports = router;

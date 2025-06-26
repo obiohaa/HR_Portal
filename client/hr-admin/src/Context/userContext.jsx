@@ -41,7 +41,7 @@ const AppProvider = ({ children }) => {
     refetchOnReconnect: false, //do not refetch on reconnect
     refetchOnMount: true, //do not refetch on mount
     refetchInterval: false, //do not refetch at intervals
-    refetchIntervalInBackground: false, //do not refetch in background
+    refetchIntervalInBackground: true, //do not refetch in background
     queryFn: async () => {
       const { data } = await axiosFetch.get("/users/showMe");
       saveUser(data.user);
