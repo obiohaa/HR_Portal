@@ -15,6 +15,7 @@ import nokProfile from "./Pages/Body/Profile/NOK/index.jsx";
 import myUserProfile from "./Pages/Body/Profile/MyUser/index.jsx";
 import ndaProfile from "./Pages/Body/Profile/NDA/index.jsx";
 import jobOpening from "./Pages/Body/JobOpening/Index.jsx";
+import BDJSONpdf from "../src/Components/PDF/BDJSONpdf.jsx";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         <Route path="/my_user" exact Component={myUserProfile} />
         <Route path="/nda" exact Component={ndaProfile} />
         <Route path="/job_opening" exact Component={jobOpening} />
+        <Route path="/pdfPage" exact Component={BDJSONpdf} />
       </Routes>
     </Router>
   );

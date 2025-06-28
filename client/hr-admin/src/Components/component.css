@@ -291,3 +291,28 @@
   color: var(--clr-primary-2);
 }
 /* END EDIT USER MODAL */
+
+/* START PDF */
+.pdfContainer {
+  width: 100%;
+  height: 620px;
+}
+
+.PDFsubmitBtn {
+  display: block;
+  padding: 8px 30px;
+  border: none;
+  background-color: var(--clr-primary-2);
+  color: var(--clr-white);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 18px;
+  width: 150px;
+  margin: 20px auto;
+}
+
+.PDFsubmitBtn:active {
+  outline: none;
+  transform: scale(0.95);
+}
+/* END PDF */

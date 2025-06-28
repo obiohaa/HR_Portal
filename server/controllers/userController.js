@@ -91,9 +91,9 @@ const updateNOKData = async (req, res) => {
 };
 
 const showCurrentUser = async (req, res) => {
-  //there is a bug here
-  // console.log(req.user);
-  res.status(StatusCodes.OK).json({ user: req.user });
+  const loggedInUser = await User.findOne({ _id: req.user.userId }).select("-password");
+  const tokenUser = createTokenUser(loggedInUser);
+  res.status(StatusCodes.OK).json({ user: tokenUser });
 };
 // update user with user.save()
 const updateUser = async (req, res) => {

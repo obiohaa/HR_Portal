@@ -31,6 +31,7 @@ const BioData = () => {
   // console.log(userData);
 
   // PREPARING THE USER BIO FILE FOR DOWNLOAD
+  //SENDING THE DATA TO PDF
   if (data && data.userBio) {
     var bioURL = data.userBio.UserFileUrl;
   }
@@ -181,12 +182,17 @@ const BioData = () => {
             </div>
           </div>
           <div className="btns profileBtn">
-            <button className="btn">Download</button>
+            <button
+              className="btn"
+              onClick={() => window.open("http://localhost:5173/pdfPage", "_blank")}>
+              Download
+            </button>
             <button className="btn" onClick={openModal}>
               Edit
             </button>
           </div>
         </div>
+        //
       )}
     </div>
   );
