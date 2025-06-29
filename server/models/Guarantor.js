@@ -6,7 +6,6 @@ const GuarantorSchema = new mongoose.Schema(
   {
     guarantorOneEmail: {
       type: String,
-      unique: true,
       validate: {
         validator: validator.isEmail,
         message: "Please provide valid email",
@@ -14,7 +13,6 @@ const GuarantorSchema = new mongoose.Schema(
     },
     guarantorTwoEmail: {
       type: String,
-      unique: true,
       validate: {
         validator: validator.isEmail,
         message: "Please provide valid email",

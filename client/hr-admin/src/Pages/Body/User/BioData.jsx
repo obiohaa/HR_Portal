@@ -6,8 +6,8 @@ import capitalizeFirstLetter from "../../../Components/ToUpperCase";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
 import { toast } from "react-toastify";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import PageLoading from "../../../Components/PageLoading";
-import Modal from "../../../Components/Modal";
+import PageLoading from "../../../Components/Checks/PageLoading";
+import Modal from "../../../Components/Modal/Modal";
 
 import {
   stateCapital,
@@ -25,7 +25,7 @@ const BioData = () => {
   const [marriageStatus, setMarriageStatus] = useState("");
   const [pensionStatus, setPensionStatus] = useState("");
 
-  const { user, userStepState } = useGlobalContext();
+  const { user, userStepState, setUserStepState } = useGlobalContext();
   console.log(userStepState);
   const {
     register,
@@ -40,8 +40,9 @@ const BioData = () => {
   const { mutate: bioDataUser, isLoading } = useMutation({
     mutationFn: async (bioDataUser) => axiosFetchFormData.post("/users/bioData", bioDataUser),
     onSuccess: (data) => {
-      console.log(data);
-      queryClient.invalidateQueries({ queryKey: ["bioDataKey", "currentUser"] });
+      console.log(data.data.stepState.updateUserStepState);
+      setUserStepState(data.data.stepState.updateUserStepState);
+      queryClient.invalidateQueries({ queryKey: ["bioDataKey"] });
       toast.success(data.data.steps.msg, {
         position: "top-center",
         autoClose: 5000,
@@ -485,7 +486,7 @@ const BioData = () => {
                 pension
               </label>
             </div>
-            {pensionStatus === "Yes, i have a pension account" && (
+            {pensionStatus === "Yes" && (
               <div className="formBioData">
                 <input
                   type="text"
@@ -514,7 +515,7 @@ const BioData = () => {
                 </label>
               </div>
             )}
-            {pensionStatus === "Yes, i have a pension account" && (
+            {pensionStatus === "Yes" && (
               <div className="formBioData">
                 <input
                   type="number"

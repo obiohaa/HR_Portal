@@ -3,7 +3,7 @@ import BioData from "./BioData";
 import Next_of_kin from "./Next_of_kin";
 import Guarantor from "./Guarantor";
 import NDA from "./NDA";
-import PageLoading from "../../../Components/PageLoading";
+import PageLoading from "../../../Components/Checks/PageLoading";
 import { FaUserPlus, FaUsers, FaFileCircleXmark, FaUserSecret } from "react-icons/fa6";
 import Progress from "./Progress";
 import { useQuery } from "@tanstack/react-query";
@@ -18,7 +18,7 @@ const Tracker = () => {
 
   const { isLoading } = useQuery({
     queryKey: ["bioDataKey"],
-    refetchOnMount: true,
+    retryOnMount: true, //do not retry on mount
     queryFn: async () => {
       const { data } = await axiosFetch.get("/users/userStepState");
       const { currentStep } = data.currentUserStepState;
@@ -70,13 +70,15 @@ const Tracker = () => {
       </div>
       <div className="formsContainer">
         {steps === 1 ? (
-          <BioData steps={steps} totalSteps={totalSteps} />
+          <BioData />
         ) : steps === 2 ? (
           <Next_of_kin />
         ) : steps === 3 ? (
           <Guarantor />
-        ) : (
+        ) : steps === 4 ? (
           <NDA />
+        ) : (
+          <PageLoading />
         )}
       </div>
     </div>

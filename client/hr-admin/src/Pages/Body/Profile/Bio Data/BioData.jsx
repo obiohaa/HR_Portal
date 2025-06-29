@@ -1,11 +1,11 @@
 import React from "react";
 import { FaDownload } from "react-icons/fa6";
 import { useGlobalContext } from "../../../../Context/userContext";
-import ProfileModal from "../../../../Components/ProfileModal";
-import EditBioDataModal from "../../../../Components/EditBioDataModal";
+import ProfileModal from "../../../../Components/Modal/ProfileModal";
+import EditBioDataModal from "../../../../Components/Modal/EditBioDataModal";
 import { useQuery } from "@tanstack/react-query";
 import { axiosFetch } from "../../../../Utils/axiosFetch";
-import PageLoading from "../../../../Components/PageLoading";
+import PageLoading from "../../../../Components/Checks/PageLoading";
 
 const BioData = () => {
   const { userStepState, openModal, isModalOpen } = useGlobalContext();
@@ -112,7 +112,7 @@ const BioData = () => {
               <div className="singleProfile">
                 <p className="profileLabel">Spouse Name</p>
                 <h4 className="profileName">
-                  {data && data.userBio ? data.userBio.spouseName : "Marital Status"}
+                  {data && data.userBio ? data.userBio.spouseName : "Spouse Name"}
                 </h4>
                 <div className="profileLine"></div>
               </div>
@@ -184,7 +184,7 @@ const BioData = () => {
           <div className="btns profileBtn">
             <button
               className="btn"
-              onClick={() => window.open("http://localhost:5173/pdfPage", "_blank")}>
+              onClick={() => window.open("http://localhost:5173/pdfPagebioDATA", "_blank")}>
               Download
             </button>
             <button className="btn" onClick={openModal}>

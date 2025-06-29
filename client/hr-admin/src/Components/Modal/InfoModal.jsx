@@ -1,6 +1,6 @@
 import React from "react";
-import "./component.css";
-import { useGlobalContext } from "../Context/userContext";
+import "../component.css";
+import { useGlobalContext } from "../../Context/userContext";
 
 const InfoModal = () => {
   const { closeModal } = useGlobalContext();

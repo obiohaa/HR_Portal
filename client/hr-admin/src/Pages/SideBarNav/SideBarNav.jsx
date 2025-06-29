@@ -3,7 +3,7 @@ import { FaPowerOff } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import capitalizeFirstLetter from "../../Components/ToUpperCase";
 import { useGlobalContext } from "../../Context/userContext";
-import Loading from "../../Components/Loading";
+import Loading from "../../Components/Checks/Loading";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { axiosFetch } from "../../Utils/axiosFetch";

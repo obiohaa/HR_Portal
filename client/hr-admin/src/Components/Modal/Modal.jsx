@@ -1,10 +1,10 @@
 import React from "react";
-import "./component.css";
-import CheckMark from "./CheckMark";
+import "../component.css";
+import CheckMark from "../Checks/CheckMark";
 import { toast } from "react-toastify";
-import { axiosFetch } from "../Utils/axiosFetch";
+import { axiosFetch } from "../../Utils/axiosFetch";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useGlobalContext } from "../Context/userContext";
+import { useGlobalContext } from "../../Context/userContext";
 
 const Modal = () => {
   const { userStepState, closeModal } = useGlobalContext();

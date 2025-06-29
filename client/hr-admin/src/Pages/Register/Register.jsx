@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Loading from "../../Components/Loading";
+import Loading from "../../Components/Checks/Loading";
 import { axiosFetchFormData } from "../../Utils/axiosFetch";
 import { toast } from "react-toastify";
 import "../Login/Login.css";

@@ -1,11 +1,11 @@
 import React from "react";
 import { FaDownload } from "react-icons/fa6";
-import EditNOKModal from "../../../../Components/EditNOKModal";
+import EditNOKModal from "../../../../Components/Modal/EditNOKModal";
 import { useGlobalContext } from "../../../../Context/userContext";
-import ProfileModal from "../../../../Components/ProfileModal";
+import ProfileModal from "../../../../Components/Modal/ProfileModal";
 import { useQuery } from "@tanstack/react-query";
 import { axiosFetch } from "../../../../Utils/axiosFetch";
-import PageLoading from "../../../../Components/PageLoading";
+import PageLoading from "../../../../Components/Checks/PageLoading";
 
 const NOK = () => {
   const { userStepState, openModal, isModalOpen } = useGlobalContext();
@@ -89,7 +89,11 @@ const NOK = () => {
             </div>
           </div>
           <div className="btns profileBtn">
-            <button className="btn ">Download</button>
+            <button
+              className="btn"
+              onClick={() => window.open("http://localhost:5173/pdfPagenok", "_blank")}>
+              Download
+            </button>
             <button className="btn" onClick={openModal}>
               Edit
             </button>

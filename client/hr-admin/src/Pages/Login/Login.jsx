@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import Loading from "../../Components/Loading";
-import PageLoading from "../../Components/PageLoading";
+import Loading from "../../Components/Checks/Loading";
+import PageLoading from "../../Components/Checks/PageLoading";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { axiosFetch } from "../../Utils/axiosFetch";

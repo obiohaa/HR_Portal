@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, Link } from "react-router-dom";
-import Loading from "../../Components/Loading";
+import Loading from "../../Components/Checks/Loading";
 import { useMutation } from "@tanstack/react-query";
 import { axiosFetch } from "../../Utils/axiosFetch";
 import { toast } from "react-toastify";

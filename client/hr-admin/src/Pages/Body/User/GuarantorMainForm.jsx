@@ -3,12 +3,12 @@ import "./user.css";
 import logo from "/logo.svg";
 import { useForm } from "react-hook-form";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
-import InfoModal from "../../../Components/InfoModal";
+import InfoModal from "../../../Components/Modal/InfoModal";
 import { useMutation } from "@tanstack/react-query";
 import { useGlobalContext } from "../../../Context/userContext";
 import { toast } from "react-toastify";
 import { axiosFetchFormData } from "../../../Utils/axiosFetch";
-import PageLoading from "../../../Components/PageLoading";
+import PageLoading from "../../../Components/Checks/PageLoading";
 import { useLocation, Link } from "react-router-dom";
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -34,9 +34,12 @@ const GuarantorMainForm = () => {
       axiosFetchFormData.patch("/users/updateGuarantor", guarantorMain),
     onSuccess: (data) => {
       console.log(data);
-      toast.success(data.data.msg, {
+      reset();
+      setFileName(null);
+      setImgName(null);
+      toast.success("Guarantor form updated successfully", {
         position: "top-center",
-        autoClose: 5000,
+        autoClose: 10000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
@@ -49,7 +52,7 @@ const GuarantorMainForm = () => {
     onError: (error) => {
       toast.error(error.response.data.msg, {
         position: "top-center",
-        autoClose: 5000,
+        autoClose: 10000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
@@ -83,11 +86,10 @@ const GuarantorMainForm = () => {
         imgName.size < 5000000 &&
         fileName.size < 5000000
       ) {
-        const formData = new FormData();
         values.verificationToken = query.get("token");
         values.email = query.get("email");
         console.log(values);
-
+        const formData = new FormData();
         formData.append("file", fileName);
         formData.append("file", imgName);
         formData.append("body", JSON.stringify(values));
@@ -506,8 +508,8 @@ const GuarantorMainForm = () => {
               <button className="btn" disabled>
                 Prev
               </button>
-              <button type="submit" className="btn">
-                Next
+              <button type="submit" className="btn" disabled={isLoading}>
+                SEND
               </button>
             </div>
           </form>

@@ -1,6 +1,6 @@
 import React from "react";
 import "../Dashboard.css";
-import PageLoading from "../../../../Components/PageLoading";
+import PageLoading from "../../../../Components/Checks/PageLoading";
 import { useQuery } from "@tanstack/react-query";
 import { axiosFetch } from "../../../../Utils/axiosFetch";
 import { useGlobalContext } from "../../../../Context/userContext";
@@ -104,56 +104,56 @@ const EmployeeMainDash = () => {
         </div>
         <div
           className={
-            userStepState && userStepState.completedStep >= 3
+            userStepState && userStepState.guarantorStep >= 1
               ? "employeeDashSingle dashColoured"
               : "employeeDashSingle dashNotColoured"
           }>
           <span className="toolTipText">
-            Guarantor One {userStepState && userStepState.completedStep >= 3 ? "Completed" : ""}
+            Guarantor One {userStepState && userStepState.guarantorStep >= 1 ? "Completed" : ""}
           </span>
           <FaUserSecret
             className={
-              userStepState && userStepState.completedStep >= 3
+              userStepState && userStepState.guarantorStep >= 1
                 ? "dashIconColoured"
                 : "dashIconNotColoured"
             }
           />
           <div
             className={
-              userStepState && userStepState.completedStep >= 3 ? "dividerColoured" : "divider"
+              userStepState && userStepState.guarantorStep >= 1 ? "dividerColoured" : "divider"
             }></div>
           <div
             className={
-              userStepState && userStepState.completedStep >= 3 ? "dashCountColoured" : "dashCount"
+              userStepState && userStepState.guarantorStep >= 1 ? "dashCountColoured" : "dashCount"
             }>
-            {userStepState && userStepState.completedStep >= 3 ? "1" : "0"}
+            {userStepState && userStepState.guarantorStep >= 1 ? "1" : "0"}
           </div>
         </div>
         <div
           className={
-            userStepState && userStepState.completedStep >= 3
+            userStepState && userStepState.guarantorStep === 2
               ? "employeeDashSingle dashColoured"
               : "employeeDashSingle dashNotColoured"
           }>
           <span className="toolTipText">
-            Guarantor Two {userStepState && userStepState.completedStep >= 3 ? "Completed" : ""}
+            Guarantor Two {userStepState && userStepState.guarantorStep === 2 ? "Completed" : ""}
           </span>
           <FaUserSecret
             className={
-              userStepState && userStepState.completedStep >= 3
+              userStepState && userStepState.guarantorStep === 2
                 ? "dashIconColoured"
                 : "dashIconNotColoured"
             }
           />
           <div
             className={
-              userStepState && userStepState.completedStep >= 3 ? "dividerColoured" : "divider"
+              userStepState && userStepState.guarantorStep === 2 ? "dividerColoured" : "divider"
             }></div>
           <div
             className={
-              userStepState && userStepState.completedStep >= 3 ? "dashCountColoured" : "dashCount"
+              userStepState && userStepState.guarantorStep === 2 ? "dashCountColoured" : "dashCount"
             }>
-            {userStepState && userStepState.completedStep >= 3 ? "1" : "0"}
+            {userStepState && userStepState.guarantorStep === 2 ? "1" : "0"}
           </div>
         </div>
         <div

@@ -1,9 +1,9 @@
 import React from "react";
-import "./component.css";
-import BadMark from "./BadMark";
-import { useGlobalContext } from "../Context/userContext";
+import "../component.css";
+import BadMark from "../Checks/BadMark";
+import { useGlobalContext } from "../../Context/userContext";
 
-const NoJob = () => {
+const ProfileModal = () => {
   const { closeModal } = useGlobalContext();
 
   return (
@@ -17,7 +17,10 @@ const NoJob = () => {
           <div className="modalContent">
             <div className="contentM">
               <BadMark />
-              <p>No job posted currently. Please contact your HR Admin for more information.</p>
+              <p>
+                This form has not been filled, submitted or updated, if you intend to view or edit
+                this form, please fill the form from E-Form before viewing or editing it here.
+              </p>
             </div>
           </div>
         </div>
@@ -26,4 +29,4 @@ const NoJob = () => {
   );
 };
 
-export default NoJob;
+export default ProfileModal;

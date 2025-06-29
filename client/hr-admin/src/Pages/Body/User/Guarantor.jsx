@@ -4,8 +4,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useGlobalContext } from "../../../Context/userContext";
 import { toast } from "react-toastify";
 import { axiosFetch } from "../../../Utils/axiosFetch";
-import PageLoading from "../../../Components/PageLoading";
-import Modal from "../../../Components/Modal";
+import PageLoading from "../../../Components/Checks/PageLoading";
+import Modal from "../../../Components/Modal/Modal";
 
 const Guarantor = () => {
   const { userStepState } = useGlobalContext();
@@ -90,7 +90,7 @@ const Guarantor = () => {
 
   const onSubmit = async (values) => {
     try {
-      // console.log(values);
+      console.log(values);
       guarantorUser(values);
     } catch (error) {
       console.log(error);
@@ -120,46 +120,42 @@ const Guarantor = () => {
             <div className="formBioData">
               <input
                 type="email"
-                id="guarantorOneEmail"
+                id="oneEmail"
                 className="form_input"
                 placeholder=""
                 autoComplete="off"
                 formNoValidate
-                {...register("guarantorOneEmail", {
-                  // required: "Email address is required!",
+                {...register("oneEmail", {
+                  required: "Email address is required!",
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
                     message: "Invalid email address!",
                   },
                 })}
               />
-              {errors.guarantorOneEmail && (
-                <p className="bioError">{errors.guarantorOneEmail.message}</p>
-              )}
-              <label htmlFor="emailAddress" className="form_label">
+              {errors.oneEmail && <p className="bioError">{errors.oneEmail.message}</p>}
+              <label htmlFor="oneEmail" className="form_label">
                 Guarantor One Email
               </label>
             </div>
             <div className="formBioData">
               <input
                 type="email"
-                id="guarantorTwoEmail"
+                id="twoEmail"
                 className="form_input"
                 placeholder=" "
                 autoComplete="off"
                 formNoValidate
-                {...register("guarantorTwoEmail", {
-                  // required: "Email address is required!",
+                {...register("twoEmail", {
+                  required: "Email address is required!",
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
                     message: "Invalid email address!",
                   },
                 })}
               />
-              {errors.guarantorTwoEmail && (
-                <p className="bioError">{errors.guarantorTwoEmail.message}</p>
-              )}
-              <label htmlFor="emailAddress" className="form_label">
+              {errors.twoEmail && <p className="bioError">{errors.twoEmail.message}</p>}
+              <label htmlFor="twoEmail" className="form_label">
                 Guarantor Two Email
               </label>
             </div>

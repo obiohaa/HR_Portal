@@ -1,9 +1,9 @@
 import React from "react";
-import "./component.css";
+import "../component.css";
 import { toast } from "react-toastify";
-import { useGlobalContext } from "../Context/userContext";
+import { useGlobalContext } from "../../Context/userContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { axiosFetch } from "../Utils/axiosFetch";
+import { axiosFetch } from "../../Utils/axiosFetch";
 
 const AgreeModal = () => {
   const { closeModal } = useGlobalContext();

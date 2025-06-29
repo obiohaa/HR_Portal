@@ -6,14 +6,14 @@ import { useGlobalContext } from "../../../Context/userContext";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
 import { toast } from "react-toastify";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import PageLoading from "../../../Components/PageLoading";
-import Modal from "../../../Components/Modal";
-
+import PageLoading from "../../../Components/Checks/PageLoading";
+import Modal from "../../../Components/Modal/Modal";
+import { genderOptions } from "../../../Components/UserData";
 //When i have onChange in a select field, the react-hook-form validation does not work, i guess because it uses onChange function too. To validate i used my custom validation.
 
 const Next_of_kin = () => {
   const { userStepState } = useGlobalContext();
-  // console.log(userStepState);
+
   const {
     register,
     reset,
@@ -193,6 +193,61 @@ const Next_of_kin = () => {
               )}
               <label htmlFor="nextOfKinLastName" className="form_label">
                 NOK Last Name
+              </label>
+            </div>
+            <div className="formBioData selectFormBioData">
+              <select
+                name="gender"
+                id="gender"
+                className="form_input"
+                {...register("gender", {
+                  required: "Gender is required!",
+                  validate: {
+                    isValidState: () =>
+                      genderOptions.some((gender) => gender.gender === gender.value) ||
+                      "Invalid gender selected",
+                  },
+                })}>
+                {genderOptions.map((gender) => {
+                  return (
+                    <option key={gender.id} value={gender.value}>
+                      {gender.gender}
+                    </option>
+                  );
+                })}
+              </select>
+              {errors.gender && <p className="bioError">{errors.gender.message}</p>}
+              <label htmlFor="gender" className="form_label">
+                Gender
+              </label>
+            </div>
+            <div className="formBioData">
+              <input
+                type="number"
+                id="phoneNumber"
+                name="phoneNumber"
+                className="form_input"
+                placeholder=" "
+                autoComplete="off"
+                {...register("phoneNumber", {
+                  required: "Phone number is required!",
+                  minLength: {
+                    value: 10,
+                    message: "Minimum characters of 2 letters.",
+                  },
+                  maxLength: {
+                    value: 14,
+                    message: "Maximum characters of 20 letters.",
+                  },
+                  pattern: {
+                    value: /^[0-9]*$/,
+                    message: "Numbers only!",
+                  },
+                })}
+              />
+              {errors.phoneNumber && <p className="bioError">{errors.phoneNumber.message}</p>}
+              <label htmlFor="phoneNumber" className="form_label">
+                Phone Number
               </label>
             </div>
             <div className="formBioData">

@@ -1,5 +1,5 @@
 import React from "react";
-import "./component.css";
+import "../component.css";
 
 const PageLoading = () => {
   return (

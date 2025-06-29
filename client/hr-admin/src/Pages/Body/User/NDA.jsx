@@ -3,9 +3,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useGlobalContext } from "../../../Context/userContext";
 import { toast } from "react-toastify";
 import { axiosFetch } from "../../../Utils/axiosFetch";
-import PageLoading from "../../../Components/PageLoading";
-import AgreeModal from "../../../Components/AgreeModal";
-import Modal from "../../../Components/Modal";
+import PageLoading from "../../../Components/Checks/PageLoading";
+import AgreeModal from "../../../Components/Modal/AgreeModal";
+import Modal from "../../../Components/Modal/Modal";
 import capitalizeFirstLetter from "../../../Components/ToUpperCase";
 
 const NDA = () => {

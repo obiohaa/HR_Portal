@@ -41,8 +41,6 @@ const BioDataSchema = new mongoose.Schema(
     },
     bankName: {
       type: String,
-      minlength: 2,
-      maxlength: 50,
     },
     bankAccountNumber: {
       type: Number,
@@ -52,8 +50,6 @@ const BioDataSchema = new mongoose.Schema(
     },
     pensionCompany: {
       type: String,
-      minlength: 2,
-      maxlength: 50,
     },
     pensionPin: {
       type: Number,

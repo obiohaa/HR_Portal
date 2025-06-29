@@ -91,6 +91,7 @@ const updateNOKData = async (req, res) => {
 };
 
 const showCurrentUser = async (req, res) => {
+  console.log(req.user);
   const loggedInUser = await User.findOne({ _id: req.user.userId }).select("-password");
   const tokenUser = createTokenUser(loggedInUser);
   res.status(StatusCodes.OK).json({ user: tokenUser });
@@ -375,7 +376,7 @@ const bioData = async (req, res) => {
     pensionCompany,
     pensionPin,
   } = JSON.parse(req.body.body);
-  console.log(JSON.parse(req.body.body));
+  // console.log(JSON.parse(req.body.body));
   if (
     !dateOfBirth ||
     !state_of_origin ||
@@ -393,6 +394,7 @@ const bioData = async (req, res) => {
   let userBioData = JSON.parse(req.body.body);
 
   const user = await BioData.findOne({ email: req.user.email });
+
   if (user) {
     throw new CustomError.BadRequestError("Bio Data already exist");
   }
@@ -409,7 +411,9 @@ const bioData = async (req, res) => {
   if (userFile.size > maxSize) {
     throw new CustomError.BadRequestError("Please upload file smaller than 5MB");
   }
-
+  console.log("bio");
+  console.log(userBioData);
+  console.log(req.user);
   try {
     //move to a local folder
     // const filePath = path.join(__dirname, "../public/fileUploads/" + `${userFile.name}`);
@@ -421,9 +425,12 @@ const bioData = async (req, res) => {
       use_filename: true,
       folder: "HR_ADMIN_PORTAL",
     });
+    console.log(result);
     //unlink/delete the file
     fs.unlinkSync(req.files.file.tempFilePath);
-
+    console.log("inside");
+    console.log(userBioData);
+    console.log(req.user);
     const mainUserBioData = {
       ...userBioData,
       UserFileUrl: result.secure_url,
@@ -432,7 +439,7 @@ const bioData = async (req, res) => {
       email: req.user.email,
       user: req.user.userId,
     };
-
+    console.log(mainUserBioData);
     //Add do database
     const UserBioData = await BioData.create(mainUserBioData);
     if (UserBioData.createdAt) {
@@ -457,13 +464,13 @@ const bioData = async (req, res) => {
           runValidators: true,
         }
       );
+      res.status(StatusCodes.OK).json({
+        steps: {
+          msg: "Bio Data created",
+        },
+        stepState: { updateUserStepState },
+      });
     }
-
-    return res.status(StatusCodes.OK).json({
-      steps: {
-        msg: "Bio Data created",
-      },
-    });
   } catch (error) {
     throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
   }
@@ -534,9 +541,23 @@ const updateUserNextStepState = async (req, res) => {
 };
 
 const nextOfKinData = async (req, res) => {
-  const { nextOfKinFirstName, nextOfKinLastName, houseAddress, nextOfKinRelationship } = req.body;
+  const {
+    nextOfKinFirstName,
+    nextOfKinLastName,
+    houseAddress,
+    nextOfKinRelationship,
+    gender,
+    phoneNumber,
+  } = req.body;
 
-  if (!nextOfKinFirstName || !nextOfKinLastName || !houseAddress || !nextOfKinRelationship) {
+  if (
+    !nextOfKinFirstName ||
+    !nextOfKinLastName ||
+    !houseAddress ||
+    !nextOfKinRelationship ||
+    !gender ||
+    !phoneNumber
+  ) {
     throw new CustomError.BadRequestError("Please provide all values");
   }
 
@@ -586,10 +607,13 @@ const nextOfKinData = async (req, res) => {
 const guarantorUser = async (req, res) => {
   console.log(req.body);
 
-  const { guarantorOneEmail, guarantorTwoEmail } = req.body;
-  if (!guarantorOneEmail || !guarantorTwoEmail) {
+  const { oneEmail, twoEmail } = req.body;
+  if (!oneEmail || !twoEmail) {
     throw new CustomError.BadRequestError("Please provide all values");
   }
+
+  console.log(twoEmail);
+  console.log(oneEmail);
 
   try {
     const user = req.user.userId;
@@ -597,8 +621,8 @@ const guarantorUser = async (req, res) => {
     const lastName = req.user.lastName;
     const origin = "http://localhost:5173";
 
-    const emailOneAlreadyExists = await Guarantor.findOne({ guarantorOneEmail });
-    const emailTwoAlreadyExists = await Guarantor.findOne({ guarantorTwoEmail });
+    const emailOneAlreadyExists = await Guarantor.findOne({ guarantorOneEmail: oneEmail });
+    const emailTwoAlreadyExists = await Guarantor.findOne({ guarantorTwoEmail: twoEmail });
 
     console.log(emailOneAlreadyExists);
     console.log(emailTwoAlreadyExists);
@@ -707,7 +731,7 @@ const updateGuarantor = async (req, res) => {
   });
 
   if (guarantorData.isCompleted === 1) {
-    throw new CustomError.BadRequestError("Guarantor form already completed");
+    throw new CustomError.BadRequestError("Guarantor form already submitted");
   }
 
   if (!guarantorData || guarantorData.verificationToken !== verificationToken) {
@@ -769,20 +793,7 @@ const updateGuarantor = async (req, res) => {
 
     if (updatedGuarantor) {
       //UPDATE STEP STATUS guarantorStep BY ADDING ONE TO THE INITIAL ONE
-      const updateGuarantorStepForDash = await StepState.findOne({ user: guarantorData.user });
-      if (updateGuarantorStepForDash) {
-        const updateGuarantorStepForDashboard = await StepState.findOneAndUpdate(
-          { user: guarantorData.user },
-          {
-            guarantorStep: updateGuarantorStepForDash.guarantorStep + 1,
-          },
-          {
-            new: true,
-            runValidators: true,
-          }
-        );
-        console.log(updateGuarantorStepForDashboard);
-      }
+      // const updateGuarantorStepForDash = await StepState.findOne({ user: guarantorData.user });
 
       const checkGuarantorCompletion = await Guarantor.find({ user: guarantorData.user });
       console.log(checkGuarantorCompletion);
@@ -793,13 +804,34 @@ const updateGuarantor = async (req, res) => {
       console.log(confirmGuarantorCompletion);
       if (confirmGuarantorCompletion) {
         //Update guarantor step to completed IF both guarantors have completed their form
-        const updateGuarantorStep = await StepState.findOneAndUpdate(
+        await StepState.findOneAndUpdate(
           { user: guarantorData.user },
           {
             currentStep: 4,
             nextStep: 5,
             completed: true,
             completedStep: 3,
+          },
+          {
+            new: true,
+            runValidators: true,
+          }
+        );
+        await StepState.findOneAndUpdate(
+          { user: guarantorData.user },
+          {
+            guarantorStep: 2,
+          },
+          {
+            new: true,
+            runValidators: true,
+          }
+        );
+      } else {
+        await StepState.findOneAndUpdate(
+          { user: guarantorData.user },
+          {
+            guarantorStep: 1,
           },
           {
             new: true,

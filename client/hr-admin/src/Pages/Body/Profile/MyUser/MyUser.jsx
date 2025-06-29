@@ -1,8 +1,8 @@
 import React from "react";
 import { useGlobalContext } from "../../../../Context/userContext";
-import ProfileModal from "../../../../Components/ProfileModal";
-import EditUserModal from "../../../../Components/EditUserModal";
-import PageLoading from "../../../../Components/PageLoading";
+import ProfileModal from "../../../../Components/Modal/ProfileModal";
+import EditUserModal from "../../../../Components/Modal/EditUserModal";
+import PageLoading from "../../../../Components/Checks/PageLoading";
 import capitalizeFirstLetter from "../../../../Components/ToUpperCase";
 
 const MyUser = () => {

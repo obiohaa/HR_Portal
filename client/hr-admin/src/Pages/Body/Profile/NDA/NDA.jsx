@@ -1,8 +1,8 @@
 import React from "react";
 import { useGlobalContext } from "../../../../Context/userContext";
-import ProfileModal from "../../../../Components/ProfileModal";
+import ProfileModal from "../../../../Components/Modal/ProfileModal";
 import capitalizeFirstLetter from "../../../../Components/ToUpperCase";
-import AgreeModal from "../../../../Components/AgreeModal";
+import AgreeModal from "../../../../Components/Modal/AgreeModal";
 
 const NDA = () => {
   const { user, userStepState, isModalOpen } = useGlobalContext();

@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 import { axiosFetch } from "../../Utils/axiosFetch";
 import { useLocation, Link } from "react-router-dom";
-import PageLoading from "../../Components/PageLoading";
+import PageLoading from "../../Components/Checks/PageLoading";
 import ErrorPage from "../../Pages/Error/ErrorPage";
 
 //Query string to get the token and email

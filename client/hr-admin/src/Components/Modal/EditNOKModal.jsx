@@ -1,17 +1,17 @@
 import React, { useEffect } from "react";
-import "./component.css";
-import PageLoading from "./PageLoading";
+import "../component.css";
+import PageLoading from "../Checks/PageLoading";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { useGlobalContext } from "../Context/userContext";
+import { useGlobalContext } from "../../Context/userContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { axiosFetchFormData } from "../Utils/axiosFetch";
+import { axiosFetchFormData } from "../../Utils/axiosFetch";
 import { FaRegEyeSlash, FaRegEye, FaX } from "react-icons/fa6";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
 // import capitalizeFirstLetter from "../Components/ToUpperCase";
 
-import { genderOptions } from "../Components/UserData";
+import { genderOptions } from "../UserData";
 
 const EditNOKModal = ({ userNOK }) => {
   const { closeModal } = useGlobalContext();
