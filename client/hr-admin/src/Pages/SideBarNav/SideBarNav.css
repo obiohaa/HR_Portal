@@ -119,7 +119,7 @@
 }
 
 .nav-menu {
-  margin-top: 25px;
+  margin-top: 10px;
 }
 
 /*  */
@@ -198,6 +198,7 @@ a .dropdown {
 
 .menu-item:hover > .tooltip {
   display: block;
+  z-index: 999;
 }
 
 .tooltip {

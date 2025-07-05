@@ -1,26 +1,123 @@
-const User = require("../models/User");
-const BioData = require("../models/BioData");
-const StepState = require("../models/StepState");
-const Guarantor = require("../models/Guarantor");
-const NextOfKin = require("../models/NextOfKin");
-const finalNDA = require("../models/FinalNDA");
+const User = require("../../models/User");
+const BioData = require("../../models/BioData");
+const StepState = require("../../models/StepState");
+const Guarantor = require("../../models/Guarantor");
+const NextOfKin = require("../../models/NextOfKin");
+const finalNDA = require("../../models/FinalNDA");
 const { StatusCodes } = require("http-status-codes");
 const path = require("path");
-const CustomError = require("../errors");
+const CustomError = require("../../errors");
 const {
   createTokenUser,
   attachCookiesToResponse,
   checkPermissions,
   sendGuarantorEmailOne,
   sendGuarantorEmailTwo,
-} = require("../utils");
+} = require("../../utils");
 const cloudinary = require("cloudinary").v2;
 const crypto = require("crypto");
 const fs = require("fs");
 
+//get all users where role is admin
+const getAllAdminUsers = async (req, res) => {
+  const adminUsers = await User.find({ role: "admin" }).select(
+    "-password -passwordToken -verificationToken -passwordTokenExpirationDate -__v"
+  );
+  res.status(StatusCodes.OK).json({
+    msg: "Admin users generated",
+    adminUsers,
+    count: adminUsers.length,
+  });
+};
+//get all users where role is employee
 const getAllUsers = async (req, res) => {
-  const users = await User.find({ role: "user" }).select("-password");
-  res.status(StatusCodes.OK).json({ users });
+  const employeeUsers = await User.find({ role: "employee" }).select(
+    "-password -passwordToken -verificationToken -passwordTokenExpirationDate -__v"
+  );
+  res.status(StatusCodes.OK).json({
+    msg: "Employee users generated",
+    employeeUsers,
+    count: employeeUsers.length,
+  });
+};
+//get all bioData
+const getAllBioData = async (req, res) => {
+  const AllBioData = await BioData.find();
+  res.status(StatusCodes.OK).json({
+    msg: "Bio Data generated",
+    AllBioData,
+    count: AllBioData.length,
+  });
+};
+//get all next of kin
+const getAllNOK = async (req, res) => {
+  const AllNOK = await NextOfKin.find().populate({
+    path: "user",
+    select:
+      "-password -isVerified -passwordToken -verificationToken -passwordTokenExpirationDate -__v -_id -role -imgURL -active -email -createdAt -updatedAt -verified",
+  });
+  res.status(StatusCodes.OK).json({
+    msg: "Next of Kin generated",
+    AllNOK,
+    count: AllNOK.length,
+  });
+};
+
+//get all guarantors
+const getAllGuarantor = async (req, res) => {
+  const AllGuarantor = await Guarantor.find().sort({ user: 1 }).populate({
+    path: "user",
+    select:
+      "-password -isVerified -passwordToken -verificationToken -passwordTokenExpirationDate -__v -_id -role -imgURL -active -email -createdAt -updatedAt -verified",
+  });
+  res.status(StatusCodes.OK).json({
+    msg: "Guarantor generated",
+    AllGuarantor,
+    count: AllGuarantor.length,
+  });
+};
+
+//get all GuarantorOne
+const getAllGuarantorOne = async (req, res) => {
+  const AllGuarantorOne = await Guarantor.find({ guarantorOneEmail: { $exists: true } }).populate({
+    path: "user",
+    select:
+      "-password -isVerified -passwordToken -verificationToken -passwordTokenExpirationDate -__v -_id -role -imgURL -active -email -createdAt -updatedAt -verified",
+  });
+  res.status(StatusCodes.OK).json({
+    msg: "Guarantor One generated",
+    AllGuarantorOne,
+    count: AllGuarantorOne.length,
+  });
+};
+
+//get all guarantorTwo using email
+const getAllGuarantorTwo = async (req, res) => {
+  const AllGuarantorTwo = await Guarantor.find({ guarantorTwoEmail: { $exists: true } }).populate({
+    path: "user",
+    select:
+      "-password -isVerified -passwordToken -verificationToken -passwordTokenExpirationDate -__v -_id -role -imgURL -active -email -createdAt -updatedAt -verified",
+  });
+  res.status(StatusCodes.OK).json({
+    msg: "Guarantor Two generated",
+    AllGuarantorTwo,
+    count: AllGuarantorTwo.length,
+  });
+};
+
+//get all who has completed NDA
+const getAllNDA = async (req, res) => {
+  const AllNDA = await finalNDA.find().populate({
+    path: "user",
+    select:
+      "-password -isVerified -passwordToken -verificationToken -passwordTokenExpirationDate -__v -_id -role -imgURL -active -email -createdAt -updatedAt -verified",
+  });
+
+  res.status(StatusCodes.OK).json({
+    msg: "NDA Data generated",
+    AllNDA,
+    count: AllNDA.length,
+  });
 };
 
 const getSingleUser = async (req, res) => {
@@ -610,10 +707,6 @@ const guarantorUser = async (req, res) => {
   const { oneEmail, twoEmail } = req.body;
   console.log(oneEmail);
   console.log(twoEmail);
-
-  if (oneEmail === twoEmail) {
-    throw new CustomError.BadRequestError("Please provide two different emails");
-  }
   if (!oneEmail || !twoEmail) {
     throw new CustomError.BadRequestError("Please provide all values");
   }
@@ -669,6 +762,7 @@ const guarantorUser = async (req, res) => {
       const verificationToken = crypto.randomBytes(50).toString("hex");
       const guarantorOne = await Guarantor.create({
         guarantorOneEmail: oneEmail,
+        // guarantorTwoEmail: "",
         user: user,
         verificationToken: verificationToken,
       });
@@ -689,6 +783,7 @@ const guarantorUser = async (req, res) => {
       const verificationToken = crypto.randomBytes(50).toString("hex");
       console.log(twoEmail);
       const guarantorTwo = await Guarantor.create({
+        // guarantorOneEmail: "",
         guarantorTwoEmail: twoEmail,
         user: user,
         verificationToken: verificationToken,
@@ -922,7 +1017,6 @@ const finalAgreement = async (req, res) => {
 };
 
 module.exports = {
-  getAllUsers,
   getSingleUser,
   showCurrentUser,
   updateUser,
@@ -940,20 +1034,12 @@ module.exports = {
   updateBioData,
   getSingleNOK,
   updateNOKData,
+  getAllUsers,
+  getAllAdminUsers,
+  getAllBioData,
+  getAllNOK,
+  getAllGuarantorOne,
+  getAllGuarantorTwo,
+  getAllGuarantor,
+  getAllNDA,
 };
-
-// update user with findOneAndUpdate
-// const updateUser = async (req, res) => {
-//   const { email, name } = req.body;
-//   if (!email || !name) {
-//     throw new CustomError.BadRequestError('Please provide all values');
-//   }
-//   const user = await User.findOneAndUpdate(
-//     { _id: req.user.userId },
-//     { email, name },
-//     { new: true, runValidators: true }
-//   );
-//   const tokenUser = createTokenUser(user);
-//   attachCookiesToResponse({ res, user: tokenUser });
-//   res.status(StatusCodes.OK).json({ user: tokenUser });
-// };

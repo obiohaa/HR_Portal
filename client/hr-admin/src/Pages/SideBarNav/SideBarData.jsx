@@ -20,34 +20,56 @@ const AdminSideBar = [
   },
   {
     id: 2,
-    url: "/create-admins",
-    text: "Add Admins",
+    url: "#",
+    text: "Admins",
     icon: <FaChessKing />,
+    iconClosed: <FaAngleRight />,
+    subNav: [
+      {
+        id: 1,
+        url: "/add-admin",
+        text: "Add Admin",
+      },
+      {
+        id: 2,
+        url: "/admin-user",
+        text: "Admin Profile",
+      },
+    ],
   },
   {
     id: 3,
     url: "#",
-    text: "Users",
+    text: "Employees",
     icon: <FaUser />,
     iconClosed: <FaAngleRight />,
     subNav: [
       {
         id: 1,
-        url: "/admin-user",
-        text: "Admins",
+        url: "/admin-bioData",
+        text: "Bio Data",
       },
       {
         id: 2,
-        url: "/user",
-        text: "Employees",
+        url: "/admin-NOK",
+        text: "NOK",
+      },
+      {
+        id: 3,
+        url: "/admin-bioDataG_One",
+        text: "Guarantor One",
+      },
+      {
+        id: 4,
+        url: "/admin-bioDataG_One",
+        text: "Guarantor Two",
+      },
+      {
+        id: 5,
+        url: "/admin-bioDataG_One",
+        text: "NDA",
       },
     ],
-  },
-  {
-    id: 4,
-    url: "#",
-    text: "Profiles",
-    icon: <FaFilePowerpoint />,
   },
   {
     id: 5,

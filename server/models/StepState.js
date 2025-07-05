@@ -32,3 +32,4 @@ const StepStateSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("StepState", StepStateSchema);
+// By default, Mongoose discards fields not defined in the schema (strict: true by default) If you want to save undefined fields, explicitly allow it

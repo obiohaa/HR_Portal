@@ -18,6 +18,10 @@ import jobOpening from "./Pages/Body/JobOpening/Index.jsx";
 import BDJSONpdf from "../src/Components/PDF/BDJSONpdf.jsx";
 import NOKJSON from "../src/Components/PDF/NOKJSON.jsx";
 import ErrorPage from "./Pages/Error/ErrorPage.jsx";
+import RegisterAdmin from "./Pages/Register/RegisterAdmin.jsx";
+import AddAdmin from "./Pages/Body/Admin/AdminSide/index.jsx";
+import AdminBioData from "./Pages/Body/Admin/AdminBioData/index.jsx";
+import AdminNOK from "./Pages/Body/Admin/AdminNOK/index.jsx";
 
 function App() {
   return (
@@ -26,7 +30,9 @@ function App() {
       <Routes>
         <Route path="/login" exact Component={Login} />
         <Route path="/register" exact Component={Register} />
+        <Route path="/registerAdmin" exact Component={RegisterAdmin} />
         <Route path="/user/verify_email" exact Component={Verify_email} />
+        <Route path="/admin/verify_email" exact Component={Verify_email} />
         <Route path="/forgot_password" exact Component={Reset_Password} />
         <Route path="/user/reset_password" exact Component={Confirm_Password} />
         <Route path="/dashboard" exact Component={Dashboard} />
@@ -35,6 +41,10 @@ function App() {
         <Route path="/biodata" exact Component={bioDataProfile} />
         <Route path="/nextofkin" exact Component={nokProfile} />
         <Route path="/my_user" exact Component={myUserProfile} />
+        <Route path="/admin-user" exact Component={myUserProfile} />
+        <Route path="/add-admin" exact Component={AddAdmin} />
+        <Route path="/admin-bioData" exact Component={AdminBioData} />
+        <Route path="/admin-NOK" exact Component={AdminNOK} />
         <Route path="/nda" exact Component={ndaProfile} />
         <Route path="/job_opening" exact Component={jobOpening} />
         <Route path="/pdfPagebioDATA" exact Component={BDJSONpdf} />

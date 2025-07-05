@@ -169,17 +169,6 @@
   transform: scale(0.95);
 }
 
-.disabled {
-  outline: none;
-  border: none;
-  cursor: not-allowed;
-  font-family: inherit;
-  border-radius: 4px;
-  color: #000;
-  padding: 4px 40px;
-  background-color: #ddd;
-}
-
 /* FORM SECTION */
 .formsContainerBody {
   width: 100%;

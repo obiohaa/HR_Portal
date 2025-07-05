@@ -75,7 +75,10 @@ const GuarantorSchema = new mongoose.Schema(
       type: String,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
+  { strict: true }
 );
 
 module.exports = mongoose.model("Guarantor", GuarantorSchema);
+
+// By default, Mongoose discards fields not defined in the schema (strict: true by default) If you want to save undefined fields, explicitly allow it
