@@ -1,6 +1,8 @@
 import React from "react";
 
 export default function Checkbox({ name, value = false, updateValue = () => {}, children }) {
+  // console.log(name);
+  // console.log(value);
   // handle checkbox change
   const handleChange = () => {
     updateValue(!value, name);
@@ -19,7 +21,7 @@ export default function Checkbox({ name, value = false, updateValue = () => {}, 
         checked={value}
         onChange={handleChange}
       />
-      <label for={`${name}-checkbox`}>{children}</label>
+      <label htmlFor={`${name}-checkbox`}>{children}</label>
     </div>
   );
 }

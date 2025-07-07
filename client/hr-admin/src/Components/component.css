@@ -84,11 +84,19 @@
 
 .profile-modal-container {
   width: 100%;
-
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 200px auto;
+  transition: all 0.5s ease-in-out;
+}
+
+.table-modal-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 50px auto;
   transition: all 0.5s ease-in-out;
 }
 
@@ -316,3 +324,16 @@
   transform: scale(0.95);
 }
 /* END PDF */
+
+/* NO DATA */
+.noJobContainer {
+  display: flex;
+  height: auto;
+  width: 100%;
+  margin: 0 auto;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: red;
+}
+/* END NO DATA */
