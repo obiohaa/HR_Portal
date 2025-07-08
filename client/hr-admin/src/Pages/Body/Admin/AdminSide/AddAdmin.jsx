@@ -1,30 +1,34 @@
-import React, { useState, useRef } from "react";
-import { FaSistrix, FaArrowsUpDownLeftRight } from "react-icons/fa6";
+import React, { useState, useRef, useEffect } from "react";
+import {
+  FaSistrix,
+  FaArrowsUpDownLeftRight,
+  FaRegEye,
+  FaPencil,
+  FaTrashCan,
+} from "react-icons/fa6";
 import { useGlobalContext } from "../../../../Context/userContext";
 import AddAdminModal from "../../../../Components/Modal/AddAdminModal";
+import DeleteAdminModal from "../../../../Components/Modal/DeleteAdminModal";
 import Checkbox from "../../../../Components/CheckBoxTest";
-// import Pagination from "./Pagination";
 import { useQuery } from "@tanstack/react-query";
 import { axiosFetch } from "../../../../Utils/axiosFetch";
 import PageLoading from "../../../../Components/Checks/PageLoading";
 import capitalizeFirstLetter from "../../../../Components/ToUpperCase";
 import ReactPaginate from "react-paginate";
 import NoData from "../../../../Components/Modal/NoData";
-import { FaRegEye, FaPencil, FaTrashCan } from "react-icons/fa6";
 
 const AddAdmin = () => {
   const [selected, setSelected] = useState([]);
-  // const [showOptions, setShowOptions] = useState(false);
-  // const [selectedItem, setSelectedItem] = useState(null);
   const [selectedItemId, setSelectedItemId] = useState(null);
-  const { openModal, isModalOpen } = useGlobalContext();
+  const { openModal, isModalOpen, openDelModal, isDeleteModalOpen } = useGlobalContext();
   const [paginationData, setPaginationData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  // const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
-  const tableRef = useRef(null);
+  const [deleteWho, setDeleteWho] = useState(null);
+  const modalRef = useRef(null);
 
+  //GET ALL ADMIN USERS
   const { data, isLoading } = useQuery({
-    queryKey: ["addAdmin"],
+    queryKey: ["registerAdmin"],
     retryOnMount: true, //do not retry on mount
     refetchOnWindowFocus: false, //do not refetch on window focus
     refetchOnReconnect: false, //do not refetch on reconnect
@@ -33,11 +37,15 @@ const AddAdmin = () => {
     refetchIntervalInBackground: false, //do not refetch in background
     queryFn: async () => {
       const { data } = await axiosFetch.get("/admins/getAllAdminUsers");
-      // console.log(data.adminUsers);
+      console.log(data.adminUsers);
       setPaginationData(data.adminUsers);
       return data;
     },
   });
+  //END GET ALL ADMIN USERS
+  //DELETE ADMIN USERS
+
+  //END DELETE ADMIN USERS
 
   // SEARCH SECTION
   const handleSearch = (e) => {
@@ -48,6 +56,8 @@ const AddAdmin = () => {
       (results) => results.firstName.includes(query) || results.lastName.includes(query)
     );
     setPaginationData(filterQuery);
+    //Controls what page to display when you search, in this case page 1
+    setItemOffset(0);
   };
   // END SEARCH SECTION
 
@@ -92,31 +102,49 @@ const AddAdmin = () => {
     }
   }
   // END CHECKBOX SECTION
-  // OPTIONS CLICK FOR EACH ITEM
 
-  // END OPTIONS CLICK FOR EACH ITEM
+  //USE EFFECT FUNCTION TO MAKE THE OPEN OPTIONS CLOSE ON MOUSE DOWN OR ON CLICK.
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setSelectedItemId(null);
+      }
+    };
 
-  // useEffect(() => {
-  //   const closeMenu = () => setSelectedItemId(null);
-  //   window.addEventListener("click", closeMenu);
-  //   return () => window.removeEventListener("click", closeMenu);
-  // }, []);
+    if (selectedItemId !== null) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [selectedItemId]);
+
+  //END USE EFFECT FUNCTION TO MAKE THE OPEN OPTIONS CLOSE ON MOUSE DOWN OR ON CLICK.
+
+  // HANDLE DELETE
+  const handleSingleDelete = (id) => {
+    console.log(id);
+    setDeleteWho(id);
+    setSelectedItemId(null);
+    openDelModal();
+  };
+  const handleMultiDelete = () => {
+    openDelModal();
+    console.log(selected);
+  };
+
+  // END HANDLE DELETE
 
   if (isLoading) {
     return <PageLoading />;
   }
 
-  console.log(selectedItemId);
-
   return (
     <div className="bioDataProfileContainer">
       {isModalOpen && <AddAdminModal />}
-      <div
-        className="addAdminBody"
-        // onClick={(e) => {
-        //   if (e.target.className === "addAdminBody") setShowOptions(false);
-        // }}
-      >
+      {isDeleteModalOpen && <DeleteAdminModal id={deleteWho} />}
+      <div className="addAdminBody">
         <div className="addAdminControl">
           <div className="searchBar">
             <FaSistrix className="searchIcon" />
@@ -132,7 +160,10 @@ const AddAdmin = () => {
             <button className="btnAdmin" disabled={selected && selected.length == 0}>
               Status
             </button>
-            <button className="btnAdmin" disabled={selected && selected.length == 0}>
+            <button
+              className="btnAdmin"
+              disabled={selected && selected.length == 0}
+              onClick={handleMultiDelete}>
               Delete
             </button>
             <button className="btnAdmin" onClick={openModal}>
@@ -186,7 +217,7 @@ const AddAdmin = () => {
                             {item.active.toString()}
                           </div>
                         </td>
-                        <td>{item.verified.split("T")[0]}</td>
+                        <td>{item.createdAt.split("T")[0]}</td>
                         <td>
                           <div className={item.isVerified ? "tagGreen" : "tagRed"}>
                             {item.isVerified.toString()}
@@ -202,9 +233,10 @@ const AddAdmin = () => {
 
                           {selectedItemId === item._id && (
                             <div
+                              ref={modalRef}
                               style={{
                                 position: "absolute",
-                                top: "-30%",
+                                top: "-100%",
                                 right: "60%",
                                 transform: "translateY(-50%)",
                                 backgroundColor: "#fff",
@@ -226,7 +258,9 @@ const AddAdmin = () => {
                                 {" "}
                                 <FaPencil /> Edit
                               </button>
-                              <button className="sideButton">
+                              <button
+                                className="sideButton"
+                                onClick={() => handleSingleDelete(item._id)}>
                                 {" "}
                                 <FaTrashCan /> Delete
                               </button>

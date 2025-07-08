@@ -11,7 +11,7 @@ import { FaRegEyeSlash, FaRegEye, FaX } from "react-icons/fa6";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
 
 const AddAdminModal = () => {
-  const { closeModal, saveUser } = useGlobalContext();
+  const { closeModal } = useGlobalContext();
   const [showPassword, setShowPassword] = useState(false);
   const [imgName, setImgName] = useState(null);
   const [imgError, setImgError] = useState({ msg: "" });
@@ -30,18 +30,16 @@ const AddAdminModal = () => {
 
   //Using react query to handle the API call
   const queryClient = useQueryClient();
-  const { mutate: updateUserProfile, isLoading } = useMutation({
-    mutationFn: async (updateUserProfile) =>
-      axiosFetchFormData.patch("/users/updateUser", updateUserProfile),
+  const { mutate: regUser, isLoading } = useMutation({
+    mutationFn: async (regUser) => axiosFetchFormData.post("/adminAuth/register", regUser),
     onSuccess: (data) => {
-      saveUser(data.data.user);
+      queryClient.invalidateQueries({ queryKey: ["registerAdmin"] });
       reset();
       setImgName(null);
       closeModal();
-      queryClient.invalidateQueries({ queryKey: ["currentUser", "bioDataKey"] });
-      toast.success(data.data.steps.msg, {
+      toast.success(data.data.msg, {
         position: "top-center",
-        autoClose: 5000,
+        autoClose: 8000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
@@ -49,13 +47,11 @@ const AddAdminModal = () => {
         progress: undefined,
         className: "toastGood",
       });
-      //   reset();
-      //   setFileName(null);
     },
     onError: (error) => {
       toast.error(error.response.data.msg, {
         position: "top-center",
-        autoClose: 5000,
+        autoClose: 8000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
@@ -75,7 +71,7 @@ const AddAdminModal = () => {
         formData.append("file", imgName);
         formData.append("body", JSON.stringify(values));
         console.log(formData);
-        updateUserProfile(formData);
+        regUser(formData);
         // reset();
       }
     } catch (error) {

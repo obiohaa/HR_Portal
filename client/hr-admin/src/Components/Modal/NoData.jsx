@@ -17,7 +17,9 @@ const NoData = () => {
           <div className="modalContent">
             <div className="contentM">
               <BadMark />
-              <p>No record found. Please contact your IT Admin for more information.</p>
+              <p>
+                No record found here. Go to page 1 or contact your IT Admin for more information.
+              </p>
             </div>
           </div>
         </div>

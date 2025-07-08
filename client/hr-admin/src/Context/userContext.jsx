@@ -12,6 +12,7 @@ const AppProvider = ({ children }) => {
   const [isBarOpen, setIsBarOpen] = useState(true);
   const [DropDownOpen, setDropDownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [userStepState, setUserStepState] = useState();
 
   const saveUser = (user) => {
@@ -27,11 +28,21 @@ const AppProvider = ({ children }) => {
   };
 
   const openModal = () => {
+    setIsDeleteModalOpen(false);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const openDelModal = () => {
+    setIsModalOpen(false);
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDelModal = () => {
+    setIsDeleteModalOpen(false);
   };
 
   useQuery({
@@ -68,6 +79,9 @@ const AppProvider = ({ children }) => {
         openModal,
         closeModal,
         isModalOpen,
+        openDelModal,
+        closeDelModal,
+        isDeleteModalOpen,
       }}>
       {children}
     </AppContext.Provider>

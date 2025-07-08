@@ -337,3 +337,17 @@
   background-color: red;
 }
 /* END NO DATA */
+
+/* DELETE ADMIN MODAL */
+.noticeButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.noticeWords {
+  text-align: center;
+  margin: 20px 0;
+}
+/* END DELETE ADMIN MODAL */
