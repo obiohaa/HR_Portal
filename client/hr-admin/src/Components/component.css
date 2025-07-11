@@ -125,7 +125,7 @@
 .infoModal {
   position: relative;
   border-radius: 8px;
-  padding: 2rem;
+  padding: 1.5rem;
   background-color: white;
   /* width: 40em; */
   width: 50%;
@@ -144,9 +144,10 @@
   transition: all 0.5s ease-in-out;
 }
 
-.container > h3,
-.intro {
+.container,
+.container > h3 {
   text-align: center;
+  margin-top: 5px;
 }
 
 .guarantorList {

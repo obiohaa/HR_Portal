@@ -23,7 +23,6 @@ const AddAdmin = () => {
   const { openModal, isModalOpen, openDelModal, isDeleteModalOpen } = useGlobalContext();
   const [paginationData, setPaginationData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [deleteWho, setDeleteWho] = useState(null);
   const modalRef = useRef(null);
 
   //GET ALL ADMIN USERS
@@ -39,6 +38,8 @@ const AddAdmin = () => {
       const { data } = await axiosFetch.get("/admins/getAllAdminUsers");
       console.log(data.adminUsers);
       setPaginationData(data.adminUsers);
+      setSelected([]);
+      setItemOffset(0);
       return data;
     },
   });
@@ -123,19 +124,24 @@ const AddAdmin = () => {
   //END USE EFFECT FUNCTION TO MAKE THE OPEN OPTIONS CLOSE ON MOUSE DOWN OR ON CLICK.
 
   // HANDLE DELETE
-  const handleSingleDelete = (id) => {
-    console.log(id);
-    setDeleteWho(id);
-    setSelectedItemId(null);
+  const handleDelete = (id) => {
     openDelModal();
+    const arrayTest = [];
+    arrayTest.push(id);
+    // console.log(arrayTest);
+    setSelected(arrayTest);
+    setSelectedItemId(null);
   };
+
   const handleMultiDelete = () => {
     openDelModal();
-    console.log(selected);
+    //we can put this empty array outside this function...
+    // console.log(selected);
+    setSelectedItemId(null);
   };
 
   // END HANDLE DELETE
-
+  // console.log(selected);
   if (isLoading) {
     return <PageLoading />;
   }
@@ -143,7 +149,7 @@ const AddAdmin = () => {
   return (
     <div className="bioDataProfileContainer">
       {isModalOpen && <AddAdminModal />}
-      {isDeleteModalOpen && <DeleteAdminModal id={deleteWho} />}
+      {isDeleteModalOpen && <DeleteAdminModal deletedItem={selected} />}
       <div className="addAdminBody">
         <div className="addAdminControl">
           <div className="searchBar">
@@ -258,9 +264,7 @@ const AddAdmin = () => {
                                 {" "}
                                 <FaPencil /> Edit
                               </button>
-                              <button
-                                className="sideButton"
-                                onClick={() => handleSingleDelete(item._id)}>
+                              <button className="sideButton" onClick={() => handleDelete(item._id)}>
                                 {" "}
                                 <FaTrashCan /> Delete
                               </button>

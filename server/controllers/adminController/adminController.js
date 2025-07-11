@@ -120,6 +120,31 @@ const getAllNDA = async (req, res) => {
   });
 };
 
+//DELETE USER
+const deleteUser = async (req, res) => {
+  const deleteThisItem = req.body.ids;
+  const neverDelete = "686177da71064b4821e19289"; //Protected Admin Id
+
+  if (deleteThisItem.includes(neverDelete)) {
+    throw new CustomError.BadRequestError("You cannot delete Administrator");
+  }
+  //$in matches document where _id match (or is in) any of the values in array filteredArray
+  //can also be used in array of objects
+  try {
+    const result = await User.deleteMany({
+      _id: { $in: deleteThisItem },
+    });
+    if (result.deletedCount === 0) {
+      throw new CustomError.BadRequestError("No user were deleted");
+    }
+    res.status(StatusCodes.OK).json({ msg: "Success! User(s) deleted" });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
+  }
+};
+
+//UPDATE USER STATUS
+//////////////////////////////////////////////////////////
 const getSingleUser = async (req, res) => {
   console.log(req.params.id);
   const user = await User.findOne({ _id: req.params.id });
@@ -1042,4 +1067,5 @@ module.exports = {
   getAllGuarantorTwo,
   getAllGuarantor,
   getAllNDA,
+  deleteUser,
 };

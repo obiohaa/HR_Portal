@@ -10,6 +10,7 @@ const {
   getAllGuarantorTwo,
   getAllGuarantor,
   getAllNDA,
+  deleteUser,
 } = require("../controllers/adminController/adminController");
 
 router.route("/getAllUsers").get(authenticateUser, authorizePermissions("admin"), getAllUsers);
@@ -28,6 +29,8 @@ router
 router
   .route("/getAllAdminUsers")
   .get(authenticateUser, authorizePermissions("admin"), getAllAdminUsers);
+
+router.route("/deleteUser").delete(authenticateUser, authorizePermissions("admin"), deleteUser);
 
 ///////////////////////////////////////////////////////
 // router.route("/showMe").get(authenticateUser, showCurrentUser);
