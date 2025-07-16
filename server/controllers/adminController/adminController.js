@@ -20,9 +20,11 @@ const fs = require("fs");
 
 //get all users where role is admin
 const getAllAdminUsers = async (req, res) => {
-  const adminUsers = await User.find({ role: "admin" }).select(
-    "-password -passwordToken -verificationToken -passwordTokenExpirationDate -__v"
-  );
+  const excludedAdminId = "686177da71064b4821e19289";
+  //_id: { $ne: excludedAdminId }
+  const adminUsers = await User.find({ role: "admin" })
+    .select("-password -passwordToken -verificationToken -passwordTokenExpirationDate -__v")
+    .sort({ createdAt: -1 });
   res.status(StatusCodes.OK).json({
     msg: "Admin users generated",
     adminUsers,
@@ -31,9 +33,9 @@ const getAllAdminUsers = async (req, res) => {
 };
 //get all users where role is employee
 const getAllUsers = async (req, res) => {
-  const employeeUsers = await User.find({ role: "employee" }).select(
-    "-password -passwordToken -verificationToken -passwordTokenExpirationDate -__v"
-  );
+  const employeeUsers = await User.find({ role: "employee" })
+    .select("-password -passwordToken -verificationToken -passwordTokenExpirationDate -__v")
+    .sort({ createdAt: -1 });
   res.status(StatusCodes.OK).json({
     msg: "Employee users generated",
     employeeUsers,
@@ -42,12 +44,175 @@ const getAllUsers = async (req, res) => {
 };
 //get all bioData
 const getAllBioData = async (req, res) => {
-  const AllBioData = await BioData.find();
+  const AllBioData = await BioData.find()
+    .sort({ createdAt: -1 })
+    .select("-user -createdAt -updatedAt -__v");
   res.status(StatusCodes.OK).json({
     msg: "Bio Data generated",
     AllBioData,
     count: AllBioData.length,
   });
+};
+//get all bio data per user
+const getAllBioDataPerUser = async (req, res) => {
+  const AllBioDataPerUser = await BioData.find({ _id: req.params.id })
+    .sort({ createdAt: -1 })
+    .select("-user -createdAt -updatedAt -__v");
+  res.status(StatusCodes.OK).json({
+    msg: "Bio Data generated",
+    AllBioDataPerUser,
+    count: AllBioDataPerUser.length,
+  });
+};
+
+//UPDATE BIO DATA PER USER
+const updateOneBioData = async (req, res) => {
+  const {
+    firstName,
+    lastName,
+    middleName,
+    dateOfBirth,
+    state_of_origin,
+    gender,
+    maritalStatus,
+    houseAddress,
+    phoneNumber,
+    bankName,
+    bankAccountNumber,
+    pension,
+    levelOfEducation,
+    spouseName,
+    pensionCompany,
+    pensionPin,
+    email,
+    id,
+  } = JSON.parse(req.body.body);
+  // console.log(JSON.parse(req.body.body));
+  if (
+    !firstName ||
+    !lastName ||
+    !dateOfBirth ||
+    !state_of_origin ||
+    !gender ||
+    !maritalStatus ||
+    !houseAddress ||
+    !phoneNumber ||
+    !email ||
+    !bankName ||
+    !bankAccountNumber ||
+    !pension ||
+    !levelOfEducation
+  ) {
+    throw new CustomError.BadRequestError("Please provide all values");
+  }
+  let updatedUserBioData = JSON.parse(req.body.body);
+  // console.log(req.user);
+  const user = await BioData.findOne({ _id: updatedUserBioData.id });
+  if (!user) {
+    throw new CustomError.BadRequestError("Bio Data does not exist");
+  }
+
+  // IF FILE EXIST, RUN FILE FUNCTIONALITY
+  console.log(req.files);
+  if (req.files) {
+    const userFile = req.files.file;
+    if (!userFile.mimetype.startsWith("application")) {
+      throw new CustomError.BadRequestError("Please upload a PDF or Doc File");
+    }
+    const maxSize = 5000000;
+    if (userFile.size > maxSize) {
+      throw new CustomError.BadRequestError("Please upload file smaller than 5MB");
+    }
+
+    try {
+      //move to a local folder
+      // const filePath = path.join(__dirname, "../public/fileUploads/" + `${userFile.name}`);
+      // await userFile.mv(filePath);
+      // return res.status(StatusCodes.OK).json({ file: { src: `/fileUploads/${userFile.name}` } });
+
+      //Upload to cloudinary
+      const result = await cloudinary.uploader.upload(req.files.file.tempFilePath, {
+        use_filename: true,
+        folder: "HR_ADMIN_PORTAL",
+      });
+      console.log(result);
+      //unlink/delete the file
+      fs.unlinkSync(userFile.tempFilePath);
+
+      const mainUserBioData = {
+        ...updatedUserBioData,
+        UserFileUrl: result.secure_url,
+      };
+
+      const updatedMainUserBioData = await BioData.findOneAndUpdate(
+        { _id: updatedUserBioData.id },
+        {
+          ...mainUserBioData,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+      console.log(updatedMainUserBioData);
+      const updateUserData = await User.findOneAndUpdate(
+        { email: updatedUserBioData.email },
+        {
+          firstName: updatedMainUserBioData.firstName,
+          lastName: updatedMainUserBioData.lastName,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+      console.log(updateUserData);
+
+      return res.status(StatusCodes.OK).json({
+        msg: "Bio Data Updated",
+      });
+    } catch (error) {
+      throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
+    }
+  } else {
+    try {
+      const mainUserBioData = {
+        ...updatedUserBioData,
+      };
+      //
+      console.log(mainUserBioData);
+      const updatedMainUserBioData = await BioData.findOneAndUpdate(
+        { _id: updatedUserBioData.id },
+        {
+          ...mainUserBioData,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+      console.log(updatedMainUserBioData);
+
+      const updateUserData = await User.findOneAndUpdate(
+        { email: updatedUserBioData.email },
+        {
+          firstName: updatedMainUserBioData.firstName,
+          lastName: updatedMainUserBioData.lastName,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+      console.log(updateUserData);
+
+      return res.status(StatusCodes.OK).json({
+        msg: "Bio Data Updated",
+      });
+    } catch (error) {
+      throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
+    }
+  }
 };
 //get all next of kin
 const getAllNOK = async (req, res) => {
@@ -143,7 +308,129 @@ const deleteUser = async (req, res) => {
   }
 };
 
-//UPDATE USER STATUS
+//UPDATE USER STATUS, ACTIVE OR INACTIVE
+const updateStatus = async (req, res) => {
+  console.log(req.body.data);
+
+  const updateThisStatus = req.body.data;
+  const neverUpdate = "686177da71064b4821e19289"; //Protected Admin Id
+
+  if (updateThisStatus.includes(neverUpdate)) {
+    throw new CustomError.BadRequestError("You cannot update Administrator");
+  }
+  //$in matches document where _id match (or is in) any of the values in array filteredArray
+  //can also be used in array of objects
+  try {
+    // Get users whose status should be toggled
+    const users = await User.find({ _id: { $in: updateThisStatus } });
+    console.log(users);
+    // Toggle each user's active status and update them
+    const updateAdminUserStatus = users.map((user) =>
+      User.findByIdAndUpdate(user._id, { active: !user.active }, { new: true, runValidators: true })
+    );
+    //update all users concurrently. Collect all these individual promises into an array or takes an iterable (like an array) of promises and returns a single Promise. This returned Promise resolves when all the input promises have resolved, or rejects as soon as any of the input promises reject.
+    await Promise.all(updateAdminUserStatus);
+
+    res.status(StatusCodes.OK).json({ msg: "Success! User(s) status toggled" });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin: " + error.message);
+  }
+};
+
+//EDIT SINGLE USER
+const editUser = async (req, res) => {
+  // console.log(req.body.body);
+  const { firstName, lastName, email, isVerified } = JSON.parse(req.body.body);
+  if (!firstName || !lastName || !email) {
+    throw new CustomError.BadRequestError("Please provide all values");
+  }
+
+  if (email === "chukwuebuka.obi@theplace.com.ng" || email === "administrator@theplace.com.ng") {
+    throw new CustomError.BadRequestError("You cannot edit Administrator");
+  }
+
+  const user = await User.findOne({ email: email });
+  console.log(user);
+  if (!user) {
+    throw new CustomError.BadRequestError("User does not exist");
+  }
+
+  try {
+    //IF FILES/IMAGE IS UPLOADED
+    if (req.files) {
+      const UpdatedFile = req.files.file;
+
+      if (!UpdatedFile.mimetype.startsWith("image")) {
+        throw new CustomError.BadRequestError("Please upload an Image File");
+      }
+      const maxSize = 5000000;
+      if (UpdatedFile.size > maxSize) {
+        throw new CustomError.BadRequestError("Please upload file smaller than 5MB");
+      }
+
+      //Upload to cloudinary
+      const resultUpdatedFile = await cloudinary.uploader.upload(UpdatedFile.tempFilePath, {
+        use_filename: true,
+        folder: "HR_ADMIN_PORTAL",
+      });
+
+      //unlink/delete the file
+      fs.unlinkSync(UpdatedFile.tempFilePath);
+
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.email = email;
+      user.isVerified = isVerified;
+      user.imgURL = resultUpdatedFile.secure_url;
+
+      await user.save();
+
+      if (user.role === "employee") {
+        await BioData.findOneAndUpdate(
+          { email: email },
+          {
+            firstName: firstName,
+            lastName: lastName,
+          },
+          {
+            new: true,
+            runValidators: true,
+          }
+        );
+      }
+      // const tokenUser = createTokenUser(user);
+      // attachCookiesToResponse({ res, user: tokenUser });
+      res.status(StatusCodes.OK).json({ msg: "User details updated" });
+    } else {
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.email = email;
+      user.isVerified = isVerified;
+
+      await user.save();
+
+      if (user.role === "employee") {
+        await BioData.findOneAndUpdate(
+          { email: email },
+          {
+            firstName: firstName,
+            lastName: lastName,
+          },
+          {
+            new: true,
+            runValidators: true,
+          }
+        );
+      }
+
+      // const tokenUser = createTokenUser(user);
+      // attachCookiesToResponse({ res, user: tokenUser });
+      res.status(StatusCodes.OK).json({ msg: "User details updated" });
+    }
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
+  }
+};
 //////////////////////////////////////////////////////////
 const getSingleUser = async (req, res) => {
   console.log(req.params.id);
@@ -1068,4 +1355,8 @@ module.exports = {
   getAllGuarantor,
   getAllNDA,
   deleteUser,
+  updateStatus,
+  editUser,
+  getAllBioDataPerUser,
+  updateOneBioData,
 };

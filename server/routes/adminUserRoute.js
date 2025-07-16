@@ -11,6 +11,10 @@ const {
   getAllGuarantor,
   getAllNDA,
   deleteUser,
+  updateStatus,
+  editUser,
+  getAllBioDataPerUser,
+  updateOneBioData,
 } = require("../controllers/adminController/adminController");
 
 router.route("/getAllUsers").get(authenticateUser, authorizePermissions("admin"), getAllUsers);
@@ -31,7 +35,15 @@ router
   .get(authenticateUser, authorizePermissions("admin"), getAllAdminUsers);
 
 router.route("/deleteUser").delete(authenticateUser, authorizePermissions("admin"), deleteUser);
+router.route("/updateStatus").patch(authenticateUser, authorizePermissions("admin"), updateStatus);
+router.route("/adminEditUser").patch(authenticateUser, authorizePermissions("admin"), editUser);
+router
+  .route("/updateOneBioData")
+  .patch(authenticateUser, authorizePermissions("admin"), updateOneBioData);
 
+router
+  .route("/getAllBioDataPerUser/:id")
+  .get(authenticateUser, authorizePermissions("admin"), getAllBioDataPerUser);
 ///////////////////////////////////////////////////////
 // router.route("/showMe").get(authenticateUser, showCurrentUser);
 // router.route("/updateUser").patch(authenticateUser, updateUser);

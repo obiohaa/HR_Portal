@@ -27,13 +27,13 @@ const AdminSideBar = [
     subNav: [
       {
         id: 1,
-        url: "/add-admin",
-        text: "Add Admin",
+        url: "/admin-user",
+        text: "Admin Profile",
       },
       {
         id: 2,
-        url: "/admin-user",
-        text: "Admin Profile",
+        url: "/add-admin",
+        text: "Add Admin",
       },
     ],
   },
@@ -46,24 +46,29 @@ const AdminSideBar = [
     subNav: [
       {
         id: 1,
+        url: "/admin-employee",
+        text: "Employee",
+      },
+      {
+        id: 2,
         url: "/admin-bioData",
         text: "Bio Data",
       },
       {
-        id: 2,
+        id: 3,
         url: "/admin-NOK",
         text: "NOK",
       },
       {
-        id: 3,
-        url: "/admin-bioDataG_One",
-        text: "Guarantor One",
-      },
-      {
         id: 4,
-        url: "/admin-bioDataG_One",
-        text: "Guarantor Two",
+        url: "/admin-guarantor",
+        text: "Guarantor",
       },
+      // {
+      //   id: 5,
+      //   url: "/admin-bioDataG_One",
+      //   text: "Guarantor Two",
+      // },
       {
         id: 5,
         url: "/admin-bioDataG_One",

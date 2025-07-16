@@ -13,12 +13,14 @@ import { MdCloudUpload, MdDelete } from "react-icons/md";
 
 import { stateCapital, genderOptions, maritalStatus, pension, levelOfEducation } from "../UserData";
 
-const EditBioDataModal = ({ userBio }) => {
-  const { closeModal, saveUser } = useGlobalContext();
+const EditEmployeeBioModal = ({ editUser }) => {
+  console.log(editUser);
+  const { closeEditModal } = useGlobalContext();
   const [fileName, setFileName] = useState(null);
   const [fileError, setFileError] = useState({ msg: "" });
   const [marriageStatus, setMarriageStatus] = useState("");
   const [pensionStatus, setPensionStatus] = useState("");
+  // const [updateData, setUpdateData] = useState("");
 
   const {
     register,
@@ -28,19 +30,58 @@ const EditBioDataModal = ({ userBio }) => {
     setError,
   } = useForm({});
 
-  //Using react query to handle the API call
+  //GET THE BIO DATA RECORD
+  // const { isLoading: Loading, error } = useQuery({
+  //   queryKey: ["adminBioDataOneKey"],
+  //   retryOnMount: true, //do not retry on mount
+  //   refetchOnWindowFocus: false, //do not refetch on window focus
+  //   refetchOnReconnect: true, //do not refetch on reconnect
+  //   refetchOnMount: true, //do not refetch on mount
+  //   refetchInterval: false, //do not refetch at intervals
+  //   refetchIntervalInBackground: false, //do not refetch in background
+  //   queryFn: async () => {
+  //     const { data } = await axiosFetch.get("/admins/getAllBioDataPerUser/" + editUser._id);
+  //     setUpdateData(data.AllBioDataPerUser[0]);
+  //     setPensionStatus(data.AllBioDataPerUser[0].pension);
+  //     setMarriageStatus(data.AllBioDataPerUser[0].maritalStatus);
+  //     return data;
+  //   },
+  // });
+
+  // console.log(error);
+  // if (error) {
+  //   toast.error(
+  //     <div>
+  //       <span>
+  //         {error.response ? error.response.data.msg : "Something went wrong contact Admin"}
+  //       </span>
+  //     </div>,
+  //     {
+  //       position: "top-center",
+  //       autoClose: 8000,
+  //       hideProgressBar: true,
+  //       closeOnClick: false,
+  //       pauseOnHover: true,
+  //       draggable: true,
+  //       progress: undefined,
+  //       className: "toastBad",
+  //     }
+  //   );
+  // }
+
+  //Using react query to handle the API call to post updated BIO DATA
   const queryClient = useQueryClient();
   const { mutate: updateBioData, isLoading } = useMutation({
     mutationFn: async (updateBioData) =>
-      axiosFetchFormData.patch("/users/updateBioData", updateBioData),
+      axiosFetchFormData.patch("/admins/updateOneBioData", updateBioData),
     onSuccess: (data) => {
       console.log(data.data.user);
-      saveUser(data.data.user);
-      reset();
-      setFileName(null);
-      closeModal();
-      queryClient.invalidateQueries({ queryKey: ["bioDataKey", "currentUser"] });
-      toast.success(data.data.updateBio.msg, {
+      closeEditModal();
+      //   reset();
+      //   setFileName(null);
+      //   closeEditModal()
+      queryClient.invalidateQueries({ queryKey: ["adminBioDataOneKey"] });
+      toast.success(data.msg, {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: true,
@@ -68,6 +109,7 @@ const EditBioDataModal = ({ userBio }) => {
   });
 
   const onSubmit = async (values) => {
+    values.id = editUser._id;
     try {
       if (fileName && fileName.size > 5000000) {
         setFileError({ msg: "File size must be less than 5MB" });
@@ -77,7 +119,6 @@ const EditBioDataModal = ({ userBio }) => {
         formData.append("body", JSON.stringify(values));
         console.log(formData);
         updateBioData(formData);
-        // reset();
       }
     } catch (error) {
       console.log(error);
@@ -87,28 +128,30 @@ const EditBioDataModal = ({ userBio }) => {
       });
     }
   };
-
+  //   console.log(updateData);
   useEffect(() => {
+    setPensionStatus(editUser.pension);
+    setMarriageStatus(editUser.maritalStatus);
     reset({
-      firstName: userBio.firstName,
-      lastName: userBio.lastName,
-      middleName: userBio.middleName,
-      bankAccountNumber: userBio.bankAccountNumber,
-      bankName: userBio.bankName,
-      dateOfBirth: userBio.dateOfBirth.split("T")[0],
-      email: userBio.email,
-      gender: userBio.gender,
-      houseAddress: userBio.houseAddress,
-      maritalStatus: userBio.maritalStatus,
-      pension: userBio.pension,
-      phoneNumber: userBio.phoneNumber,
-      state_of_origin: userBio.state_of_origin,
-      spouseName: userBio.spouseName,
-      pensionCompany: userBio.pensionCompany,
-      pensionPin: userBio.pensionPin,
-      levelOfEducation: userBio.levelOfEducation,
+      firstName: editUser ? editUser.firstName : "firstName",
+      lastName: editUser ? editUser.lastName : "lastName",
+      middleName: editUser ? editUser.middleName : "middleName",
+      bankAccountNumber: editUser ? editUser.bankAccountNumber : "Bank Account Number",
+      bankName: editUser ? editUser.bankName : "Bank Name",
+      dateOfBirth: editUser ? editUser.dateOfBirth.split("T")[0] : "Date Of Birth",
+      email: editUser ? editUser.email : "email",
+      gender: editUser ? editUser.gender : "gender",
+      houseAddress: editUser ? editUser.houseAddress : "House Address",
+      maritalStatus: editUser ? editUser.maritalStatus : "Marital Status",
+      pension: editUser ? editUser.pension : "pension",
+      phoneNumber: editUser ? editUser.phoneNumber : "Phone Number",
+      state_of_origin: editUser ? editUser.state_of_origin : "State",
+      spouseName: editUser ? editUser.spouseName : "Spouse Name",
+      pensionCompany: editUser ? editUser.pensionCompany : "Pension Company",
+      pensionPin: editUser ? editUser.pensionPin : "Pension Pin",
+      levelOfEducation: editUser ? editUser.levelOfEducation : "Level Of Education",
     });
-  }, [reset, userBio]);
+  }, [reset, editUser]);
 
   //handles marriage status state
   const handleChange = (event) => {
@@ -121,14 +164,14 @@ const EditBioDataModal = ({ userBio }) => {
     setPensionStatus(event.target.value);
   };
 
-  if (isLoading) {
+  if (isLoading || !editUser) {
     return <PageLoading />;
   }
 
   return (
     <div className="infoModal-container">
       <div className="bioModal">
-        <FaX className="cancelEdit" onClick={closeModal} />
+        <FaX className="cancelEdit" onClick={closeEditModal} />
         <div className="mainModal">
           <div className="modalContent">
             <div className="contentM">
@@ -235,14 +278,14 @@ const EditBioDataModal = ({ userBio }) => {
                       autoComplete="off"
                       formNoValidate
                       {...register("dateOfBirth", {
-                        // required: "Date of Birth is required!",
+                        required: "Date of Birth is required!",
                         // validate: {
                         //   isFutureDate: (value) =>
                         //     new Date(value) < new Date() || "Date must be in the past",
                         // },
                       })}
                     />
-                    {errors.date && <p className="bioError">{errors.date.message}</p>}
+                    {errors.dateOfBirth && <p className="bioError">{errors.dateOfBirth.message}</p>}
                     <label htmlFor="dateOfBirth" className="form_label">
                       Date of Birth
                     </label>
@@ -651,8 +694,8 @@ const EditBioDataModal = ({ userBio }) => {
                   </div>
                 </div>
                 <div className="btns">
-                  <button className="btn" disabled>
-                    Prev
+                  <button className="btn" onClick={closeEditModal} type="button">
+                    CANCEL
                   </button>
                   <button type="submit" className="btn">
                     UPDATE
@@ -667,4 +710,4 @@ const EditBioDataModal = ({ userBio }) => {
   );
 };
 
-export default EditBioDataModal;
+export default EditEmployeeBioModal;

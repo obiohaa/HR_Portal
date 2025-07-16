@@ -9,24 +9,40 @@ import {
 import { useGlobalContext } from "../../../../Context/userContext";
 import AddAdminModal from "../../../../Components/Modal/AddAdminModal";
 import DeleteAdminModal from "../../../../Components/Modal/DeleteAdminModal";
+import ViewUsersModal from "../../../../Components/Modal/ViewUsersModal";
+import EditAdminModal from "../../../../Components/Modal/EditAdminModal";
 import Checkbox from "../../../../Components/CheckBoxTest";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { axiosFetch } from "../../../../Utils/axiosFetch";
 import PageLoading from "../../../../Components/Checks/PageLoading";
 import capitalizeFirstLetter from "../../../../Components/ToUpperCase";
 import ReactPaginate from "react-paginate";
+import { toast } from "react-toastify";
 import NoData from "../../../../Components/Modal/NoData";
 
 const AddAdmin = () => {
   const [selected, setSelected] = useState([]);
   const [selectedItemId, setSelectedItemId] = useState(null);
-  const { openModal, isModalOpen, openDelModal, isDeleteModalOpen } = useGlobalContext();
+  const {
+    openModal,
+    isModalOpen,
+    openDelModal,
+    isDeleteModalOpen,
+    isViewModalOpen,
+    openViewModal,
+    openEditModal,
+    isEditModalOpen,
+  } = useGlobalContext();
   const [paginationData, setPaginationData] = useState([]);
+  const [currentItems, setCurrentItems] = useState([]);
+  const [pageCount, setPageCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [viewUser, setViewUser] = useState(null);
+  const [editUser, setEditUser] = useState(null);
   const modalRef = useRef(null);
 
   //GET ALL ADMIN USERS
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["registerAdmin"],
     retryOnMount: true, //do not retry on mount
     refetchOnWindowFocus: false, //do not refetch on window focus
@@ -36,26 +52,83 @@ const AddAdmin = () => {
     refetchIntervalInBackground: false, //do not refetch in background
     queryFn: async () => {
       const { data } = await axiosFetch.get("/admins/getAllAdminUsers");
-      console.log(data.adminUsers);
+      console.log(data);
+      // console.log(data.adminUsers);
+      // console.log(data.adminUsers.length);
       setPaginationData(data.adminUsers);
       setSelected([]);
       setItemOffset(0);
       return data;
     },
   });
-  //END GET ALL ADMIN USERS
-  //DELETE ADMIN USERS
 
-  //END DELETE ADMIN USERS
+  console.log(data);
+  if (error) {
+    toast.error(
+      <div>
+        <span>
+          {error.response ? error.response.data.msg : "Something went wrong contact Admin"}
+        </span>
+      </div>,
+      {
+        position: "top-center",
+        autoClose: 8000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastBad",
+      }
+    );
+  }
+  //END GET ALL ADMIN USERS
+
+  //UPDATE ADMIN USER
+  const queryClient = useQueryClient();
+  const { mutate: updateUserStatus, isLoading: isLoadingStatus } = useMutation({
+    mutationFn: async (updateUserStatus) =>
+      axiosFetch.patch("/admins/updateStatus", { data: updateUserStatus }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["registerAdmin"] });
+      toast.success(data.data.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastGood",
+      });
+      //   reset();
+      //   setFileName(null);
+    },
+    onError: (error) => {
+      toast.error(error.response.data.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastBad",
+      });
+    },
+  });
+  //END UPDATE ADMIN USERS
 
   // SEARCH SECTION
   const handleSearch = (e) => {
     e.preventDefault();
-    const query = e.target.value;
+    const query = e.target.value.trim().toLowerCase();
     setSearchQuery(query);
-    const filterQuery = data.adminUsers.filter(
-      (results) => results.firstName.includes(query) || results.lastName.includes(query)
-    );
+
+    const filterQuery = data.adminUsers.filter((user) => {
+      const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
+      return fullName.includes(query) || user.email?.toLowerCase().includes(query);
+    });
     setPaginationData(filterQuery);
     //Controls what page to display when you search, in this case page 1
     setItemOffset(0);
@@ -66,12 +139,15 @@ const AddAdmin = () => {
   const [itemOffset, setItemOffset] = useState(0);
   const itemsPerPage = 2;
 
-  const endOffset = itemOffset + itemsPerPage;
-  // console.log(`Loading items from ${itemOffset} to ${endOffset}`);
-  const currentItems = paginationData.slice(itemOffset, endOffset);
-  const pageCount = Math.ceil(paginationData.length / itemsPerPage);
-  // console.log(currentItems);
-  // Invoke when user click to request another page.
+  useEffect(() => {
+    const endOffset = itemOffset + itemsPerPage;
+    // console.log(`Loading items from ${itemOffset} to ${endOffset}`);
+    setCurrentItems(paginationData.slice(itemOffset, endOffset));
+    setPageCount(Math.ceil(paginationData.length / itemsPerPage));
+    // console.log(currentItems);
+    // Invoke when user click to request another page.
+  }, [itemOffset, paginationData]);
+
   const handlePageClick = (event) => {
     const newOffset = (event.selected * itemsPerPage) % paginationData.length;
     // console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
@@ -139,10 +215,31 @@ const AddAdmin = () => {
     // console.log(selected);
     setSelectedItemId(null);
   };
-
   // END HANDLE DELETE
+  //EDIT ADMIN USER STATUS
+  const updateAdminStatus = () => {
+    console.log("update status");
+    console.log(selected);
+    updateUserStatus(selected);
+  };
+  //END EDIT ADMIN USER STATUS
+
+  // VIEW THIS USER
+  const viewThisUser = (item) => {
+    setViewUser(item);
+    setSelectedItemId(null);
+    openViewModal();
+  };
+  // END VIEW THIS USER
+  // EDIT THIS USER
+  const editThisUser = (item) => {
+    setEditUser(item);
+    setSelectedItemId(null);
+    openEditModal();
+  };
+  //END EDIT THIS USER
   // console.log(selected);
-  if (isLoading) {
+  if (isLoading || isLoadingStatus) {
     return <PageLoading />;
   }
 
@@ -150,6 +247,8 @@ const AddAdmin = () => {
     <div className="bioDataProfileContainer">
       {isModalOpen && <AddAdminModal />}
       {isDeleteModalOpen && <DeleteAdminModal deletedItem={selected} />}
+      {isViewModalOpen && <ViewUsersModal viewUser={viewUser} />}
+      {isEditModalOpen && <EditAdminModal editUser={editUser} />}
       <div className="addAdminBody">
         <div className="addAdminControl">
           <div className="searchBar">
@@ -163,7 +262,10 @@ const AddAdmin = () => {
             />
           </div>
           <div className="actionButtons">
-            <button className="btnAdmin" disabled={selected && selected.length == 0}>
+            <button
+              className="btnAdmin"
+              disabled={selected && selected.length == 0}
+              onClick={updateAdminStatus}>
               Status
             </button>
             <button
@@ -189,7 +291,7 @@ const AddAdmin = () => {
                     component. */}
                     <Checkbox
                       name="all"
-                      value={data && selected.length === data.adminUsers.length}
+                      value={data && data.adminUsers && data.adminUsers.length === selected.length}
                       updateValue={selectAll}></Checkbox>
                   </th>
                   <th>Name</th>
@@ -257,11 +359,10 @@ const AddAdmin = () => {
                                 minWidth: "230px",
                               }}
                               onClick={(e) => e.stopPropagation()}>
-                              <button className="sideButton">
+                              <button className="sideButton" onClick={() => viewThisUser(item)}>
                                 <FaRegEye /> View
                               </button>
-                              <button className="sideButton">
-                                {" "}
+                              <button className="sideButton" onClick={() => editThisUser(item)}>
                                 <FaPencil /> Edit
                               </button>
                               <button className="sideButton" onClick={() => handleDelete(item._id)}>

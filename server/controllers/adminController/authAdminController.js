@@ -112,7 +112,7 @@ const register = async (req, res) => {
   }
   //send verification token only while testing in post man
   res.status(StatusCodes.CREATED).json({
-    msg: "Success! Please check your email to verify your account",
+    msg: "Success! Please check email to verify your account",
   });
 };
 

@@ -31,7 +31,7 @@
 
 .grayBackground {
   position: fixed;
-  z-index: 2;
+  z-index: 6;
   left: 0;
   top: 0;
   width: 100%;
@@ -112,6 +112,31 @@
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.4);
   transition: all 1s ease-in;
+}
+
+.viewModal-container {
+  position: fixed;
+  z-index: 5;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  transition: all 1s ease-in;
+}
+
+.viewModal {
+  position: relative;
+  border-radius: 8px;
+  /* padding: 1.5rem; */
+  padding-bottom: 1.5rem;
+  background-color: white;
+  width: 55%;
+  /* border-top: 4px solid var(--clr-primary-2); */
+  transition: all 0.5s ease-in-out;
 }
 
 .modal {
@@ -266,9 +291,9 @@
   transition: all 0.5s ease-in-out;
 }
 
-/* .editProfileBtn {
-  margin-top: 65px;
-} */
+.editProfileBtn {
+  margin-top: 70px;
+}
 
 .userDetails {
   margin-bottom: 15px;
@@ -352,3 +377,31 @@
   margin: 20px 0;
 }
 /* END DELETE ADMIN MODAL */
+
+/* VIEW ADMIN/USER PROFILE */
+
+.verification {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0 5px 0;
+  cursor: pointer;
+}
+
+.editCheckVerification {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 10px 0 5px 0;
+  cursor: pointer;
+}
+/* END VIEW ADMIN/USER PROFILE */
+.viewProfileImage {
+  height: 220px;
+  width: 220px;
+  position: absolute;
+  top: 50%;
+  right: 36.5%;
+  border-radius: 50%;
+}

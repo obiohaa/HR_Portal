@@ -49,16 +49,23 @@ function Login() {
       navigate("/dashboard");
     },
     onError: (error) => {
-      toast.error(error.response.data.msg, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        className: "toastBad",
-      });
+      toast.error(
+        <div>
+          <span>
+            {error.response ? error.response.data.msg : "Something went wrong contact Admin"}
+          </span>
+        </div>,
+        {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          className: "toastBad",
+        }
+      );
     },
   });
 

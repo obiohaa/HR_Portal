@@ -22,6 +22,7 @@ import RegisterAdmin from "./Pages/Register/RegisterAdmin.jsx";
 import AddAdmin from "./Pages/Body/Admin/AdminSide/index.jsx";
 import AdminBioData from "./Pages/Body/Admin/AdminBioData/index.jsx";
 import AdminNOK from "./Pages/Body/Admin/AdminNOK/index.jsx";
+import Employee from "./Pages/Body/Admin/AdminEmployee/index.jsx";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
         <Route path="/add-admin" exact Component={AddAdmin} />
         <Route path="/admin-bioData" exact Component={AdminBioData} />
         <Route path="/admin-NOK" exact Component={AdminNOK} />
+        <Route path="/admin-employee" exact Component={Employee} />
         <Route path="/nda" exact Component={ndaProfile} />
         <Route path="/job_opening" exact Component={jobOpening} />
         <Route path="/pdfPagebioDATA" exact Component={BDJSONpdf} />

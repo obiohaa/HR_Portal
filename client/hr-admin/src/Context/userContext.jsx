@@ -13,6 +13,9 @@ const AppProvider = ({ children }) => {
   const [DropDownOpen, setDropDownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [userStepState, setUserStepState] = useState();
 
   const saveUser = (user) => {
@@ -43,6 +46,33 @@ const AppProvider = ({ children }) => {
 
   const closeDelModal = () => {
     setIsDeleteModalOpen(false);
+  };
+
+  const openViewModal = () => {
+    setIsModalOpen(false);
+    setIsViewModalOpen(true);
+  };
+
+  const closeViewModal = () => {
+    setIsViewModalOpen(false);
+  };
+
+  const openEditModal = () => {
+    setIsModalOpen(false);
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+  };
+
+  const openExportModal = () => {
+    setIsModalOpen(false);
+    setIsExportModalOpen(true);
+  };
+
+  const closeExportModal = () => {
+    setIsExportModalOpen(false);
   };
 
   useQuery({
@@ -82,6 +112,15 @@ const AppProvider = ({ children }) => {
         openDelModal,
         closeDelModal,
         isDeleteModalOpen,
+        isViewModalOpen,
+        openViewModal,
+        closeViewModal,
+        openEditModal,
+        closeEditModal,
+        isEditModalOpen,
+        isExportModalOpen,
+        openExportModal,
+        closeExportModal,
       }}>
       {children}
     </AppContext.Provider>

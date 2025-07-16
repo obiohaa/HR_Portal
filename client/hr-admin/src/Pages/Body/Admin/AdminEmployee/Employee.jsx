@@ -7,12 +7,12 @@ import {
   FaTrashCan,
 } from "react-icons/fa6";
 import { useGlobalContext } from "../../../../Context/userContext";
+import AddAdminModal from "../../../../Components/Modal/AddAdminModal";
 import DeleteAdminModal from "../../../../Components/Modal/DeleteAdminModal";
-import EmployeeBioModal from "../../../../Components/Modal/EmployeeBioModal";
-import EditEmployeeBioModal from "../../../../Components/Modal/EditEmployeeBioModal";
-import ExportBio from "../../../../Components/Modal/ExportBio";
+import ViewUsersModal from "../../../../Components/Modal/ViewUsersModal";
+import EditAdminEmployeeModal from "../../../../Components/Modal/EditAdminEmployeeModal";
 import Checkbox from "../../../../Components/CheckBoxTest";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { axiosFetch } from "../../../../Utils/axiosFetch";
 import PageLoading from "../../../../Components/Checks/PageLoading";
 import capitalizeFirstLetter from "../../../../Components/ToUpperCase";
@@ -20,12 +20,13 @@ import ReactPaginate from "react-paginate";
 import { toast } from "react-toastify";
 import NoData from "../../../../Components/Modal/NoData";
 
-const AddAdmin = () => {
+const Employee = () => {
   const [selected, setSelected] = useState([]);
   const [selectedItemId, setSelectedItemId] = useState(null);
   const {
-    isExportModalOpen,
-    openExportModal,
+    openModal,
+    isModalOpen,
+    openDelModal,
     isDeleteModalOpen,
     isViewModalOpen,
     openViewModal,
@@ -41,47 +42,61 @@ const AddAdmin = () => {
   const modalRef = useRef(null);
 
   //GET ALL ADMIN USERS
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["adminBioDataOneKey"],
+  const { data, isLoading } = useQuery({
+    queryKey: ["registerAdmin"],
     retryOnMount: true, //do not retry on mount
-    refetchOnWindowFocus: true, //do not refetch on window focus
-    refetchOnReconnect: true, //do not refetch on reconnect
+    refetchOnWindowFocus: false, //do not refetch on window focus
+    refetchOnReconnect: false, //do not refetch on reconnect
     refetchOnMount: true, //do not refetch on mount
     refetchInterval: false, //do not refetch at intervals
-    refetchIntervalInBackground: true, //do not refetch in background
+    refetchIntervalInBackground: false, //do not refetch in background
     queryFn: async () => {
-      const { data } = await axiosFetch.get("/admins/getAllBioData");
-      // console.log(data);
-      // console.log(data.AllBioData);
-      // console.log(data.AllBioData.length);
-      setPaginationData(data.AllBioData);
+      const { data } = await axiosFetch.get("/admins/getAllUsers");
+      console.log(data.employeeUsers);
+      console.log(data.employeeUsers.length);
+      setPaginationData(data.employeeUsers);
       setSelected([]);
       //   setItemOffset(0);
       return data;
     },
   });
+  console.log(data);
+  //END GET ALL ADMIN USERS
 
-  // console.log(data);
-  if (error) {
-    toast.error(
-      <div>
-        <span>
-          {error.response ? error.response.data.msg : "Something went wrong contact Admin"}
-        </span>
-      </div>,
-      {
+  //UPDATE ADMIN USER
+  const queryClient = useQueryClient();
+  const { mutate: updateUserStatus, isLoading: isLoadingStatus } = useMutation({
+    mutationFn: async (updateUserStatus) =>
+      axiosFetch.patch("/admins/updateStatus", { data: updateUserStatus }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["adminEmployee"] });
+      toast.success(data.data.msg, {
         position: "top-center",
-        autoClose: 8000,
+        autoClose: 5000,
         hideProgressBar: true,
-        closeOnClick: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastGood",
+      });
+      //   reset();
+      //   setFileName(null);
+    },
+    onError: (error) => {
+      toast.error(error.response.data.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
         className: "toastBad",
-      }
-    );
-  }
-  //END GET ALL ADMIN USERS
+      });
+    },
+  });
+  //END UPDATE ADMIN USERS
 
   // SEARCH SECTION
   const handleSearch = (e) => {
@@ -89,7 +104,7 @@ const AddAdmin = () => {
     const query = e.target.value.trim().toLowerCase();
     setSearchQuery(query);
 
-    const filterQuery = data.AllBioData.filter((user) => {
+    const filterQuery = data.employeeUsers.filter((user) => {
       const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
       return fullName.includes(query) || user.email?.toLowerCase().includes(query);
     });
@@ -134,7 +149,7 @@ const AddAdmin = () => {
     //if unchecked, hence false, the setSelected is updated to an empty array
     if (value) {
       // if true
-      const mappedValue = data.AllBioData.map((item) => {
+      const mappedValue = data.employeeUsers.map((item) => {
         return item._id;
       });
       setSelected(mappedValue); // select all
@@ -164,28 +179,28 @@ const AddAdmin = () => {
   //END USE EFFECT FUNCTION TO MAKE THE OPEN OPTIONS CLOSE ON MOUSE DOWN OR ON CLICK.
 
   // HANDLE DELETE
-  // const handleDelete = (id) => {
-  //   openDelModal();
-  //   const arrayTest = [];
-  //   arrayTest.push(id);
-  //   // console.log(arrayTest);
-  //   setSelected(arrayTest);
-  //   setSelectedItemId(null);
-  // };
+  const handleDelete = (id) => {
+    openDelModal();
+    const arrayTest = [];
+    arrayTest.push(id);
+    // console.log(arrayTest);
+    setSelected(arrayTest);
+    setSelectedItemId(null);
+  };
 
-  // const handleMultiDelete = () => {
-  //   openDelModal();
-  //   //we can put this empty array outside this function...
-  //   // console.log(selected);
-  //   setSelectedItemId(null);
-  // };
+  const handleMultiDelete = () => {
+    openDelModal();
+    //we can put this empty array outside this function...
+    // console.log(selected);
+    setSelectedItemId(null);
+  };
   // END HANDLE DELETE
   //EDIT ADMIN USER STATUS
-  // const updateAdminStatus = () => {
-  //   console.log("update status");
-  //   console.log(selected);
-  //   updateUserStatus(selected);
-  // };
+  const updateAdminStatus = () => {
+    console.log("update status");
+    console.log(selected);
+    updateUserStatus(selected);
+  };
   //END EDIT ADMIN USER STATUS
 
   // VIEW THIS USER
@@ -203,17 +218,16 @@ const AddAdmin = () => {
   };
   //END EDIT THIS USER
   // console.log(selected);
-  if (isLoading) {
+  if (isLoading || isLoadingStatus) {
     return <PageLoading />;
   }
 
   return (
     <div className="bioDataProfileContainer">
-      {/* {isModalOpen && <AddAdminModal />} */}
+      {isModalOpen && <AddAdminModal />}
       {isDeleteModalOpen && <DeleteAdminModal deletedItem={selected} />}
-      {isViewModalOpen && <EmployeeBioModal viewUser={viewUser} />}
-      {isEditModalOpen && <EditEmployeeBioModal editUser={editUser} />}
-      {isExportModalOpen && <ExportBio editUser={editUser} />}
+      {isViewModalOpen && <ViewUsersModal viewUser={viewUser} />}
+      {isEditModalOpen && <EditAdminEmployeeModal editUser={editUser} />}
       <div className="addAdminBody">
         <div className="addAdminControl">
           <div className="searchBar">
@@ -227,19 +241,19 @@ const AddAdmin = () => {
             />
           </div>
           <div className="actionButtons">
-            {/* <button
+            <button
               className="btnAdmin"
               disabled={selected && selected.length == 0}
               onClick={updateAdminStatus}>
               Status
-            </button> */}
-            {/* <button
+            </button>
+            <button
               className="btnAdmin"
               disabled={selected && selected.length == 0}
               onClick={handleMultiDelete}>
               Delete
-            </button> */}
-            <button className="btnAdmin" onClick={openExportModal}>
+            </button>
+            <button className="btnAdmin" onClick={openModal}>
               Export
             </button>
           </div>
@@ -256,15 +270,17 @@ const AddAdmin = () => {
                     component. */}
                     <Checkbox
                       name="all"
-                      value={data && data.AllBioData && data.AllBioData.length === selected.length}
+                      value={
+                        data && data.employeeUsers && data.employeeUsers.length === selected.length
+                      }
                       updateValue={selectAll}></Checkbox>
                   </th>
                   <th>Name</th>
-                  <th>DOB</th>
-                  <th>State</th>
-                  <th>Gender</th>
-                  <th>M-Status</th>
-                  <th>Number</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Active</th>
+                  <th>Created</th>
+                  <th>Verified</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -283,14 +299,18 @@ const AddAdmin = () => {
                           {capitalizeFirstLetter(item.firstName)}{" "}
                           {capitalizeFirstLetter(item.lastName)}
                         </td>
-                        <td>{item && item.dateOfBirth.split("T")[0]}</td>
-                        <td>{item.state_of_origin}</td>
+                        <td>{item.email}</td>
+                        <td>{item.role}</td>
                         <td>
-                          <div>{item.gender}</div>
+                          <div className={item.active ? "tagGreen" : "tagRed"}>
+                            {item.active.toString()}
+                          </div>
                         </td>
-                        <td>{item.maritalStatus}</td>
+                        <td>{item.createdAt.split("T")[0]}</td>
                         <td>
-                          <div>{item.phoneNumber}</div>
+                          <div className={item.isVerified ? "tagGreen" : "tagRed"}>
+                            {item.isVerified.toString()}
+                          </div>
                         </td>
                         <td style={{ position: "relative" }}>
                           <FaArrowsUpDownLeftRight
@@ -326,10 +346,10 @@ const AddAdmin = () => {
                               <button className="sideButton" onClick={() => editThisUser(item)}>
                                 <FaPencil /> Edit
                               </button>
-                              {/* <button className="sideButton" onClick={() => handleDelete(item._id)}>
+                              <button className="sideButton" onClick={() => handleDelete(item._id)}>
                                 {" "}
                                 <FaTrashCan /> Delete
-                              </button> */}
+                              </button>
                             </div>
                           )}
                         </td>
@@ -366,4 +386,4 @@ const AddAdmin = () => {
   );
 };
 
-export default AddAdmin;
+export default Employee;
