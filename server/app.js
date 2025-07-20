@@ -48,8 +48,8 @@ app.set("trust proxy", 1);
 //     max: 60,
 //   })
 // );
-app.use(helmet());
 app.use(cors(corOptions));
+app.use(helmet());
 app.use(xss());
 app.use(mongoSanitize());
 

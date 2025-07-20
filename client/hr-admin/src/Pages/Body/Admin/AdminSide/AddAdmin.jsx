@@ -7,10 +7,10 @@ import {
   FaTrashCan,
 } from "react-icons/fa6";
 import { useGlobalContext } from "../../../../Context/userContext";
-import AddAdminModal from "../../../../Components/Modal/AddAdminModal";
+import AddAdminModal from "../../../../Components/Modal/Admin/AddAdminModal";
 import DeleteAdminModal from "../../../../Components/Modal/DeleteAdminModal";
 import ViewUsersModal from "../../../../Components/Modal/ViewUsersModal";
-import EditAdminModal from "../../../../Components/Modal/EditAdminModal";
+import EditAdminModal from "../../../../Components/Modal/Admin/EditAdminModal";
 import Checkbox from "../../../../Components/CheckBoxTest";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { axiosFetch } from "../../../../Utils/axiosFetch";

@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import "../component.css";
-import PageLoading from "../Checks/PageLoading";
+import "../../component.css";
+import PageLoading from "../../Checks/PageLoading";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { useGlobalContext } from "../../Context/userContext";
+import { useGlobalContext } from "../../../Context/userContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { axiosFetchFormData } from "../../Utils/axiosFetch";
+import { axiosFetchFormData } from "../../../Utils/axiosFetch";
 import { FaX } from "react-icons/fa6";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
 
-const EditAdminModal = ({ editUser }) => {
+const EditAdminEmployeeModal = ({ editUser }) => {
   const { closeEditModal } = useGlobalContext();
   //   const [showPassword, setShowPassword] = useState(false);
   const [imgName, setImgName] = useState(null);
@@ -35,7 +35,7 @@ const EditAdminModal = ({ editUser }) => {
     mutationFn: async (editThisUser) =>
       axiosFetchFormData.patch("/admins/adminEditUser", editThisUser),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["registerAdmin"] });
+      queryClient.invalidateQueries({ queryKey: ["adminEmployee"] });
       reset();
       setImgName(null);
       closeEditModal();
@@ -299,4 +299,4 @@ const EditAdminModal = ({ editUser }) => {
   );
 };
 
-export default EditAdminModal;
+export default EditAdminEmployeeModal;

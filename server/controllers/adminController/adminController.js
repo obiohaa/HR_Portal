@@ -65,6 +65,125 @@ const getAllBioDataPerUser = async (req, res) => {
   });
 };
 
+//get bio data from date range
+const getBioDataFromDateRange = async (req, res) => {
+  console.log(req.body);
+  const { firstDate, secondDate } = req.body;
+  if (!firstDate || !secondDate) {
+    throw new CustomError.BadRequestError("Please provide both start and end dates");
+  }
+  const start = new Date(firstDate);
+  const end = new Date(secondDate);
+  end.setHours(23, 59, 59, 999); // Set the end date to the end of the day
+  const AllBioData = await BioData.find({
+    createdAt: {
+      $gte: new Date(start),
+      $lte: new Date(end),
+    },
+  })
+    .sort({ createdAt: -1 })
+    .select("-user -createdAt -updatedAt -__v");
+  //
+  if (AllBioData === "" || AllBioData.length === 0) {
+    throw new CustomError.BadRequestError("No data for this date range");
+  }
+  res.status(StatusCodes.OK).json({
+    msg: "Bio Data Report Generated",
+    AllBioData,
+    count: AllBioData.length,
+  });
+};
+
+//get employee users based on date range
+const getEmployeeUsersFromDateRange = async (req, res) => {
+  const { firstDate, secondDate } = req.body;
+  if (!firstDate || !secondDate) {
+    throw new CustomError.BadRequestError("Please provide both start and end dates");
+  }
+  const start = new Date(firstDate);
+  const end = new Date(secondDate);
+  end.setHours(23, 59, 59, 999); // Set the end date to the end of the day
+  const employeeUsers = await User.find({
+    role: "employee",
+    createdAt: {
+      $gte: new Date(start),
+      $lte: new Date(end),
+    },
+  })
+    .sort({ createdAt: -1 })
+    .select(
+      "-password -passwordToken -verificationToken -passwordTokenExpirationDate -__v -updatedAt -_id"
+    );
+
+  //
+  if (employeeUsers === "" || employeeUsers.length === 0) {
+    throw new CustomError.BadRequestError("No data for this date range");
+  }
+
+  res.status(StatusCodes.OK).json({
+    msg: "Employee Users Report Generated",
+    // employeeUsers,
+    count: employeeUsers.length,
+  });
+};
+
+//get Next of Kin users based on date range
+const getNOKDataFromDateRange = async (req, res) => {
+  console.log(req.body);
+  const { firstDate, secondDate } = req.body;
+  if (!firstDate || !secondDate) {
+    throw new CustomError.BadRequestError("Please provide both start and end dates");
+  }
+  const start = new Date(firstDate);
+  const end = new Date(secondDate);
+  end.setHours(23, 59, 59, 999); // Set the end date to the end of the day
+  const AllNOKData = await NextOfKin.find({
+    createdAt: {
+      $gte: new Date(start),
+      $lte: new Date(end),
+    },
+  })
+    .sort({ createdAt: -1 })
+    .select("-user -createdAt -updatedAt -__v");
+  //
+  if (AllNOKData === "" || AllNOKData.length === 0) {
+    throw new CustomError.BadRequestError("No data for this date range");
+  }
+  res.status(StatusCodes.OK).json({
+    msg: "NOK Report Generated",
+    AllNOKData,
+    count: AllNOKData.length,
+  });
+};
+
+//get Guarantor data from date range
+const getGuaDataFromDateRange = async (req, res) => {
+  const { firstDate, secondDate } = req.body;
+  if (!firstDate || !secondDate) {
+    throw new CustomError.BadRequestError("Please provide both start and end dates");
+  }
+  const start = new Date(firstDate);
+  const end = new Date(secondDate);
+  end.setHours(23, 59, 59, 999); // Set the end date to the end of the day
+  const AllGuaData = await Guarantor.find({
+    createdAt: {
+      $gte: new Date(start),
+      $lte: new Date(end),
+    },
+  })
+    .sort({ createdAt: -1 })
+    .select("-user -createdAt -updatedAt -__v -verificationToken -isCompleted ");
+  //
+  if (AllGuaData === "" || AllGuaData.length === 0) {
+    throw new CustomError.BadRequestError("No data for this date range");
+  }
+  res.status(StatusCodes.OK).json({
+    msg: "Bio Data Report Generated",
+    AllGuaData,
+    count: AllGuaData.length,
+  });
+};
+
 //UPDATE BIO DATA PER USER
 const updateOneBioData = async (req, res) => {
   const {
@@ -216,11 +335,13 @@ const updateOneBioData = async (req, res) => {
 };
 //get all next of kin
 const getAllNOK = async (req, res) => {
-  const AllNOK = await NextOfKin.find().populate({
-    path: "user",
-    select:
-      "-password -isVerified -passwordToken -verificationToken -passwordTokenExpirationDate -__v -_id -role -imgURL -active -email -createdAt -updatedAt -verified",
-  });
+  const AllNOK = await NextOfKin.find()
+    .populate({
+      path: "user",
+      select:
+        "-password -isVerified -passwordToken -verificationToken -passwordTokenExpirationDate -__v -_id -role -imgURL -active -email -createdAt -updatedAt -verified",
+    })
+    .sort({ createdAt: -1 });
   res.status(StatusCodes.OK).json({
     msg: "Next of Kin generated",
     AllNOK,
@@ -228,13 +349,58 @@ const getAllNOK = async (req, res) => {
   });
 };
 
+//UPDATE NEXT OF KIN
+const updateNOKData = async (req, res) => {
+  console.log(req.body);
+  const { firstName, lastName, gender, houseAddress, phoneNumber, relationship } = req.body;
+  if (!firstName || !lastName || !gender || !relationship || !houseAddress || !phoneNumber) {
+    throw new CustomError.BadRequestError("Please provide all values");
+  }
+
+  const NOKData = req.body;
+  const NOKMainData = await NextOfKin.findOne({ _id: NOKData.id });
+
+  if (!NOKMainData) {
+    throw new CustomError.BadRequestError("NOK does not exist");
+  }
+
+  try {
+    const updatedMainUserNOK = await NextOfKin.findOneAndUpdate(
+      { _id: NOKData.id },
+      {
+        nextOfKinFirstName: NOKData.firstName,
+        nextOfKinLastName: NOKData.lastName,
+        nextOfKinRelationship: NOKData.relationship,
+        houseAddress: NOKData.houseAddress,
+        gender: NOKData.gender,
+        phoneNumber: NOKData.phoneNumber,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    console.log(updatedMainUserNOK);
+
+    return res.status(StatusCodes.OK).json({
+      msg: "NOK Data Updated",
+    });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
+  }
+};
+
 //get all guarantors
 const getAllGuarantor = async (req, res) => {
-  const AllGuarantor = await Guarantor.find().sort({ user: 1 }).populate({
-    path: "user",
-    select:
-      "-password -isVerified -passwordToken -verificationToken -passwordTokenExpirationDate -__v -_id -role -imgURL -active -email -createdAt -updatedAt -verified",
-  });
+  const AllGuarantor = await Guarantor.find()
+    .sort({ user: 1 })
+    .populate({
+      path: "user",
+      select:
+        "-password -isVerified -passwordToken -verificationToken -passwordTokenExpirationDate -__v -_id -role -imgURL -active -email -createdAt -updatedAt -verified",
+    })
+    .sort({ createdAt: -1 });
   res.status(StatusCodes.OK).json({
     msg: "Guarantor generated",
     AllGuarantor,
@@ -431,6 +597,129 @@ const editUser = async (req, res) => {
     throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
   }
 };
+
+// UPDATE SINGLE GUARANTOR
+const updateGuarantor = async (req, res) => {
+  try {
+    const guarantorUpdateData = JSON.parse(req.body.body);
+    const requiredFields = [
+      "fullName",
+      "houseAddress",
+      "phoneNumber",
+      "occupation",
+      "employer",
+      "employerAddress",
+      "employeeFullName",
+      "employeeDesignation",
+      "outletEmployed",
+      "ageRange",
+      "uniformedPublicServant",
+      "signedPolicy",
+      "id",
+    ];
+
+    for (const field of requiredFields) {
+      if (!guarantorUpdateData[field]) {
+        throw new CustomError.BadRequestError(`Missing value for ${field}`);
+      }
+    }
+
+    if (guarantorUpdateData.signedPolicy === "" || guarantorUpdateData.signedPolicy === "No") {
+      throw new CustomError.BadRequestError("Agreement must be accepted before updating");
+    }
+
+    const guarantorData = await Guarantor.findOne({ _id: guarantorUpdateData.id });
+    if (!guarantorData) throw new CustomError.NotFoundError("Guarantor not found");
+
+    const maxSize = 5 * 1024 * 1024;
+    const updatePayload = { ...guarantorUpdateData, isCompleted: 1 };
+
+    const uploadImage = async (file) => {
+      if (!file.mimetype.startsWith("image") || file.size > maxSize) {
+        throw new CustomError.BadRequestError("Invalid image or too large (max 5MB)");
+      }
+      const result = await cloudinary.uploader.upload(file.tempFilePath, {
+        use_filename: true,
+        folder: "HR_ADMIN_PORTAL",
+      });
+      fs.unlinkSync(file.tempFilePath);
+      return result.secure_url;
+    };
+
+    if (req.files) {
+      if (req.files.img) {
+        updatePayload.passport = await uploadImage(req.files.img);
+      }
+      if (req.files.file) {
+        updatePayload.identificationCard = await uploadImage(req.files.file);
+      }
+    }
+
+    const updatedGuarantor = await Guarantor.findOneAndUpdate(
+      { _id: guarantorData._id },
+      { ...updatePayload, verificationToken: "" },
+      { new: true, runValidators: true }
+    );
+
+    const allGuarantors = await Guarantor.find({ user: guarantorData.user });
+    const completedCount = allGuarantors.filter((g) => g.isCompleted === 1).length;
+    const guarantorStep = completedCount > 1 ? 2 : 1;
+
+    await StepState.findOneAndUpdate(
+      { user: guarantorData.user },
+      {
+        ...(completedCount > 1 && {
+          currentStep: 4,
+          nextStep: 5,
+          completed: false,
+          completedStep: 3,
+        }),
+        guarantorStep,
+      },
+      { new: true, runValidators: true }
+    );
+
+    res.status(StatusCodes.OK).json({
+      steps: { msg: "Guarantor form updated successfully" },
+    });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin: " + error.message);
+  }
+};
+
+//DELETE GUARANTOR THAT IS INCOMPLETE
+const deleteGua = async (req, res) => {
+  const deleteThisItem = req.body.ids;
+  const neverDelete = "686177da71064b4821e19289"; //Protected Admin Id
+
+  if (deleteThisItem.includes(neverDelete)) {
+    throw new CustomError.BadRequestError("You cannot delete Administrator");
+  }
+
+  const findThisGuarantor = await Guarantor.find({ _id: req.body.ids });
+
+  if (!findThisGuarantor) {
+    throw new CustomError.BadRequestError("This Guarantor does not exist");
+  }
+
+  if (findThisGuarantor.isCompleted === 1) {
+    throw new CustomError.BadRequestError("This Guarantor's data is complete");
+  }
+  //$in matches document where _id match (or is in) any of the values in array filteredArray
+  //can also be used in array of objects
+  try {
+    const result = await Guarantor.deleteMany({
+      _id: { $in: deleteThisItem },
+    });
+    if (result.deletedCount === 0) {
+      throw new CustomError.BadRequestError("No user were deleted");
+    }
+    res.status(StatusCodes.OK).json({ msg: "Success! User(s) deleted" });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
+  }
+};
+
 //////////////////////////////////////////////////////////
 const getSingleUser = async (req, res) => {
   console.log(req.params.id);
@@ -456,47 +745,6 @@ const getSingleNOK = async (req, res) => {
     throw new CustomError.NotFoundError(`No user with id : ${req.user.userId}`);
   }
   res.status(StatusCodes.OK).json({ userNOK });
-};
-
-//UPDATE NEXT OF KIN
-const updateNOKData = async (req, res) => {
-  const { firstName, lastName, gender, houseAddress, phoneNumber, relationship } = req.body;
-  if (!firstName || !lastName || !gender || !relationship || !houseAddress || !phoneNumber) {
-    throw new CustomError.BadRequestError("Please provide all values");
-  }
-
-  const NOKData = req.body;
-  const loggedInUser = await NextOfKin.findOne({ user: req.user.userId });
-
-  if (!loggedInUser) {
-    throw new CustomError.BadRequestError("User does not exist");
-  }
-
-  try {
-    const updatedMainUserNOK = await NextOfKin.findOneAndUpdate(
-      { user: req.user.userId },
-      {
-        nextOfKinFirstName: NOKData.firstName,
-        nextOfKinLastName: NOKData.lastName,
-        nextOfKinRelationship: NOKData.relationship,
-        houseAddress: NOKData.houseAddress,
-        gender: NOKData.gender,
-        phoneNumber: NOKData.phoneNumber,
-      },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-
-    console.log(updatedMainUserNOK);
-
-    return res.status(StatusCodes.OK).json({
-      msg: "Bio Data Updated",
-    });
-  } catch (error) {
-    throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
-  }
 };
 
 const showCurrentUser = async (req, res) => {
@@ -1120,169 +1368,6 @@ const guarantorUser = async (req, res) => {
   }
 };
 
-const updateGuarantor = async (req, res) => {
-  const {
-    fullName,
-    houseAddress,
-    phoneNumber,
-    occupation,
-    employer,
-    employerAddress,
-    employeeFullName,
-    employeeDesignation,
-    outletEmployed,
-    ageRange,
-    uniformedPublicServant,
-    signedPolicy,
-    verificationToken,
-    email,
-  } = JSON.parse(req.body.body);
-  // console.log(JSON.parse(req.body.body));
-  if (
-    !fullName ||
-    !houseAddress ||
-    !phoneNumber ||
-    !occupation ||
-    !employer ||
-    !employerAddress ||
-    !employeeFullName ||
-    !employeeDesignation ||
-    !outletEmployed ||
-    !ageRange ||
-    !uniformedPublicServant ||
-    !signedPolicy ||
-    !verificationToken ||
-    !email
-  ) {
-    throw new CustomError.BadRequestError("Please provide all values");
-  }
-  const guarantorUpdateData = JSON.parse(req.body.body);
-
-  const guarantorData = await Guarantor.findOne({
-    $or: [{ guarantorOneEmail: email }, { guarantorTwoEmail: email }],
-  });
-
-  if (guarantorData.isCompleted === 1) {
-    throw new CustomError.BadRequestError("Guarantor form already submitted");
-  }
-
-  if (!guarantorData || guarantorData.verificationToken !== verificationToken) {
-    throw new CustomError.BadRequestError("Invalid verification token or email");
-  }
-
-  //FILE FUNCTIONALITY
-  if (!req.files || !req.files.file[0] || !req.files.file[1]) {
-    throw new CustomError.BadRequestError("No File Uploaded");
-  }
-
-  const IDFile = req.files.file[0];
-  const passportFile = req.files.file[1];
-
-  if (!IDFile.mimetype.startsWith("image") || !passportFile.mimetype.startsWith("image")) {
-    throw new CustomError.BadRequestError("Please upload an Image File");
-  }
-  const maxSize = 5000000;
-  if (IDFile.size > maxSize || passportFile.size > maxSize) {
-    throw new CustomError.BadRequestError("Please upload file smaller than 5MB");
-  }
-
-  //add file data to req,body
-  try {
-    //Upload to cloudinary
-    const resultIDFile = await cloudinary.uploader.upload(IDFile.tempFilePath, {
-      use_filename: true,
-      folder: "HR_ADMIN_PORTAL",
-    });
-    const resultPassportFile = await cloudinary.uploader.upload(passportFile.tempFilePath, {
-      use_filename: false,
-      folder: "HR_ADMIN_PORTAL",
-    });
-    //unlink/delete the file
-    fs.unlinkSync(IDFile.tempFilePath);
-    fs.unlinkSync(passportFile.tempFilePath);
-
-    const mainGuarantorData = {
-      ...guarantorUpdateData,
-      isCompleted: 1,
-      passport: resultIDFile.secure_url,
-      identificationCard: resultPassportFile.secure_url,
-    };
-
-    //UPDATE GUARANTOR FORM
-    const updatedGuarantor = await Guarantor.findOneAndUpdate(
-      { _id: guarantorData._id },
-      {
-        ...mainGuarantorData,
-        verificationToken: "",
-      },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-
-    console.log(updatedGuarantor);
-
-    if (updatedGuarantor) {
-      //UPDATE STEP STATUS guarantorStep BY ADDING ONE TO THE INITIAL ONE
-      // const updateGuarantorStepForDash = await StepState.findOne({ user: guarantorData.user });
-
-      const checkGuarantorCompletion = await Guarantor.find({ user: guarantorData.user });
-      console.log(checkGuarantorCompletion);
-      const isGuarantorCompleted = checkGuarantorCompletion.map((item) => item.isCompleted);
-      console.log(isGuarantorCompleted);
-      const confirmGuarantorCompletion =
-        isGuarantorCompleted.filter((value) => value === 1).length > 1;
-      console.log(confirmGuarantorCompletion);
-      if (confirmGuarantorCompletion) {
-        //Update guarantor step to completed IF both guarantors have completed their form
-        await StepState.findOneAndUpdate(
-          { user: guarantorData.user },
-          {
-            currentStep: 4,
-            nextStep: 5,
-            completed: true,
-            completedStep: 3,
-          },
-          {
-            new: true,
-            runValidators: true,
-          }
-        );
-        await StepState.findOneAndUpdate(
-          { user: guarantorData.user },
-          {
-            guarantorStep: 2,
-          },
-          {
-            new: true,
-            runValidators: true,
-          }
-        );
-      } else {
-        await StepState.findOneAndUpdate(
-          { user: guarantorData.user },
-          {
-            guarantorStep: 1,
-          },
-          {
-            new: true,
-            runValidators: true,
-          }
-        );
-      }
-    }
-
-    return res.status(StatusCodes.OK).json({
-      steps: {
-        msg: "Guarantor form updated successfully",
-      },
-    });
-  } catch (error) {
-    throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
-  }
-};
-
 const finalAgreement = async (req, res) => {
   const { finalAgreement } = req.body;
   if (!finalAgreement) {
@@ -1359,4 +1444,9 @@ module.exports = {
   editUser,
   getAllBioDataPerUser,
   updateOneBioData,
+  getBioDataFromDateRange,
+  getEmployeeUsersFromDateRange,
+  getNOKDataFromDateRange,
+  deleteGua,
+  getGuaDataFromDateRange,
 };

@@ -1,24 +1,23 @@
-import React, { useState, useEffect } from "react";
-import "../component.css";
-import PageLoading from "../Checks/PageLoading";
+import React, { useState } from "react";
+import "../../component.css";
+import PageLoading from "../../Checks/PageLoading";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { useGlobalContext } from "../../Context/userContext";
+import { useGlobalContext } from "../../../Context/userContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { axiosFetchFormData } from "../../Utils/axiosFetch";
-import { FaX } from "react-icons/fa6";
+import { axiosFetchFormData } from "../../../Utils/axiosFetch";
+import { FaRegEyeSlash, FaRegEye, FaX } from "react-icons/fa6";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
 
-const EditAdminEmployeeModal = ({ editUser }) => {
-  const { closeEditModal } = useGlobalContext();
-  //   const [showPassword, setShowPassword] = useState(false);
+const AddAdminModal = () => {
+  const { closeModal } = useGlobalContext();
+  const [showPassword, setShowPassword] = useState(false);
   const [imgName, setImgName] = useState(null);
-  const [emailVerify, setEmailVerify] = useState(editUser.isVerified);
   const [imgError, setImgError] = useState({ msg: "" });
-  //   const togglePasswordVisibility = () => {
-  //     setShowPassword((prevState) => !prevState);
-  //   };
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevState) => !prevState);
+  };
   // console.log(userStepState);
 
   const {
@@ -31,14 +30,13 @@ const EditAdminEmployeeModal = ({ editUser }) => {
 
   //Using react query to handle the API call
   const queryClient = useQueryClient();
-  const { mutate: editThisUser, isLoading } = useMutation({
-    mutationFn: async (editThisUser) =>
-      axiosFetchFormData.patch("/admins/adminEditUser", editThisUser),
+  const { mutate: regUser, isLoading } = useMutation({
+    mutationFn: async (regUser) => axiosFetchFormData.post("/adminAuth/register", regUser),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["registerAdmin"] });
       reset();
       setImgName(null);
-      closeEditModal();
+      closeModal();
       toast.success(data.data.msg, {
         position: "top-center",
         autoClose: 8000,
@@ -65,8 +63,6 @@ const EditAdminEmployeeModal = ({ editUser }) => {
   });
 
   const onSubmit = async (values) => {
-    values.isVerified = emailVerify;
-    console.log(values);
     try {
       if (imgName && imgName.size > 5000000) {
         setImgError({ msg: "Passport size must be less than 5MB" });
@@ -75,7 +71,8 @@ const EditAdminEmployeeModal = ({ editUser }) => {
         formData.append("file", imgName);
         formData.append("body", JSON.stringify(values));
         console.log(formData);
-        editThisUser(formData);
+        regUser(formData);
+        // reset();
       }
     } catch (error) {
       console.log(error);
@@ -86,17 +83,14 @@ const EditAdminEmployeeModal = ({ editUser }) => {
     }
   };
 
-  const updateCheck = () => {
-    setEmailVerify(!emailVerify);
-  };
-
-  useEffect(() => {
-    reset({
-      firstName: editUser.firstName,
-      lastName: editUser.lastName,
-      email: editUser.email,
-    });
-  }, [reset, editUser]);
+  //   useEffect(() => {
+  //     reset({
+  //       firstName: user.firstName,
+  //       lastName: user.lastName,
+  //       email: user.email,
+  //       password: "",
+  //     });
+  //   }, [reset, user]);
 
   if (isLoading) {
     return <PageLoading />;
@@ -105,7 +99,7 @@ const EditAdminEmployeeModal = ({ editUser }) => {
   return (
     <div className="infoModal-container">
       <div className="infoModal">
-        <FaX className="cancelEdit" onClick={closeEditModal} />
+        <FaX className="cancelEdit" onClick={closeModal} />
         <div className="mainModal">
           <div className="modalContent">
             <div className="contentM">
@@ -182,7 +176,6 @@ const EditAdminEmployeeModal = ({ editUser }) => {
                         placeholder=" "
                         autoComplete="off"
                         formNoValidate
-                        disabled
                         {...register("email", {
                           required: "Email address is required!",
                           pattern: {
@@ -196,7 +189,7 @@ const EditAdminEmployeeModal = ({ editUser }) => {
                         Email
                       </label>
                     </div>
-                    {/* <div className="formBioData">
+                    <div className="formBioData">
                       <div className="eyeIcon">
                         {showPassword ? (
                           <FaRegEye onClick={togglePasswordVisibility} className="eye" />
@@ -221,8 +214,7 @@ const EditAdminEmployeeModal = ({ editUser }) => {
                       <label htmlFor="password" className="form_label">
                         Password
                       </label>
-                    </div> */}
-
+                    </div>
                     <div className="registerUploadImg">
                       <div
                         className="clickUpload"
@@ -265,19 +257,6 @@ const EditAdminEmployeeModal = ({ editUser }) => {
                       {imgError.msg !== "" && <p className="bioError">{imgError.msg}</p>}
                     </div>
                   </div>
-                  <div className="editCheckVerification">
-                    <input
-                      type="checkbox"
-                      className=""
-                      id=""
-                      name=""
-                      checked={emailVerify}
-                      onChange={updateCheck}
-                    />
-                    <label htmlFor="emailVerified" className="">
-                      Verify Email
-                    </label>
-                  </div>
                   <button
                     disabled={isLoading}
                     type="submit"
@@ -299,4 +278,4 @@ const EditAdminEmployeeModal = ({ editUser }) => {
   );
 };
 
-export default EditAdminEmployeeModal;
+export default AddAdminModal;

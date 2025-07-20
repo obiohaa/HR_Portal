@@ -78,7 +78,7 @@ const AdminSideBar = [
   },
   {
     id: 5,
-    url: "/job_opening",
+    url: "/admin_jobs",
     text: "Job Opening",
     icon: <FaHandshake />,
   },

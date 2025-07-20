@@ -1,23 +1,24 @@
-import React, { useState } from "react";
-import "../component.css";
-import PageLoading from "../Checks/PageLoading";
+import React, { useState, useEffect } from "react";
+import "../../component.css";
+import PageLoading from "../../Checks/PageLoading";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { useGlobalContext } from "../../Context/userContext";
+import { useGlobalContext } from "../../../Context/userContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { axiosFetchFormData } from "../../Utils/axiosFetch";
-import { FaRegEyeSlash, FaRegEye, FaX } from "react-icons/fa6";
+import { axiosFetchFormData } from "../../../Utils/axiosFetch";
+import { FaX } from "react-icons/fa6";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
 
-const AddAdminModal = () => {
-  const { closeModal } = useGlobalContext();
-  const [showPassword, setShowPassword] = useState(false);
+const EditAdminModal = ({ editUser }) => {
+  const { closeEditModal } = useGlobalContext();
+  //   const [showPassword, setShowPassword] = useState(false);
   const [imgName, setImgName] = useState(null);
+  const [emailVerify, setEmailVerify] = useState(editUser.isVerified);
   const [imgError, setImgError] = useState({ msg: "" });
-  const togglePasswordVisibility = () => {
-    setShowPassword((prevState) => !prevState);
-  };
+  //   const togglePasswordVisibility = () => {
+  //     setShowPassword((prevState) => !prevState);
+  //   };
   // console.log(userStepState);
 
   const {
@@ -30,13 +31,14 @@ const AddAdminModal = () => {
 
   //Using react query to handle the API call
   const queryClient = useQueryClient();
-  const { mutate: regUser, isLoading } = useMutation({
-    mutationFn: async (regUser) => axiosFetchFormData.post("/adminAuth/register", regUser),
+  const { mutate: editThisUser, isLoading } = useMutation({
+    mutationFn: async (editThisUser) =>
+      axiosFetchFormData.patch("/admins/adminEditUser", editThisUser),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["registerAdmin"] });
       reset();
       setImgName(null);
-      closeModal();
+      closeEditModal();
       toast.success(data.data.msg, {
         position: "top-center",
         autoClose: 8000,
@@ -63,6 +65,8 @@ const AddAdminModal = () => {
   });
 
   const onSubmit = async (values) => {
+    values.isVerified = emailVerify;
+    console.log(values);
     try {
       if (imgName && imgName.size > 5000000) {
         setImgError({ msg: "Passport size must be less than 5MB" });
@@ -71,8 +75,7 @@ const AddAdminModal = () => {
         formData.append("file", imgName);
         formData.append("body", JSON.stringify(values));
         console.log(formData);
-        regUser(formData);
-        // reset();
+        editThisUser(formData);
       }
     } catch (error) {
       console.log(error);
@@ -83,14 +86,17 @@ const AddAdminModal = () => {
     }
   };
 
-  //   useEffect(() => {
-  //     reset({
-  //       firstName: user.firstName,
-  //       lastName: user.lastName,
-  //       email: user.email,
-  //       password: "",
-  //     });
-  //   }, [reset, user]);
+  const updateCheck = () => {
+    setEmailVerify(!emailVerify);
+  };
+
+  useEffect(() => {
+    reset({
+      firstName: editUser.firstName,
+      lastName: editUser.lastName,
+      email: editUser.email,
+    });
+  }, [reset, editUser]);
 
   if (isLoading) {
     return <PageLoading />;
@@ -99,7 +105,7 @@ const AddAdminModal = () => {
   return (
     <div className="infoModal-container">
       <div className="infoModal">
-        <FaX className="cancelEdit" onClick={closeModal} />
+        <FaX className="cancelEdit" onClick={closeEditModal} />
         <div className="mainModal">
           <div className="modalContent">
             <div className="contentM">
@@ -176,6 +182,7 @@ const AddAdminModal = () => {
                         placeholder=" "
                         autoComplete="off"
                         formNoValidate
+                        disabled
                         {...register("email", {
                           required: "Email address is required!",
                           pattern: {
@@ -189,7 +196,7 @@ const AddAdminModal = () => {
                         Email
                       </label>
                     </div>
-                    <div className="formBioData">
+                    {/* <div className="formBioData">
                       <div className="eyeIcon">
                         {showPassword ? (
                           <FaRegEye onClick={togglePasswordVisibility} className="eye" />
@@ -214,7 +221,8 @@ const AddAdminModal = () => {
                       <label htmlFor="password" className="form_label">
                         Password
                       </label>
-                    </div>
+                    </div> */}
+
                     <div className="registerUploadImg">
                       <div
                         className="clickUpload"
@@ -257,6 +265,19 @@ const AddAdminModal = () => {
                       {imgError.msg !== "" && <p className="bioError">{imgError.msg}</p>}
                     </div>
                   </div>
+                  <div className="editCheckVerification">
+                    <input
+                      type="checkbox"
+                      className=""
+                      id=""
+                      name=""
+                      checked={emailVerify}
+                      onChange={updateCheck}
+                    />
+                    <label htmlFor="emailVerified" className="">
+                      Verify Email
+                    </label>
+                  </div>
                   <button
                     disabled={isLoading}
                     type="submit"
@@ -278,4 +299,4 @@ const AddAdminModal = () => {
   );
 };
 
-export default AddAdminModal;
+export default EditAdminModal;

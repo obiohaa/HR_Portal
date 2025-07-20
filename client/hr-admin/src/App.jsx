@@ -23,6 +23,8 @@ import AddAdmin from "./Pages/Body/Admin/AdminSide/index.jsx";
 import AdminBioData from "./Pages/Body/Admin/AdminBioData/index.jsx";
 import AdminNOK from "./Pages/Body/Admin/AdminNOK/index.jsx";
 import Employee from "./Pages/Body/Admin/AdminEmployee/index.jsx";
+import AdminGuarantor from "./Pages/Body/Admin/AdminGuarantor/Index.jsx";
+import AdminJob from "./Pages/Body/Admin/AdminJobOpen/Index.jsx";
 
 function App() {
   return (
@@ -51,6 +53,8 @@ function App() {
         <Route path="/job_opening" exact Component={jobOpening} />
         <Route path="/pdfPagebioDATA" exact Component={BDJSONpdf} />
         <Route path="/pdfPagenok" exact Component={NOKJSON} />
+        <Route path="/admin-guarantor" exact Component={AdminGuarantor} />
+        <Route path="/admin_jobs" exact Component={AdminJob} />
         <Route path="/*" exact Component={ErrorPage} />
       </Routes>
     </Router>

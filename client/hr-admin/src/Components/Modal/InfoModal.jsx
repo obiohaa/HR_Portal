@@ -6,7 +6,7 @@ const InfoModal = () => {
   const { closeModal } = useGlobalContext();
   // console.log(userStepState);
   return (
-    <div className="infoModal-container">
+    <div className="infoModal-container2">
       <div className="infoModal">
         <div className="mainModal">
           <div className="modalContent">

@@ -1,16 +1,17 @@
 import React from "react";
-import "../component.css";
-import PageLoading from "../Checks/PageLoading";
+import "../../component.css";
+import PageLoading from "../../Checks/PageLoading";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { useGlobalContext } from "../../Context/userContext";
+import { useGlobalContext } from "../../../Context/userContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { axiosFetchFormData } from "../../Utils/axiosFetch";
+import { axiosFetch } from "../../../Utils/axiosFetch";
 import { FaRegEyeSlash, FaRegEye, FaX } from "react-icons/fa6";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
+import { exportToExcel } from "../../../Utils/Excel/NOKExportFunction";
 
-const ExportBio = () => {
+const ExportNOK = () => {
   const { closeExportModal } = useGlobalContext();
 
   const {
@@ -23,10 +24,13 @@ const ExportBio = () => {
 
   //Using react query to handle the API call
   const queryClient = useQueryClient();
-  const { mutate: regUser, isLoading } = useMutation({
-    mutationFn: async (regUser) => axiosFetchFormData.post("/adminAuth/register", regUser),
+  const { mutate: exportDates, isLoading } = useMutation({
+    mutationFn: async (exportDates) =>
+      axiosFetch.post("/admins/getNOKDataFromDateRange", exportDates),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["registerAdmin"] });
+      exportToExcel(data.data.AllNOKData, "NOK DATA");
+      //   exportToCSV(data.data.AllBioData, "BIO DATA");
       reset();
       closeExportModal();
       toast.success(data.data.msg, {
@@ -57,7 +61,7 @@ const ExportBio = () => {
   const onSubmit = async (values) => {
     try {
       console.log(values);
-      regUser(values);
+      exportDates(values);
       // reset();
     } catch (error) {
       console.log(error);
@@ -125,7 +129,7 @@ const ExportBio = () => {
                       />
                       {errors.secondDate && <p className="bioError">{errors.secondDate.message}</p>}
                       <label htmlFor="secondDate" className="form_label">
-                        Date of Birth
+                        To Date
                       </label>
                     </div>
                   </div>
@@ -150,4 +154,4 @@ const ExportBio = () => {
   );
 };
 
-export default ExportBio;
+export default ExportNOK;

@@ -7,12 +7,12 @@ import {
   FaTrashCan,
 } from "react-icons/fa6";
 import { useGlobalContext } from "../../../../Context/userContext";
-import DeleteAdminModal from "../../../../Components/Modal/DeleteAdminModal";
-import ViewUsersModal from "../../../../Components/Modal/ViewUsersModal";
-import EditAdminEmployeeModal from "../../../../Components/Modal/Employee/EditAdminEmployeeModal";
-import ExportEmployee from "../../../../Components/Modal/Exports/ExportEmployee";
+import DeleteGUAModal from "../../../../Components/Modal/GUA/DeleteGUAModal";
+import EmployeeGuaModal from "../../../../Components/Modal/GUA/EmployeeGuaModal";
+import EditEmployeeGuaModal from "../../../../Components/Modal/GUA/EditEmployeeGuaModal";
+import ExportGua from "../../../../Components/Modal/Exports/ExportGua";
 import Checkbox from "../../../../Components/CheckBoxTest";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { axiosFetch } from "../../../../Utils/axiosFetch";
 import PageLoading from "../../../../Components/Checks/PageLoading";
 import capitalizeFirstLetter from "../../../../Components/ToUpperCase";
@@ -20,18 +20,18 @@ import ReactPaginate from "react-paginate";
 import { toast } from "react-toastify";
 import NoData from "../../../../Components/Modal/NoData";
 
-const Employee = () => {
+const AdminGua = () => {
   const [selected, setSelected] = useState([]);
   const [selectedItemId, setSelectedItemId] = useState(null);
   const {
-    openExportModal,
     openDelModal,
+    isExportModalOpen,
+    openExportModal,
     isDeleteModalOpen,
     isViewModalOpen,
     openViewModal,
     openEditModal,
     isEditModalOpen,
-    isExportModalOpen,
   } = useGlobalContext();
   const [paginationData, setPaginationData] = useState([]);
   const [currentItems, setCurrentItems] = useState([]);
@@ -42,61 +42,46 @@ const Employee = () => {
   const modalRef = useRef(null);
 
   //GET ALL ADMIN USERS
-  const { data, isLoading } = useQuery({
-    queryKey: ["adminEmployee"],
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["adminGuaData"],
     retryOnMount: true, //do not retry on mount
-    refetchOnWindowFocus: false, //do not refetch on window focus
-    refetchOnReconnect: false, //do not refetch on reconnect
+    refetchOnWindowFocus: true, //do not refetch on window focus
+    refetchOnReconnect: true, //do not refetch on reconnect
     refetchOnMount: true, //do not refetch on mount
     refetchInterval: false, //do not refetch at intervals
-    refetchIntervalInBackground: false, //do not refetch in background
+    refetchIntervalInBackground: true, //do not refetch in background
     queryFn: async () => {
-      const { data } = await axiosFetch.get("/admins/getAllUsers");
-      console.log(data.employeeUsers);
-      console.log(data.employeeUsers.length);
-      setPaginationData(data.employeeUsers);
+      const { data } = await axiosFetch.get("/admins/getAllGuarantor");
+      // console.log(data);
+      console.log(data.AllGuarantor);
+      // console.log(data.AllBioData.length);
+      setPaginationData(data.AllGuarantor);
       setSelected([]);
       //   setItemOffset(0);
       return data;
     },
   });
-  console.log(data);
-  //END GET ALL ADMIN USERS
-
-  //UPDATE ADMIN USER
-  const queryClient = useQueryClient();
-  const { mutate: updateUserStatus, isLoading: isLoadingStatus } = useMutation({
-    mutationFn: async (updateUserStatus) =>
-      axiosFetch.patch("/admins/updateStatus", { data: updateUserStatus }),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["adminEmployee"] });
-      toast.success(data.data.msg, {
+  // console.log(data);
+  if (error) {
+    toast.error(
+      <div>
+        <span>
+          {error.response ? error.response.data.msg : "Something went wrong contact Admin"}
+        </span>
+      </div>,
+      {
         position: "top-center",
-        autoClose: 5000,
+        autoClose: 8000,
         hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        className: "toastGood",
-      });
-      //   reset();
-      //   setFileName(null);
-    },
-    onError: (error) => {
-      toast.error(error.response.data.msg, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: true,
+        closeOnClick: false,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
         className: "toastBad",
-      });
-    },
-  });
-  //END UPDATE ADMIN USERS
+      }
+    );
+  }
+  //END GET ALL ADMIN USERS
 
   // SEARCH SECTION
   const handleSearch = (e) => {
@@ -104,16 +89,17 @@ const Employee = () => {
     const query = e.target.value.trim().toLowerCase();
     setSearchQuery(query);
 
-    const filterQuery = data.employeeUsers.filter((user) => {
-      const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
-      return fullName.includes(query) || user.email?.toLowerCase().includes(query);
+    const filterQuery = data.AllGuarantor.filter((user) => {
+      const fullName = `${user.fullName}`.toLowerCase();
+      const employeeFullName = `${user.user.firstName} ${user.user.lastName}`.toLowerCase();
+      return fullName.includes(query) || employeeFullName.includes(query);
     });
     setPaginationData(filterQuery);
     //Controls what page to display when you search, in this case page 1
     setItemOffset(0);
   };
   // END SEARCH SECTION
-
+  // console.log(paginationData);
   // PAGINATION SECTION
   const [itemOffset, setItemOffset] = useState(0);
   const itemsPerPage = 2;
@@ -149,7 +135,7 @@ const Employee = () => {
     //if unchecked, hence false, the setSelected is updated to an empty array
     if (value) {
       // if true
-      const mappedValue = data.employeeUsers.map((item) => {
+      const mappedValue = data.AllGuarantor.map((item) => {
         return item._id;
       });
       setSelected(mappedValue); // select all
@@ -188,19 +174,19 @@ const Employee = () => {
     setSelectedItemId(null);
   };
 
-  const handleMultiDelete = () => {
-    openDelModal();
-    //we can put this empty array outside this function...
-    // console.log(selected);
-    setSelectedItemId(null);
-  };
+  // const handleMultiDelete = () => {
+  //   openDelModal();
+  //   //we can put this empty array outside this function...
+  //   // console.log(selected);
+  //   setSelectedItemId(null);
+  // };
   // END HANDLE DELETE
   //EDIT ADMIN USER STATUS
-  const updateAdminStatus = () => {
-    console.log("update status");
-    console.log(selected);
-    updateUserStatus(selected);
-  };
+  // const updateAdminStatus = () => {
+  //   console.log("update status");
+  //   console.log(selected);
+  //   updateUserStatus(selected);
+  // };
   //END EDIT ADMIN USER STATUS
 
   // VIEW THIS USER
@@ -218,16 +204,17 @@ const Employee = () => {
   };
   //END EDIT THIS USER
   // console.log(selected);
-  if (isLoading || isLoadingStatus) {
+  if (isLoading) {
     return <PageLoading />;
   }
 
   return (
     <div className="bioDataProfileContainer">
-      {isDeleteModalOpen && <DeleteAdminModal deletedItem={selected} />}
-      {isViewModalOpen && <ViewUsersModal viewUser={viewUser} />}
-      {isEditModalOpen && <EditAdminEmployeeModal editUser={editUser} />}
-      {isExportModalOpen && <ExportEmployee editUser={editUser} />}
+      {/* {isModalOpen && <AddAdminModal />} */}
+      {isDeleteModalOpen && <DeleteGUAModal deletedItem={selected} />}
+      {isViewModalOpen && <EmployeeGuaModal viewUser={viewUser} />}
+      {isEditModalOpen && <EditEmployeeGuaModal editUser={editUser} />}
+      {isExportModalOpen && <ExportGua editUser={editUser} />}
       <div className="addAdminBody">
         <div className="addAdminControl">
           <div className="searchBar">
@@ -241,18 +228,18 @@ const Employee = () => {
             />
           </div>
           <div className="actionButtons">
-            <button
+            {/* <button
               className="btnAdmin"
               disabled={selected && selected.length == 0}
               onClick={updateAdminStatus}>
               Status
-            </button>
-            <button
+            </button> */}
+            {/* <button
               className="btnAdmin"
               disabled={selected && selected.length == 0}
               onClick={handleMultiDelete}>
               Delete
-            </button>
+            </button> */}
             <button className="btnAdmin" onClick={openExportModal}>
               Export
             </button>
@@ -271,16 +258,16 @@ const Employee = () => {
                     <Checkbox
                       name="all"
                       value={
-                        data && data.employeeUsers && data.employeeUsers.length === selected.length
+                        data && data.AllGuarantor && data.AllGuarantor.length === selected.length
                       }
                       updateValue={selectAll}></Checkbox>
                   </th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Active</th>
-                  <th>Created</th>
-                  <th>Verified</th>
+                  <th>Employee</th>
+                  <th>Guarantor</th>
+                  <th>Employer</th>
+                  <th>Occupation</th>
+                  <th>Completed</th>
+                  <th>Number</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -296,22 +283,28 @@ const Employee = () => {
                             updateValue={handleSelect}></Checkbox>
                         </td>
                         <td>
-                          {capitalizeFirstLetter(item.firstName)}{" "}
-                          {capitalizeFirstLetter(item.lastName)}
-                        </td>
-                        <td>{item.email}</td>
-                        <td>{item.role}</td>
-                        <td>
-                          <div className={item.active ? "tagGreen" : "tagRed"}>
-                            {item.active.toString()}
+                          <div>
+                            {item && item.user.firstName
+                              ? capitalizeFirstLetter(item.user.firstName)
+                              : ""}{" "}
+                            {item && item.user.lastName
+                              ? capitalizeFirstLetter(item.user.lastName)
+                              : ""}
                           </div>
                         </td>
-                        <td>{item.createdAt.split("T")[0]}</td>
+                        <td>{item && item.fullName ? capitalizeFirstLetter(item.fullName) : ""}</td>
+                        <td>{item && item.employer ? capitalizeFirstLetter(item.employer) : ""}</td>
                         <td>
-                          <div className={item.isVerified ? "tagGreen" : "tagRed"}>
-                            {item.isVerified.toString()}
+                          <div>
+                            {item && item.occupation ? capitalizeFirstLetter(item.occupation) : ""}
                           </div>
                         </td>
+                        <td>
+                          <div className={item.isCompleted === 1 ? "tagGreen" : "tagRed"}>
+                            {item.isCompleted === 1 ? "True" : "False"}
+                          </div>
+                        </td>
+                        <td>{item && item.phoneNumber}</td>
                         <td style={{ position: "relative" }}>
                           <FaArrowsUpDownLeftRight
                             className="actionIcon"
@@ -346,10 +339,14 @@ const Employee = () => {
                               <button className="sideButton" onClick={() => editThisUser(item)}>
                                 <FaPencil /> Edit
                               </button>
-                              <button className="sideButton" onClick={() => handleDelete(item._id)}>
-                                {" "}
-                                <FaTrashCan /> Delete
-                              </button>
+                              {item.isCompleted === 0 && (
+                                <button
+                                  className="sideButton"
+                                  onClick={() => handleDelete(item._id)}>
+                                  {" "}
+                                  <FaTrashCan /> Delete
+                                </button>
+                              )}
                             </div>
                           )}
                         </td>
@@ -386,4 +383,4 @@ const Employee = () => {
   );
 };
 
-export default Employee;
+export default AdminGua;

@@ -834,7 +834,7 @@ const updateGuarantor = async (req, res) => {
           {
             currentStep: 4,
             nextStep: 5,
-            completed: true,
+            completed: false,
             completedStep: 3,
           },
           {

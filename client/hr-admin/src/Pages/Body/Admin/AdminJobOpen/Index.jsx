@@ -1,6 +1,6 @@
 import React from "react";
 import "../adminUser.css";
-import EmployeeNOK from "./EmployeeNOK";
+import AdminJob from "./AdminJobOpening";
 import SideBarNav from "../../../SideBarNav/SideBarNav";
 
 const Index = () => {
@@ -10,7 +10,7 @@ const Index = () => {
         <SideBarNav />
       </div>
       <div className="userContainer">
-        <EmployeeNOK />
+        <AdminJob />
       </div>
     </div>
   );

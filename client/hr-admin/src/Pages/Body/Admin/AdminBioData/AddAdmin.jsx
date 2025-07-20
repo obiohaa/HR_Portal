@@ -8,9 +8,9 @@ import {
 } from "react-icons/fa6";
 import { useGlobalContext } from "../../../../Context/userContext";
 import DeleteAdminModal from "../../../../Components/Modal/DeleteAdminModal";
-import EmployeeBioModal from "../../../../Components/Modal/EmployeeBioModal";
-import EditEmployeeBioModal from "../../../../Components/Modal/EditEmployeeBioModal";
-import ExportBio from "../../../../Components/Modal/ExportBio";
+import EmployeeBioModal from "../../../../Components/Modal/BIO/EmployeeBioModal";
+import EditEmployeeBioModal from "../../../../Components/Modal/BIO/EditEmployeeBioModal";
+import ExportBio from "../../../../Components/Modal/Exports/ExportBio";
 import Checkbox from "../../../../Components/CheckBoxTest";
 import { useQuery } from "@tanstack/react-query";
 import { axiosFetch } from "../../../../Utils/axiosFetch";
