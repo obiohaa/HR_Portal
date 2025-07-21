@@ -1,6 +1,7 @@
 import React from "react";
-import "../adminUser.css";
-import EmployeeNDA from "./EmployeeNDA";
+import "../Dashboard.css";
+
+import AdminDash from "./AdminMainDash";
 import SideBarNav from "../../../SideBarNav/SideBarNav";
 
 const Index = () => {
@@ -10,7 +11,7 @@ const Index = () => {
         <SideBarNav />
       </div>
       <div className="userContainer">
-        <EmployeeNDA />
+        <AdminDash />
       </div>
     </div>
   );

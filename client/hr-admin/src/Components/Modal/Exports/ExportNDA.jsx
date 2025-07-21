@@ -9,9 +9,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { axiosFetch } from "../../../Utils/axiosFetch";
 import { FaRegEyeSlash, FaRegEye, FaX } from "react-icons/fa6";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
-import { exportToExcel } from "../../../Utils/Excel/GuaExportFunction";
+import { exportToExcel } from "../../../Utils/Excel/NDAExportFunction";
 
-const ExportGua = () => {
+const ExportNDA = () => {
   const { closeExportModal } = useGlobalContext();
 
   const {
@@ -26,10 +26,10 @@ const ExportGua = () => {
   const queryClient = useQueryClient();
   const { mutate: exportDates, isLoading } = useMutation({
     mutationFn: async (exportDates) =>
-      axiosFetch.post("/admins/getGuaDataFromDateRange", exportDates),
+      axiosFetch.post("/admins/getNDADataFromDateRange", exportDates),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["adminGuaData"] });
-      exportToExcel(data.data.AllGuaData, "Guarantor DATA");
+      queryClient.invalidateQueries({ queryKey: ["adminNDAData"] });
+      exportToExcel(data.data.AllNDAData, "NDA DATA");
       //   exportToCSV(data.data.AllBioData, "BIO DATA");
       reset();
       closeExportModal();
@@ -154,4 +154,4 @@ const ExportGua = () => {
   );
 };
 
-export default ExportGua;
+export default ExportNDA;

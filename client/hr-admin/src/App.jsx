@@ -7,6 +7,7 @@ import Reset_Password from "./Pages/Reset_Password/Reset_Password.jsx";
 import Confirm_Password from "./Pages/Reset_Password/Confirm_Password.jsx";
 import Verify_email from "./Pages/Login/Verify-email.jsx";
 import Dashboard from "./Pages/Body/Dashboard.jsx";
+import AdminDashboard from "./Pages/Body/Dashboard/AdminDash/Index.jsx";
 import User from "./Pages/Body/User.jsx";
 import SideBarNav from "./Pages/SideBarNav/SideBarNav.jsx";
 import GuarantorMainForm from "./Pages/Body/User/GuarantorMainForm.jsx";
@@ -25,6 +26,9 @@ import AdminNOK from "./Pages/Body/Admin/AdminNOK/index.jsx";
 import Employee from "./Pages/Body/Admin/AdminEmployee/index.jsx";
 import AdminGuarantor from "./Pages/Body/Admin/AdminGuarantor/Index.jsx";
 import AdminJob from "./Pages/Body/Admin/AdminJobOpen/Index.jsx";
+import AdminNDA from "./Pages/Body/Admin/AdminNDA/Index.jsx";
+import AdminBioPDF from "./Components/PDF/AdminPDF/bioPDF.jsx";
+import AdminNOKPDF from "./Components/PDF/AdminPDF/NOKPDF.jsx";
 
 function App() {
   return (
@@ -39,6 +43,7 @@ function App() {
         <Route path="/forgot_password" exact Component={Reset_Password} />
         <Route path="/user/reset_password" exact Component={Confirm_Password} />
         <Route path="/dashboard" exact Component={Dashboard} />
+        <Route path="/Admin_dashboard" exact Component={AdminDashboard} />
         <Route path="/user" exact Component={User} />
         <Route path="/employee_guarantor" exact Component={GuarantorMainForm} />
         <Route path="/biodata" exact Component={bioDataProfile} />
@@ -53,8 +58,11 @@ function App() {
         <Route path="/job_opening" exact Component={jobOpening} />
         <Route path="/pdfPagebioDATA" exact Component={BDJSONpdf} />
         <Route path="/pdfPagenok" exact Component={NOKJSON} />
+        <Route path="/adminBIOPDF" exact Component={AdminBioPDF} />
+        <Route path="/adminNOKPDF" exact Component={AdminNOKPDF} />
         <Route path="/admin-guarantor" exact Component={AdminGuarantor} />
         <Route path="/admin_jobs" exact Component={AdminJob} />
+        <Route path="/admin-bioDataG_One" exact Component={AdminNDA} />
         <Route path="/*" exact Component={ErrorPage} />
       </Routes>
     </Router>

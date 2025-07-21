@@ -1,13 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import "../Dashboard.css";
 import PageLoading from "../../../../Components/Checks/PageLoading";
 import { useQuery } from "@tanstack/react-query";
 import { axiosFetch } from "../../../../Utils/axiosFetch";
 import { useGlobalContext } from "../../../../Context/userContext";
-import { FaChessKing, FaUsers, FaFileCircleXmark, FaUserSecret, FaUser } from "react-icons/fa6";
+import {
+  FaChessKing,
+  FaUsers,
+  FaFileCircleXmark,
+  FaUserSecret,
+  FaUser,
+  FaUserGear,
+} from "react-icons/fa6";
 
 const AdminMainDash = () => {
-  const { userStepState, user, saveUser, setUserStepState } = useGlobalContext();
+  const { user, saveUser } = useGlobalContext();
+  const [dashData, setDashData] = useState();
   // console.log(user);
 
   // Fetch the current user data
@@ -29,13 +37,18 @@ const AdminMainDash = () => {
   });
 
   const { isLoading: stepLoading } = useQuery({
-    queryKey: ["bioDataKey"],
-    refetchOnMount: true,
+    queryKey: ["dashboard"],
+    retryOnMount: true, //do not retry on mount
+    refetchOnWindowFocus: true, //do not refetch on window focus
+    refetchOnReconnect: true, //do not refetch on reconnect
+    refetchOnMount: true, //do not refetch on mount
+    refetchInterval: true, //do not refetch at intervals
+    refetchIntervalInBackground: true, //do not refetch in background
     queryFn: async () => {
-      const { data } = await axiosFetch.get("/users/userStepState");
-      // const { currentStep } = data.currentUserStepState;
-      setUserStepState(data.currentUserStepState);
-      console.log(data);
+      const { data } = await axiosFetch.get("/admins/dashboard");
+      console.log(data.msg);
+      console.log(data.dashData);
+      setDashData(data.dashData);
       return data;
     },
     onError: () => {},
@@ -50,167 +63,139 @@ const AdminMainDash = () => {
       <div className="employeeDashBody">
         <div
           className={
-            userStepState && userStepState.completedStep >= 1
+            dashData && dashData.totalBioData >= 1
               ? "employeeDashSingle dashColoured"
               : "employeeDashSingle dashNotColoured"
           }>
           <span className="toolTipText">
-            Bio Data {userStepState && userStepState.completedStep >= 1 ? "Completed" : ""}
+            {dashData && dashData.totalBioData >= 1 ? dashData.totalBioData : "0"} Bio Data(s)
           </span>
           <FaUser
             className={
-              userStepState && userStepState.completedStep >= 1
-                ? "dashIconColoured"
-                : "dashIconNotColoured"
+              dashData && dashData.totalBioData >= 1 ? "dashIconColoured" : "dashIconNotColoured"
             }
           />
           <div
             className={
-              userStepState && userStepState.completedStep >= 1 ? "dividerColoured" : "divider"
+              dashData && dashData.totalBioData >= 1 ? "dividerColoured" : "divider"
             }></div>
           <div
-            className={
-              userStepState && userStepState.completedStep >= 1 ? "dashCountColoured" : "dashCount"
-            }>
-            {userStepState && userStepState.completedStep >= 1 ? "1" : "0"}
+            className={dashData && dashData.totalBioData >= 1 ? "dashCountColoured" : "dashCount"}>
+            {dashData && dashData.totalBioData >= 1 ? dashData.totalBioData : "0"}
           </div>
         </div>
         <div
           className={
-            userStepState && userStepState.completedStep >= 2
+            dashData && dashData.totalNOK >= 1
               ? "employeeDashSingle dashColoured"
               : "employeeDashSingle dashNotColoured"
           }>
           <span className="toolTipText">
-            Next of Kin {userStepState && userStepState.completedStep >= 2 ? "Completed" : ""}
+            {dashData && dashData.totalNOK >= 1 ? dashData.totalNOK : "0"} Next of Kin(s)
           </span>
           <FaUsers
             className={
-              userStepState && userStepState.completedStep >= 2
-                ? "dashIconColoured"
-                : "dashIconNotColoured"
+              dashData && dashData.totalNOK >= 1 ? "dashIconColoured" : "dashIconNotColoured"
             }
           />
-          <div
-            className={
-              userStepState && userStepState.completedStep >= 2 ? "dividerColoured" : "divider"
-            }></div>
-          <div
-            className={
-              userStepState && userStepState.completedStep >= 2 ? "dashCountColoured" : "dashCount"
-            }>
-            {userStepState && userStepState.completedStep >= 2 ? "1" : "0"}
+          <div className={dashData && dashData.totalNOK >= 1 ? "dividerColoured" : "divider"}></div>
+          <div className={dashData && dashData.totalNOK >= 1 ? "dashCountColoured" : "dashCount"}>
+            {dashData && dashData.totalNOK >= 1 ? dashData.totalNOK : "0"}
           </div>
         </div>
         <div
           className={
-            userStepState && userStepState.guarantorStep >= 1
+            dashData && dashData.totalGuarantors >= 1
               ? "employeeDashSingle dashColoured"
               : "employeeDashSingle dashNotColoured"
           }>
           <span className="toolTipText">
-            Guarantor One {userStepState && userStepState.guarantorStep >= 1 ? "Completed" : ""}
+            {dashData && dashData.totalGuarantors >= 1 ? dashData.totalGuarantors : "0"}{" "}
+            Guarantor(s)
           </span>
           <FaUserSecret
             className={
-              userStepState && userStepState.guarantorStep >= 1
-                ? "dashIconColoured"
-                : "dashIconNotColoured"
+              dashData && dashData.totalGuarantors >= 1 ? "dashIconColoured" : "dashIconNotColoured"
             }
           />
           <div
             className={
-              userStepState && userStepState.guarantorStep >= 1 ? "dividerColoured" : "divider"
+              dashData && dashData.totalGuarantors >= 1 ? "dividerColoured" : "divider"
             }></div>
           <div
             className={
-              userStepState && userStepState.guarantorStep >= 1 ? "dashCountColoured" : "dashCount"
+              dashData && dashData.totalGuarantors >= 1 ? "dashCountColoured" : "dashCount"
             }>
-            {userStepState && userStepState.guarantorStep >= 1 ? "1" : "0"}
+            {dashData && dashData.totalGuarantors >= 1 ? dashData.totalGuarantors : "0"}
           </div>
         </div>
         <div
           className={
-            userStepState && userStepState.guarantorStep === 2
+            dashData && dashData.totalNDA >= 1
               ? "employeeDashSingle dashColoured"
               : "employeeDashSingle dashNotColoured"
           }>
           <span className="toolTipText">
-            Guarantor Two {userStepState && userStepState.guarantorStep === 2 ? "Completed" : ""}
-          </span>
-          <FaUserSecret
-            className={
-              userStepState && userStepState.guarantorStep === 2
-                ? "dashIconColoured"
-                : "dashIconNotColoured"
-            }
-          />
-          <div
-            className={
-              userStepState && userStepState.guarantorStep === 2 ? "dividerColoured" : "divider"
-            }></div>
-          <div
-            className={
-              userStepState && userStepState.guarantorStep === 2 ? "dashCountColoured" : "dashCount"
-            }>
-            {userStepState && userStepState.guarantorStep === 2 ? "1" : "0"}
-          </div>
-        </div>
-        <div
-          className={
-            userStepState && userStepState.completedStep >= 4
-              ? "employeeDashSingle dashColoured"
-              : "employeeDashSingle dashNotColoured"
-          }>
-          <span className="toolTipText">
-            N.D.A {userStepState && userStepState.completedStep >= 4 ? "Signed" : ""}
+            {dashData && dashData.totalNDA >= 1 ? dashData.totalNDA : "0"} Signed NDA
           </span>
           <FaFileCircleXmark
             className={
-              userStepState && userStepState.completedStep >= 4
-                ? "dashIconColoured"
-                : "dashIconNotColoured"
+              dashData && dashData.totalNDA >= 1 ? "dashIconColoured" : "dashIconNotColoured"
+            }
+          />
+          <div className={dashData && dashData.totalNDA >= 1 ? "dividerColoured" : "divider"}></div>
+          <div className={dashData && dashData.totalNDA >= 1 ? "dashCountColoured" : "dashCount"}>
+            {dashData && dashData.totalNDA >= 1 ? dashData.totalNDA : "0"}
+          </div>
+        </div>
+        <div
+          className={
+            dashData && dashData.totalEmployees >= 1
+              ? "employeeDashSingle dashColoured"
+              : "employeeDashSingle dashNotColoured"
+          }>
+          <span className="toolTipText">
+            {dashData && dashData.totalEmployees >= 1 ? dashData.totalEmployees : "0"} Employee(s)
+          </span>
+
+          <FaUserGear
+            className={
+              dashData && dashData.totalEmployees >= 1 ? "dashIconColoured" : "dashIconNotColoured"
             }
           />
           <div
             className={
-              userStepState && userStepState.completedStep >= 4 ? "dividerColoured" : "divider"
+              dashData && dashData.totalEmployees >= 1 ? "dividerColoured" : "divider"
             }></div>
           <div
             className={
-              userStepState && userStepState.completedStep >= 4 ? "dashCountColoured" : "dashCount"
+              dashData && dashData.totalEmployees >= 1 ? "dashCountColoured" : "dashCount"
             }>
-            {userStepState && userStepState.completedStep >= 4 ? "1" : "0"}
+            {dashData && dashData.totalEmployees >= 1 ? dashData.totalEmployees : "0"}
           </div>
         </div>
         {user && user.role === "admin" && (
           <div
             className={
-              userStepState && userStepState.completedStep >= 5
+              dashData && dashData.totalAdmins >= 1
                 ? "employeeDashSingle dashColoured"
                 : "employeeDashSingle dashNotColoured"
             }>
             <span className="toolTipText">
-              Admin {userStepState && userStepState.completedStep >= 5 ? "Completed" : ""}
+              {dashData && dashData.totalAdmins >= 1 ? dashData.totalAdmins : "0"} Admin(s)
             </span>
             <FaChessKing
               className={
-                userStepState && userStepState.completedStep >= 5
-                  ? "dashIconColoured"
-                  : "dashIconNotColoured"
+                dashData && dashData.totalAdmins >= 1 ? "dashIconColoured" : "dashIconNotColoured"
               }
             />
             <div
               className={
-                userStepState && userStepState.completedStep >= 5 ? "dividerColoured" : "divider"
+                dashData && dashData.totalAdmins >= 1 ? "dividerColoured" : "divider"
               }></div>
             <div
-              className={
-                userStepState && userStepState.completedStep >= 5
-                  ? "dashCountColoured"
-                  : "dashCount"
-              }>
-              {userStepState && userStepState.completedStep >= 5 ? "1" : "0"}
+              className={dashData && dashData.totalAdmins >= 1 ? "dashCountColoured" : "dashCount"}>
+              {dashData && dashData.totalAdmins >= 1 ? dashData.totalAdmins : "0"}
             </div>
           </div>
         )}

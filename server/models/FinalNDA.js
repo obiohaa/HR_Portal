@@ -7,6 +7,18 @@ const finalNDASchema = new mongoose.Schema(
       default: false,
       required: [true, "Final agreement status is required"],
     },
+    firstName: {
+      type: String,
+      required: [true, "Please provide first name"],
+      minlength: 2,
+      maxlength: 50,
+    },
+    lastName: {
+      type: String,
+      required: [true, "Please provide last name"],
+      minlength: 2,
+      maxlength: 50,
+    },
     user: {
       type: mongoose.Types.ObjectId,
       ref: "User",

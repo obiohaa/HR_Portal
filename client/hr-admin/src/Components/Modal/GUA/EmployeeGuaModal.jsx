@@ -57,10 +57,18 @@ const EmployeeGuaModal = ({ viewUser }) => {
 
   // PREPARING THE USER BIO FILE FOR DOWNLOAD
   //SENDING THE DATA TO PDF
-  if (updateData) {
-    var idCard = updateData.identificationCard;
-    var passportImage = updateData.passport;
-  }
+  const downloadOneAttach = () => {
+    const downLoadAttachUrl = updateData.identificationCard.replace(
+      "/upload/",
+      "/upload/fl_attachment/"
+    );
+    window.open(downLoadAttachUrl, "_blank");
+  };
+
+  const downloadTwoAttach = () => {
+    const downLoadAttachUrl = updateData.passport.replace("/upload/", "/upload/fl_attachment/");
+    window.open(downLoadAttachUrl, "_blank");
+  };
 
   if (!viewUser) {
     return <PageLoading />;
@@ -179,13 +187,11 @@ const EmployeeGuaModal = ({ viewUser }) => {
                       </h4>
                       <div className="profileLine"></div>
                     </div>
-                    <div className=" downloadCV" onClick={() => window.open(idCard, "_blank")}>
+                    <div className=" downloadCV" onClick={() => downloadOneAttach()}>
                       <FaDownload className="downCV" />
                       <p className="CVprofileLabel">ID Card</p>
                     </div>
-                    <div
-                      className=" downloadCV"
-                      onClick={() => window.open(passportImage, "_blank")}>
+                    <div className=" downloadCV" onClick={() => downloadTwoAttach()}>
                       <FaDownload className="downCV" />
                       <p className="CVprofileLabel">Passport ID</p>
                     </div>

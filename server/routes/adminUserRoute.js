@@ -14,6 +14,7 @@ const {
   updateStatus,
   editUser,
   getAllBioDataPerUser,
+  getAllNOKDataPerUser,
   updateOneBioData,
   getBioDataFromDateRange,
   getEmployeeUsersFromDateRange,
@@ -22,8 +23,11 @@ const {
   updateGuarantor,
   deleteGua,
   getGuaDataFromDateRange,
+  getNDADataFromDateRange,
+  dashboard,
 } = require("../controllers/adminController/adminController");
 
+router.route("/dashboard").get(authenticateUser, authorizePermissions("admin"), dashboard);
 router.route("/getAllUsers").get(authenticateUser, authorizePermissions("admin"), getAllUsers);
 router.route("/getAllBioData").get(authenticateUser, authorizePermissions("admin"), getAllBioData);
 router.route("/getAllNOK").get(authenticateUser, authorizePermissions("admin"), getAllNOK);
@@ -58,10 +62,6 @@ router
   .patch(authenticateUser, authorizePermissions("admin"), updateNOKData);
 
 router
-  .route("/getAllBioDataPerUser/:id")
-  .get(authenticateUser, authorizePermissions("admin"), getAllBioDataPerUser);
-
-router
   .route("/getBioDataFromDateRange")
   .post(authenticateUser, authorizePermissions("admin"), getBioDataFromDateRange);
 
@@ -75,15 +75,19 @@ router
 
 router
   .route("/getGuaDataFromDateRange")
-  .post(getGuaDataFromDateRange, authorizePermissions("admin"), getGuaDataFromDateRange);
+  .post(authenticateUser, authorizePermissions("admin"), getGuaDataFromDateRange);
+
+router
+  .route("/getNDADataFromDateRange")
+  .post(authenticateUser, authorizePermissions("admin"), getNDADataFromDateRange);
+
+router
+  .route("/getAllBioDataPerUser/:id")
+  .get(authenticateUser, authorizePermissions("admin"), getAllBioDataPerUser);
+
+router
+  .route("/getAllNOKDataPerUser/:id")
+  .get(authenticateUser, authorizePermissions("admin"), getAllNOKDataPerUser);
 
 ///////////////////////////////////////////////////////
-// router.route("/showMe").get(authenticateUser, showCurrentUser);
-// router.route("/updateUser").patch(authenticateUser, updateUser);
-// router.route("/updateUserPassword").patch(authenticateUser, updateUserPassword);
-
-// router.route("/getSingleBioData").get(authenticateUser, getSingleBioData);
-// router.route("/getSingleNOK").get(authenticateUser, getSingleNOK);
-// router.route("/:id").get(authenticateUser, getSingleUser);
-
 module.exports = router;

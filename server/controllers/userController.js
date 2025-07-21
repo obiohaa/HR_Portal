@@ -888,7 +888,12 @@ const finalAgreement = async (req, res) => {
   }
 
   try {
-    const finalUserAgreementData = { ...req.body, user: req.user.userId };
+    const finalUserAgreementData = {
+      ...req.body,
+      user: req.user.userId,
+      firstName: req.user.firstName,
+      lastName: req.user.lastName,
+    };
 
     console.log(finalUserAgreementData);
     const finalUserAgreement = await finalNDA.create(finalUserAgreementData);

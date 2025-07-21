@@ -57,9 +57,11 @@ const EmployeeBioModal = ({ viewUser }) => {
 
   // PREPARING THE USER BIO FILE FOR DOWNLOAD
   //SENDING THE DATA TO PDF
-  if (updateData) {
-    var bioURL = updateData.UserFileUrl;
-  }
+  const downloadAttach = () => {
+    console.log("click");
+    const downLoadAttachUrl = updateData.UserFileUrl.replace("/upload/", "/upload/fl_attachment/");
+    window.open(downLoadAttachUrl, "_blank");
+  };
 
   if (!viewUser) {
     return <PageLoading />;
@@ -197,7 +199,7 @@ const EmployeeBioModal = ({ viewUser }) => {
                       </h4>
                       <div className="profileLine"></div>
                     </div>
-                    <div className=" downloadCV" onClick={() => window.open(bioURL, "_blank")}>
+                    <div className=" downloadCV" onClick={() => downloadAttach()}>
                       <FaDownload className="downCV" />
                       <p className="CVprofileLabel">Download CV</p>
                     </div>
@@ -209,7 +211,12 @@ const EmployeeBioModal = ({ viewUser }) => {
                   </button>
                   <button
                     className="btn"
-                    onClick={() => window.open("http://localhost:5173/pdfPagebioDATA", "_blank")}>
+                    onClick={() =>
+                      window.open(
+                        `http://localhost:5173/adminBIOPDF?id=${updateData._id}`,
+                        "_blank"
+                      )
+                    }>
                     Download
                   </button>
                 </div>

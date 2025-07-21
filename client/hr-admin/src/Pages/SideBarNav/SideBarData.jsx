@@ -14,7 +14,7 @@ import {
 const AdminSideBar = [
   {
     id: 1,
-    url: "/dashboard",
+    url: "/Admin_dashboard",
     text: "Dashboard",
     icon: <FaClipboardList />,
   },
@@ -76,12 +76,12 @@ const AdminSideBar = [
       },
     ],
   },
-  {
-    id: 5,
-    url: "/admin_jobs",
-    text: "Job Opening",
-    icon: <FaHandshake />,
-  },
+  // {
+  //   id: 5,
+  //   url: "/admin_jobs",
+  //   text: "Job Opening",
+  //   icon: <FaHandshake />,
+  // },
 ];
 ///////////////////////////////////////////////////
 const EmployeeSideBar = [

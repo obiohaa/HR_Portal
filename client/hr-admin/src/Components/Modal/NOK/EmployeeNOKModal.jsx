@@ -126,7 +126,12 @@ const EmployeeNOKModal = ({ viewUser }) => {
                   </button>
                   <button
                     className="btn"
-                    onClick={() => window.open("http://localhost:5173/pdfPagebioDATA", "_blank")}>
+                    onClick={() =>
+                      window.open(
+                        `http://localhost:5173/AdminNOKPDF?id=${updateData._id}`,
+                        "_blank"
+                      )
+                    }>
                     Download
                   </button>
                 </div>
