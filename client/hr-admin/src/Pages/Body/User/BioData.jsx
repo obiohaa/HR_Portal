@@ -606,7 +606,7 @@ const BioData = () => {
                 name="file"
                 className="upload_Doc"
                 // accept=".png, .jpeg, .jpg"
-                accept=".pdf, .docx, .docx, .odt"
+                accept=".pdf"
                 required
                 hidden
                 onChange={({ target: { files } }) => {

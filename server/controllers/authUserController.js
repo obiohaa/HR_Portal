@@ -146,6 +146,12 @@ const login = async (req, res) => {
     throw new CustomError.UnauthenticatedError("Please verify your email");
   }
 
+  if (!user.active) {
+    throw new CustomError.UnauthenticatedError(
+      "This user has been deactivated, please contact the admin"
+    );
+  }
+
   const tokenUser = createTokenUser(user);
 
   //Create refresh token

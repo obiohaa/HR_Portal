@@ -61,7 +61,7 @@ I hope this message finds you well.
                 </p>
                 <p style="font-size: 15px;">
                   We would appreciate it if you could take a few moments to complete the guarantor form by clicking the link here:
-                  <a href="${guarantorFormLink}" style="text-decoration: none;">Guarantor Form</a>.
+                  <a href="${guarantorFormLink}" style="text-decoration: none;">Guarantor Form</a>. If the link is not working please copy and past this link in your browser "${origin}/employee_guarantor?token=${verificationToken}&email=${email}"
                 </p>
                 <p>
                 Your support in this process is greatly appreciated. Should you have any questions or require further information, please do not hesitate to contact us HR@thaplce.com.ng

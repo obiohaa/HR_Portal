@@ -278,10 +278,10 @@ const EmployeeNDA = () => {
                         </td>
                         <td>
                           <div>
-                            {item && item.user.firstName
+                            {item && item.user && item.user.firstName
                               ? capitalizeFirstLetter(item.user.firstName)
                               : ""}{" "}
-                            {item && item.user.lastName
+                            {item && item.user && item.user.lastName
                               ? capitalizeFirstLetter(item.user.lastName)
                               : ""}
                           </div>

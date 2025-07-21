@@ -89,6 +89,8 @@ const EditBioDataModal = ({ userBio }) => {
   };
 
   useEffect(() => {
+    setPensionStatus(userBio.pension);
+    setMarriageStatus(userBio.maritalStatus);
     reset({
       firstName: userBio.firstName,
       lastName: userBio.lastName,

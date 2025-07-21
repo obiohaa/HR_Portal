@@ -32,9 +32,14 @@ const BioData = () => {
 
   // PREPARING THE USER BIO FILE FOR DOWNLOAD
   //SENDING THE DATA TO PDF
-  if (data && data.userBio) {
-    var bioURL = data.userBio.UserFileUrl;
-  }
+  const downloadAttach = () => {
+    console.log("click");
+    const downLoadAttachUrl = data.userBio.UserFileUrl.replace(
+      "/upload/",
+      "/upload/fl_attachment/"
+    );
+    window.open(downLoadAttachUrl, "_blank");
+  };
 
   if (isLoading) {
     <PageLoading />;
@@ -175,7 +180,7 @@ const BioData = () => {
                 </h4>
                 <div className="profileLine"></div>
               </div>
-              <div className=" downloadCV" onClick={() => window.open(bioURL, "_blank")}>
+              <div className=" downloadCV" onClick={() => downloadAttach()}>
                 <FaDownload className="downCV" />
                 <p className="CVprofileLabel">Download CV</p>
               </div>

@@ -59,6 +59,7 @@ const sendAdminVerificationEmail = async ({ firstName, email, verificationToken,
                 <p style="font-size: 15px;">
                   To complete your registration, please verify your email address by clicking on the link:
                   <a href="${verifyEmail}" style="text-decoration: none;">Verify Email</a>.
+                  If the link is not working please copy and paste this link in your browser: "${origin}/admin/verify_email?token=${verificationToken}&email=${email}"
                 </p>
                 <p style="font-size: 15px;">Best regards,<br />The Place HR Team</p>
               </td>

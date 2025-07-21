@@ -58,6 +58,7 @@ const sendResetPasswordEmail = async ({ name, email, token, origin }) => {
                 <p style="font-size: 15px;">
                   To reset your password please click on this link: <a href="${resetURL}" style="text-decoration: none;">Reset Password</a>, 
                   This link will expire in 10 minutes for your security..
+                  If the link is not working please copy and paste this link in your browser: "${origin}/user/reset_password?token=${token}&email=${email}"
                 </p>
                 <p style="font-size: 15px;">Best regards,<br />The Place HR Team</p>
               </td>

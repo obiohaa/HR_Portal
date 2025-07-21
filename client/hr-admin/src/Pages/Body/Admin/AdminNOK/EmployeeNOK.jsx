@@ -279,8 +279,12 @@ const EmployeeNOK = () => {
                             updateValue={handleSelect}></Checkbox>
                         </td>
                         <td>
-                          {capitalizeFirstLetter(item && item.user.firstName)}{" "}
-                          {capitalizeFirstLetter(item && item.user.lastName)}
+                          {item && item.user && item.user.firstName
+                            ? capitalizeFirstLetter(item.user.firstName)
+                            : ""}{" "}
+                          {item && item.user && item.user.lastName
+                            ? capitalizeFirstLetter(item.user.lastName)
+                            : ""}
                         </td>
                         <td>
                           {" "}
