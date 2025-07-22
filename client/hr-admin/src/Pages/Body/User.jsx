@@ -1,7 +1,7 @@
 import React from "react";
 import "./body.css";
 import SideBarNav from "../SideBarNav/SideBarNav";
-import { Tracker, BioData, Guarantor } from "./User/index.jsx";
+import { Tracker, BioData, Guarantor } from "./User/Index.jsx";
 
 const User = () => {
   return (
