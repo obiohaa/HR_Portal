@@ -1,6 +1,6 @@
 import React from "react";
 import "../adminUser.css";
-import Employee from "./employee";
+import Employee from "./Employee";
 import SideBarNav from "../../../SideBarNav/SideBarNav";
 
 const Index = () => {
