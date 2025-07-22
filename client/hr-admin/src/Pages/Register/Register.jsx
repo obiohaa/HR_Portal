@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Loading from "../../Components/Checks/Loading";
 import { axiosFetchFormData } from "../../Utils/axiosFetch";
 import { toast } from "react-toastify";
-import "../Login/Login.css";
+import "../Login/login.css";
 import logo from "/logo.svg";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa6";
 import { MdCloudUpload, MdDelete } from "react-icons/md";

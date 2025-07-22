@@ -5,7 +5,7 @@ import Loading from "../../Components/Checks/Loading";
 import { useMutation } from "@tanstack/react-query";
 import { axiosFetch } from "../../Utils/axiosFetch";
 import { toast } from "react-toastify";
-import "../Login/Login.css";
+import "../Login/login.css";
 import logo from "/logo.svg";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa6";
 
