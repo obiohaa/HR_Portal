@@ -27,7 +27,7 @@ import Employee from "./Pages/Body/Admin/AdminEmployee/Index.jsx";
 import AdminGuarantor from "./Pages/Body/Admin/AdminGuarantor/Index.jsx";
 import AdminJob from "./Pages/Body/Admin/AdminJobOpen/Index.jsx";
 import AdminNDA from "./Pages/Body/Admin/AdminNDA/Index.jsx";
-import AdminBioPDF from "./Components/PDF/AdminPDF/bioPDF.jsx";
+import AdminBioPDF from "./Components/PDF/AdminPDF/BIOPDF.jsx";
 import AdminNOKPDF from "./Components/PDF/AdminPDF/NOKPDF.jsx";
 
 function App() {
