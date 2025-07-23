@@ -86,7 +86,6 @@ const AppProvider = ({ children }) => {
     queryFn: async () => {
       const { data } = await axiosFetch.get("/users/showMe");
       saveUser(data.user);
-      console.log(data.user);
       return data;
     },
     onError: () => {

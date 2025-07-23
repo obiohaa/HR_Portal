@@ -35,6 +35,7 @@ function App() {
     <Router>
       <ToastContainer />
       <Routes>
+        <Route path="/" exact Component={Login} />
         <Route path="/login" exact Component={Login} />
         <Route path="/register" exact Component={Register} />
         <Route path="/registerAdmin" exact Component={RegisterAdmin} />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import Loading from "../../Components/Checks/Loading";
@@ -13,7 +13,7 @@ import { FaRegEyeSlash, FaRegEye } from "react-icons/fa6";
 
 function Login() {
   const navigate = useNavigate();
-  const { saveUser } = useGlobalContext();
+  const { saveUser, user } = useGlobalContext();
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => {
     setShowPassword((prevState) => !prevState);
@@ -32,7 +32,11 @@ function Login() {
   });
 
   //Using react query to handle the API call
-  const { mutate: logUser, isLoading } = useMutation({
+  const {
+    mutate: logUser,
+    isLoading,
+    isSuccess,
+  } = useMutation({
     mutationFn: async (logUser) => axiosFetch.post("/auth/login", { ...logUser }),
     onSuccess: (data) => {
       saveUser(data.data.user);
@@ -46,7 +50,6 @@ function Login() {
         progress: undefined,
         className: "toastGood",
       });
-      navigate("/dashboard");
     },
     onError: (error) => {
       toast.error(
@@ -68,6 +71,18 @@ function Login() {
       );
     },
   });
+
+  useEffect(() => {
+    if (isSuccess) {
+      if (user.role === "admin") {
+        navigate("/Admin_dashboard");
+      } else if (user.role === "employee") {
+        navigate("/dashboard");
+      } else {
+        navigate("/login");
+      }
+    }
+  }, [isSuccess, user, navigate]);
 
   const onSubmit = async (values) => {
     try {
