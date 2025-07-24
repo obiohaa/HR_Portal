@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosFetch = axios.create({
-  baseURL: "http://localhost:5000/api/v1",
+  baseURL: "https://hr_server.theplace.com.ng/api/v1",
   withCredentials: "true",
   headers: {
     "Content-Type": "application/json",
@@ -9,7 +9,7 @@ const axiosFetch = axios.create({
 });
 
 const axiosFetchFormData = axios.create({
-  baseURL: "http://localhost:5000/api/v1",
+  baseURL: "https://hr_server.theplace.com.ng/api/v1",
   withCredentials: "true",
   headers: {
     "Content-Type": "multipart/form-data",

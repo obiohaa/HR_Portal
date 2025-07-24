@@ -623,7 +623,8 @@ const guarantorUser = async (req, res) => {
     const user = req.user.userId;
     const firstName = req.user.firstName;
     const lastName = req.user.lastName;
-    const origin = "http://localhost:5173";
+    const origin = "https://hr_portal.theplace.com.ng";
+    // const origin = "http://localhost:5173";
 
     console.log(user);
     console.log(firstName);

@@ -35,7 +35,7 @@ const errorHandlerMiddleware = require("./middleware/error-handler");
 
 //others
 const corOptions = {
-  origin: "https://hr_portal.theplace.com.ng",
+  origin: "http://localhost:5173",
   credentials: true,
   methods: ["GET", "HEAD", "POST", "PATCH", "PUT", "DELETE", "UPDATE"],
   allowedHeader: ["Content-Type", "Authorization"],
@@ -70,11 +70,14 @@ app.use("/api/v1/admins", adminRouter);
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 const start = async () => {
   try {
-    await connectDB(process.env.MONGO_URL);
-    app.listen(port, () => console.log(`Server is listening on port ${port}...`));
+    const con = await connectDB(process.env.MONGO_URL);
+    console.log();
+    app.listen(port, () =>
+      console.log(`Server is listening on port ${port}...${con.connection.host}`)
+    );
   } catch (error) {
     console.log(error);
   }
