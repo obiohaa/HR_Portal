@@ -189,7 +189,9 @@ const BioData = () => {
           <div className="btns profileBtn">
             <button
               className="btn"
-              onClick={() => window.open("http://localhost:5173/pdfPagebioDATA", "_blank")}>
+              onClick={() =>
+                window.open("https://hr-portal.theplace.com.ng/pdfPagebioDATA", "_blank")
+              }>
               Download
             </button>
             <button className="btn" onClick={openModal}>

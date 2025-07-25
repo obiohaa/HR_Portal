@@ -46,10 +46,10 @@ const AddAdmin = () => {
     queryKey: ["registerAdmin"],
     retryOnMount: true, //do not retry on mount
     refetchOnWindowFocus: false, //do not refetch on window focus
-    refetchOnReconnect: false, //do not refetch on reconnect
+    refetchOnReconnect: true, //do not refetch on reconnect
     refetchOnMount: true, //do not refetch on mount
     refetchInterval: false, //do not refetch at intervals
-    refetchIntervalInBackground: false, //do not refetch in background
+    refetchIntervalInBackground: true, //do not refetch in background
     queryFn: async () => {
       const { data } = await axiosFetch.get("/admins/getAllAdminUsers");
       console.log(data);
@@ -62,7 +62,12 @@ const AddAdmin = () => {
     },
   });
 
-  console.log(data);
+  //USE STALE DATA IF AVAILABLE
+  // This will set the pagination data to the fetched data when it is available
+  useEffect(() => {
+    data && setPaginationData(data.adminUsers);
+  }, [data]);
+
   if (error) {
     toast.error(
       <div>
@@ -218,8 +223,8 @@ const AddAdmin = () => {
   // END HANDLE DELETE
   //EDIT ADMIN USER STATUS
   const updateAdminStatus = () => {
-    console.log("update status");
-    console.log(selected);
+    // console.log("update status");
+    // console.log(selected);
     updateUserStatus(selected);
   };
   //END EDIT ADMIN USER STATUS
@@ -239,6 +244,7 @@ const AddAdmin = () => {
   };
   //END EDIT THIS USER
   // console.log(selected);
+
   if (isLoading || isLoadingStatus) {
     return <PageLoading />;
   }

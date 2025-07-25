@@ -91,7 +91,7 @@ const NOK = () => {
           <div className="btns profileBtn">
             <button
               className="btn"
-              onClick={() => window.open("http://localhost:5173/pdfPagenok", "_blank")}>
+              onClick={() => window.open("https://hr-portal.theplace.com.ng/pdfPagenok", "_blank")}>
               Download
             </button>
             <button className="btn" onClick={openModal}>

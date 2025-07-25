@@ -128,7 +128,7 @@ const EmployeeNOKModal = ({ viewUser }) => {
                     className="btn"
                     onClick={() =>
                       window.open(
-                        `http://localhost:5173/AdminNOKPDF?id=${updateData._id}`,
+                        `https://hr-portal.theplace.com.ng/AdminNOKPDF?id=${updateData._id}`,
                         "_blank"
                       )
                     }>

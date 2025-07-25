@@ -20,7 +20,7 @@ const fs = require("fs");
 
 //get all users where role is admin
 const getAllAdminUsers = async (req, res) => {
-  const excludedAdminId = "686177da71064b4821e19289";
+  const excludedAdminId = "6881e99a77338227e497193d";
   //_id: { $ne: excludedAdminId }
   const adminUsers = await User.find({ role: "admin" })
     .select("-password -passwordToken -verificationToken -passwordTokenExpirationDate -__v")
@@ -495,7 +495,7 @@ const getAllNDA = async (req, res) => {
 //DELETE USER
 const deleteUser = async (req, res) => {
   const deleteThisItem = req.body.ids;
-  const neverDelete = "686177da71064b4821e19289"; //Protected Admin Id
+  const neverDelete = "6881e99a77338227e497193d"; //Protected Admin Id
 
   if (deleteThisItem.includes(neverDelete)) {
     throw new CustomError.BadRequestError("You cannot delete Administrator");
@@ -520,7 +520,7 @@ const updateStatus = async (req, res) => {
   console.log(req.body.data);
 
   const updateThisStatus = req.body.data;
-  const neverUpdate = "686177da71064b4821e19289"; //Protected Admin Id
+  const neverUpdate = "6881e99a77338227e497193d"; //Protected Admin Id
 
   if (updateThisStatus.includes(neverUpdate)) {
     throw new CustomError.BadRequestError("You cannot update Administrator");

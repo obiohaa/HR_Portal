@@ -7,7 +7,7 @@ import {
   FaTrashCan,
 } from "react-icons/fa6";
 import { useGlobalContext } from "../../../../Context/userContext";
-import DeleteAdminModal from "../../../../Components/Modal/DeleteAdminModal";
+import DeleteEmployeeModal from "../../../../Components/Modal/DeleteEmployeeModal";
 import ViewUsersModal from "../../../../Components/Modal/ViewUsersModal";
 import EditAdminEmployeeModal from "../../../../Components/Modal/Employee/EditAdminEmployeeModal";
 import ExportEmployee from "../../../../Components/Modal/Exports/ExportEmployee";
@@ -46,10 +46,10 @@ const Employee = () => {
     queryKey: ["adminEmployee"],
     retryOnMount: true, //do not retry on mount
     refetchOnWindowFocus: false, //do not refetch on window focus
-    refetchOnReconnect: false, //do not refetch on reconnect
+    refetchOnReconnect: true, //do not refetch on reconnect
     refetchOnMount: true, //do not refetch on mount
     refetchInterval: false, //do not refetch at intervals
-    refetchIntervalInBackground: false, //do not refetch in background
+    refetchIntervalInBackground: true, //do not refetch in background
     queryFn: async () => {
       const { data } = await axiosFetch.get("/admins/getAllUsers");
       console.log(data.employeeUsers);
@@ -60,7 +60,12 @@ const Employee = () => {
       return data;
     },
   });
-  console.log(data);
+
+  //USE STALE DATA IF AVAILABLE
+  // This will set the pagination data to the fetched data when it is available
+  useEffect(() => {
+    data && setPaginationData(data.employeeUsers);
+  }, [data]);
   //END GET ALL ADMIN USERS
 
   //UPDATE ADMIN USER
@@ -224,7 +229,7 @@ const Employee = () => {
 
   return (
     <div className="bioDataProfileContainer">
-      {isDeleteModalOpen && <DeleteAdminModal deletedItem={selected} />}
+      {isDeleteModalOpen && <DeleteEmployeeModal deletedItem={selected} />}
       {isViewModalOpen && <ViewUsersModal viewUser={viewUser} />}
       {isEditModalOpen && <EditAdminEmployeeModal editUser={editUser} />}
       {isExportModalOpen && <ExportEmployee editUser={editUser} />}

@@ -213,7 +213,7 @@ const EmployeeBioModal = ({ viewUser }) => {
                     className="btn"
                     onClick={() =>
                       window.open(
-                        `http://localhost:5173/adminBIOPDF?id=${updateData._id}`,
+                        `https://hr-portal.theplace.com.ng/adminBIOPDF?id=${updateData._id}`,
                         "_blank"
                       )
                     }>

@@ -210,7 +210,7 @@
 // <Sidebar items={AdminSideBar} userFullName="Jane Smith" /> or <Sidebar items={EmployeeSideBar} userFullName="John Doe" />
 ////////////////////////////////////////////////////////////
 
-import React from "react";
+import React, { useEffect } from "react";
 import { FaPowerOff } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import capitalizeFirstLetter from "../../Components/ToUpperCase";
@@ -248,9 +248,11 @@ const SideBarNav = () => {
     },
   });
 
-  if (user === null) {
-    navigate("/login");
-  }
+  useEffect(() => {
+    if (user === null) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
 
   return (
     <div

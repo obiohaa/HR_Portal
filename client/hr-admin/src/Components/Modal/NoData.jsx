@@ -18,7 +18,8 @@ const NoData = () => {
             <div className="contentM">
               <BadMark />
               <p>
-                No record found here. Go to page 1 or contact your IT Admin for more information.
+                No record found. If this remain the same Go to page 1 or contact your IT Admin for
+                more information.
               </p>
             </div>
           </div>

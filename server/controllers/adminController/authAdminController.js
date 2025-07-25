@@ -57,7 +57,7 @@ const register = async (req, res) => {
       imgURL,
     });
 
-    const origin = "https://hr_portal.theplace.com.ng";
+    const origin = "https://hr-portal.theplace.com.ng";
     // const origin = "http://localhost:5173";
     // const newOrigin = 'https://react-node-user-workflow-front-end.netlify.app'; //production
 
@@ -93,7 +93,7 @@ const register = async (req, res) => {
       imgURL,
     });
 
-    const origin = "https://hr_portal.theplace.com.ng";
+    const origin = "https://hr-portal.theplace.com.ng";
     // const origin = "http://localhost:5173";
     // const newOrigin = 'https://react-node-user-workflow-front-end.netlify.app'; //production
 

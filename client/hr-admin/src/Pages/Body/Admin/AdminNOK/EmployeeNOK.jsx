@@ -44,7 +44,7 @@ const EmployeeNOK = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["adminNOKData"],
     retryOnMount: true, //do not retry on mount
-    refetchOnWindowFocus: true, //do not refetch on window focus
+    refetchOnWindowFocus: false, //do not refetch on window focus
     refetchOnReconnect: true, //do not refetch on reconnect
     refetchOnMount: true, //do not refetch on mount
     refetchInterval: false, //do not refetch at intervals
@@ -60,6 +60,11 @@ const EmployeeNOK = () => {
     },
   });
 
+  //USE STALE DATA IF AVAILABLE
+  // This will set the pagination data to the fetched data when it is available
+  useEffect(() => {
+    data && setPaginationData(data.AllNOK);
+  }, [data]);
   // console.log(data);
   if (error) {
     toast.error(

@@ -63,7 +63,7 @@ const register = async (req, res) => {
     verificationToken,
     imgURL,
   });
-  const origin = "https://hr_portal.theplace.com.ng";
+  const origin = "https://hr-portal.theplace.com.ng";
   // const origin = "http://localhost:5173";
   // const newOrigin = 'https://react-node-user-workflow-front-end.netlify.app'; //production
 
@@ -215,7 +215,7 @@ const forgotPassword = async (req, res) => {
     const passwordToken = crypto.randomBytes(70).toString("hex");
 
     //send email
-    const origin = "https://hr_portal.theplace.com.ng";
+    const origin = "https://hr-portal.theplace.com.ng";
     // const origin = "http://localhost:5173";
     await sendResetPasswordEmail({
       name: user.firstName,

@@ -408,7 +408,93 @@ input[type="file"]::file-selector-button {
   height: auto;
 }
 
+/* Main Guarantor form Mobile */
+@media screen and (max-width: 800px) and (min-width: 300px) {
+  .mainGuarantorFormBody {
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+    margin-bottom: 30px;
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    /* grid-template-rows: repeat(5, 1fr); */
+    justify-content: center;
+    column-gap: 10px;
+    row-gap: 70px;
+    transition: all 0.5s ease-in-out;
+  }
+
+  .mainGuarantorBody {
+    height: 95vh;
+    width: 85%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    background-color: #fff;
+    overflow: auto;
+    border-radius: 8px;
+    border-top: 4px solid var(--clr-primary-2);
+  }
+
+  /* THE MAGIC OF HAVING THE HEADER STATIC WHILE THE FORM MOVES IS OVERFLOW */
+  .mainGuarantorForm {
+    width: 95%;
+    height: auto;
+    overflow-x: auto;
+    margin: 20px 0;
+  }
+
+  .guarantorBtns {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+@media screen and (max-width: 1300px) and (min-width: 801px) {
+  .mainGuarantorFormBody {
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+    margin-bottom: 30px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    /* grid-template-rows: repeat(5, 1fr); */
+    justify-content: center;
+    column-gap: 10px;
+    row-gap: 70px;
+    transition: all 0.5s ease-in-out;
+  }
+
+  .mainGuarantorBody {
+    height: 95vh;
+    width: 85%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    background-color: #fff;
+    overflow: auto;
+    border-radius: 8px;
+    border-top: 4px solid var(--clr-primary-2);
+  }
+
+  /* THE MAGIC OF HAVING THE HEADER STATIC WHILE THE FORM MOVES IS OVERFLOW */
+  .mainGuarantorForm {
+    width: 95%;
+    height: auto;
+    overflow-x: auto;
+    margin: 20px 0;
+  }
+
+  .guarantorBtns {
+    display: flex;
+    justify-content: space-between;
+  }
+}
 /* END GUARANTOR MAIN FORM */
+
+/*  */
 /* START NDA MAIN */
 .NDAContainer {
   width: 100%;

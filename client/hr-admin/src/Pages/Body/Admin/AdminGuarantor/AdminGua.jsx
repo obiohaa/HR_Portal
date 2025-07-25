@@ -61,6 +61,13 @@ const AdminGua = () => {
       return data;
     },
   });
+
+  //USE STALE DATA IF AVAILABLE
+  // This will set the pagination data to the fetched data when it is available
+  useEffect(() => {
+    data && setPaginationData(data.AllGuarantor);
+  }, [data]);
+
   // console.log(data);
   if (error) {
     toast.error(

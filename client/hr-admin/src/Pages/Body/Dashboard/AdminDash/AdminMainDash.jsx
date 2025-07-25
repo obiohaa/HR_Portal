@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../Dashboard.css";
 import PageLoading from "../../../../Components/Checks/PageLoading";
 import { useQuery } from "@tanstack/react-query";
@@ -36,7 +36,7 @@ const AdminMainDash = () => {
     onError: () => {},
   });
 
-  const { isLoading: stepLoading } = useQuery({
+  const { data, isLoading: stepLoading } = useQuery({
     queryKey: ["dashboard"],
     retryOnMount: true, //do not retry on mount
     refetchOnWindowFocus: true, //do not refetch on window focus
@@ -53,6 +53,12 @@ const AdminMainDash = () => {
     },
     onError: () => {},
   });
+
+  //USE STALE DATA IF AVAILABLE
+  // This will set the pagination data to the fetched data when it is available
+  useEffect(() => {
+    data && setDashData(data.dashData);
+  }, [data]);
 
   if (stepLoading) {
     return <PageLoading />;

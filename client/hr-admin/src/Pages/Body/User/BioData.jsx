@@ -447,11 +447,11 @@ const BioData = () => {
                 {...register("bankAccountNumber", {
                   required: "Bank account number is required!",
                   minLength: {
-                    value: 11,
+                    value: 10,
                     message: "Minimum characters of 11 letters.",
                   },
                   maxLength: {
-                    value: 11,
+                    value: 10,
                     message: "Maximum characters of 11 letters.",
                   },
                   pattern: {
