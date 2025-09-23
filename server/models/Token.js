@@ -23,6 +23,9 @@ const TokenSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    lastLogin: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );

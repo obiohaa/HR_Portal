@@ -6,6 +6,7 @@ const createTokenUser = (user) => {
     imgURL: user.imgURL,
     userId: user._id,
     role: user.role,
+    staffId: user.bioData ? user.bioData.staffId : null,
   };
 };
 

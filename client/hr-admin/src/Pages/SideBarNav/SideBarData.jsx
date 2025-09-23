@@ -9,6 +9,8 @@ import {
   FaFilePowerpoint,
   FaHandshake,
   FaClipboardUser,
+  FaGlobe,
+  FaUsers,
 } from "react-icons/fa6";
 
 const AdminSideBar = [
@@ -46,42 +48,69 @@ const AdminSideBar = [
     subNav: [
       {
         id: 1,
-        url: "/admin-employee",
-        text: "Employee",
+        url: "/Registered-employee",
+        text: "Registered",
       },
       {
         id: 2,
+        url: "/Resumed-employee",
+        text: "Resumed",
+      },
+      {
+        id: 3,
+        url: "/Resigned-employee",
+        text: "Resigned",
+      },
+    ],
+  },
+  {
+    id: 4,
+    url: "#",
+    text: "Other Data",
+    icon: <FaUsers />,
+    iconClosed: <FaAngleRight />,
+    subNav: [
+      {
+        id: 1,
         url: "/admin-bioData",
         text: "Bio Data",
       },
       {
-        id: 3,
+        id: 2,
         url: "/admin-NOK",
-        text: "NOK",
+        text: "Next of Kin",
       },
       {
-        id: 4,
+        id: 3,
         url: "/admin-guarantor",
         text: "Guarantor",
       },
-      // {
-      //   id: 5,
-      //   url: "/admin-bioDataG_One",
-      //   text: "Guarantor Two",
-      // },
       {
-        id: 5,
+        id: 7,
         url: "/admin-bioDataG_One",
         text: "NDA",
       },
     ],
   },
-  // {
-  //   id: 5,
-  //   url: "/admin_jobs",
-  //   text: "Job Opening",
-  //   icon: <FaHandshake />,
-  // },
+  {
+    id: 5,
+    url: "#",
+    text: "Website Content",
+    icon: <FaGlobe />,
+    iconClosed: <FaAngleRight />,
+    subNav: [
+      {
+        id: 1,
+        url: "/admin_jobs",
+        text: "Job Opening",
+      },
+      {
+        id: 2,
+        url: "/Outlet-locations",
+        text: "Outlet Locations",
+      },
+    ],
+  },
 ];
 ///////////////////////////////////////////////////
 const EmployeeSideBar = [

@@ -4,6 +4,7 @@ const StepState = require("../../models/StepState");
 const Guarantor = require("../../models/Guarantor");
 const NextOfKin = require("../../models/NextOfKin");
 const finalNDA = require("../../models/FinalNDA");
+const Location = require("../../models/Location");
 const { StatusCodes } = require("http-status-codes");
 const path = require("path");
 const CustomError = require("../../errors");
@@ -31,9 +32,11 @@ const getAllAdminUsers = async (req, res) => {
     count: adminUsers.length,
   });
 };
-//get all users where role is employee
+
+//get all users where role is employee and status is registered
 const getAllUsers = async (req, res) => {
-  const employeeUsers = await User.find({ role: "employee" })
+  const employeeUsers = await User.find({ role: "employee", employeeStatus: "registered" })
+    .populate("bioData", "staffId -_id -user")
     .select("-password -passwordToken -verificationToken -passwordTokenExpirationDate -__v")
     .sort({ createdAt: -1 });
   res.status(StatusCodes.OK).json({
@@ -42,17 +45,50 @@ const getAllUsers = async (req, res) => {
     count: employeeUsers.length,
   });
 };
+
+//GET ALL USERS WHERE ROLE IS EMPLOYEE AND STATUS IS RESUMED
+const getAllResumedUsers = async (req, res) => {
+  const employeeUsers = await User.find({ role: "employee", employeeStatus: "resumed" })
+    .populate("bioData", "staffId -_id -user")
+    .select("-password -passwordToken -verificationToken -passwordTokenExpirationDate -__v")
+    .sort({ createdAt: -1 });
+  res.status(StatusCodes.OK).json({
+    msg: "Employee users generated",
+    employeeUsers,
+    count: employeeUsers.length,
+  });
+};
+
+//GET ALL USERS WHERE ROLE IS EMPLOYEE AND STATUS IS TERMINATED
+const getAllTerminatedUsers = async (req, res) => {
+  const employeeUsers = await User.find({ role: "employee", employeeStatus: "terminated" })
+    .populate("bioData", "staffId -_id -user")
+    .select("-password -passwordToken -verificationToken -passwordTokenExpirationDate -__v")
+    .sort({ createdAt: -1 });
+  res.status(StatusCodes.OK).json({
+    msg: "Employee users generated",
+    employeeUsers,
+    count: employeeUsers.length,
+  });
+};
+
 //get all bioData
 const getAllBioData = async (req, res) => {
   const AllBioData = await BioData.find()
+    .populate({
+      path: "user",
+      select:
+        "-email -_id -role -imgURL -active -createdAt -updatedAt -verified -firstName -lastName -password -isVerified -passwordToken -verificationToken -passwordTokenExpirationDate -__v",
+    })
     .sort({ createdAt: -1 })
-    .select("-user -createdAt -updatedAt -__v");
+    .select(" -createdAt -updatedAt -__v");
   res.status(StatusCodes.OK).json({
     msg: "Bio Data generated",
     AllBioData,
     count: AllBioData.length,
   });
 };
+
 //get all bio data per user
 const getAllBioDataPerUser = async (req, res) => {
   const AllBioDataPerUser = await BioData.find({ _id: req.params.id })
@@ -93,8 +129,13 @@ const getBioDataFromDateRange = async (req, res) => {
       $lte: new Date(end),
     },
   })
+    .populate({
+      path: "user",
+      select:
+        "-email -_id -role -imgURL -active -createdAt -updatedAt -verified -firstName -lastName -password -isVerified -passwordToken -verificationToken -passwordTokenExpirationDate -__v",
+    })
     .sort({ createdAt: -1 })
-    .select("-user -createdAt -updatedAt -__v");
+    .select(" -createdAt -updatedAt -__v");
   //
   if (AllBioData === "" || AllBioData.length === 0) {
     throw new CustomError.BadRequestError("No data for this date range");
@@ -117,15 +158,51 @@ const getEmployeeUsersFromDateRange = async (req, res) => {
   end.setHours(23, 59, 59, 999); // Set the end date to the end of the day
   const employeeUsers = await User.find({
     role: "employee",
+    employeeStatus: "registered",
     createdAt: {
       $gte: new Date(start),
       $lte: new Date(end),
     },
   })
-    .sort({ createdAt: -1 })
+    .populate("bioData", "staffId -_id -user")
     .select(
-      "-password -passwordToken -verificationToken -passwordTokenExpirationDate -__v -updatedAt -_id"
-    );
+      "-password -passwordToken -verificationToken -passwordTokenExpirationDate -__v -updatedAt"
+    )
+    .sort({ createdAt: -1 });
+  //
+  if (employeeUsers === "" || employeeUsers.length === 0) {
+    throw new CustomError.BadRequestError("No data for this date range");
+  }
+
+  res.status(StatusCodes.OK).json({
+    msg: "Employee Users Report Generated",
+    employeeUsers,
+    count: employeeUsers.length,
+  });
+};
+
+//get resumed employee users based on date range
+const getResumedEmployeeUsersFromDateRange = async (req, res) => {
+  const { firstDate, secondDate } = req.body;
+  if (!firstDate || !secondDate) {
+    throw new CustomError.BadRequestError("Please provide both start and end dates");
+  }
+  const start = new Date(firstDate);
+  const end = new Date(secondDate);
+  end.setHours(23, 59, 59, 999); // Set the end date to the end of the day
+  const employeeUsers = await User.find({
+    role: "employee",
+    employeeStatus: "resumed",
+    createdAt: {
+      $gte: new Date(start),
+      $lte: new Date(end),
+    },
+  })
+    .populate("bioData", "staffId -_id -user")
+    .select(
+      "-password -passwordToken -verificationToken -passwordTokenExpirationDate -__v -updatedAt"
+    )
+    .sort({ createdAt: -1 });
 
   //
   if (employeeUsers === "" || employeeUsers.length === 0) {
@@ -134,7 +211,42 @@ const getEmployeeUsersFromDateRange = async (req, res) => {
 
   res.status(StatusCodes.OK).json({
     msg: "Employee Users Report Generated",
-    // employeeUsers,
+    employeeUsers,
+    count: employeeUsers.length,
+  });
+};
+
+//get resumed employee users based on date range
+const getTerminatedEmployeeUsersFromDateRange = async (req, res) => {
+  const { firstDate, secondDate } = req.body;
+  if (!firstDate || !secondDate) {
+    throw new CustomError.BadRequestError("Please provide both start and end dates");
+  }
+  const start = new Date(firstDate);
+  const end = new Date(secondDate);
+  end.setHours(23, 59, 59, 999); // Set the end date to the end of the day
+  const employeeUsers = await User.find({
+    role: "employee",
+    employeeStatus: "terminated",
+    createdAt: {
+      $gte: new Date(start),
+      $lte: new Date(end),
+    },
+  })
+    .populate("bioData", "staffId -_id -user")
+    .select(
+      "-password -passwordToken -verificationToken -passwordTokenExpirationDate -__v -updatedAt"
+    )
+    .sort({ createdAt: -1 });
+
+  //
+  if (employeeUsers === "" || employeeUsers.length === 0) {
+    throw new CustomError.BadRequestError("No data for this date range");
+  }
+
+  res.status(StatusCodes.OK).json({
+    msg: "Employee Users Report Generated",
+    employeeUsers,
     count: employeeUsers.length,
   });
 };
@@ -246,6 +358,9 @@ const updateOneBioData = async (req, res) => {
     pensionPin,
     email,
     id,
+    staffId,
+    jobLocation,
+    jobName,
   } = JSON.parse(req.body.body);
   // console.log(JSON.parse(req.body.body));
   if (
@@ -261,19 +376,27 @@ const updateOneBioData = async (req, res) => {
     !bankName ||
     !bankAccountNumber ||
     !pension ||
-    !levelOfEducation
+    !levelOfEducation ||
+    !staffId ||
+    !jobLocation ||
+    !jobName
   ) {
     throw new CustomError.BadRequestError("Please provide all values");
   }
   let updatedUserBioData = JSON.parse(req.body.body);
   // console.log(req.user);
   const user = await BioData.findOne({ _id: updatedUserBioData.id });
+
   if (!user) {
     throw new CustomError.BadRequestError("Bio Data does not exist");
   }
 
+  const existStaffId = await BioData.findOne({ staffId: updatedUserBioData.staffId });
+  if (existStaffId) {
+    throw new CustomError.BadRequestError("Staff ID already exist, please use another one");
+  }
   // IF FILE EXIST, RUN FILE FUNCTIONALITY
-  console.log(req.files);
+  // console.log(req.files);
   if (req.files) {
     const userFile = req.files.file;
     if (!userFile.mimetype.startsWith("application")) {
@@ -295,7 +418,7 @@ const updateOneBioData = async (req, res) => {
         use_filename: true,
         folder: "HR_ADMIN_PORTAL",
       });
-      console.log(result);
+      // console.log(result);
       //unlink/delete the file
       fs.unlinkSync(userFile.tempFilePath);
 
@@ -314,7 +437,7 @@ const updateOneBioData = async (req, res) => {
           runValidators: true,
         }
       );
-      console.log(updatedMainUserBioData);
+      // console.log(updatedMainUserBioData);
       const updateUserData = await User.findOneAndUpdate(
         { email: updatedUserBioData.email },
         {
@@ -326,7 +449,7 @@ const updateOneBioData = async (req, res) => {
           runValidators: true,
         }
       );
-      console.log(updateUserData);
+      // console.log(updateUserData);
 
       return res.status(StatusCodes.OK).json({
         msg: "Bio Data Updated",
@@ -351,7 +474,7 @@ const updateOneBioData = async (req, res) => {
           runValidators: true,
         }
       );
-      console.log(updatedMainUserBioData);
+      // console.log(updatedMainUserBioData);
 
       const updateUserData = await User.findOneAndUpdate(
         { email: updatedUserBioData.email },
@@ -364,7 +487,7 @@ const updateOneBioData = async (req, res) => {
           runValidators: true,
         }
       );
-      console.log(updateUserData);
+      // console.log(updateUserData);
 
       return res.status(StatusCodes.OK).json({
         msg: "Bio Data Updated",
@@ -515,10 +638,8 @@ const deleteUser = async (req, res) => {
   }
 };
 
-//UPDATE USER STATUS, ACTIVE OR INACTIVE
+//UPDATE USER STATUS, ACTIVE
 const updateStatus = async (req, res) => {
-  console.log(req.body.data);
-
   const updateThisStatus = req.body.data;
   const neverUpdate = "6881e99a77338227e497193d"; //Protected Admin Id
 
@@ -530,15 +651,154 @@ const updateStatus = async (req, res) => {
   try {
     // Get users whose status should be toggled
     const users = await User.find({ _id: { $in: updateThisStatus } });
-    console.log(users);
     // Toggle each user's active status and update them
     const updateAdminUserStatus = users.map((user) =>
-      User.findByIdAndUpdate(user._id, { active: !user.active }, { new: true, runValidators: true })
+      User.findByIdAndUpdate(user._id, { active: true }, { new: true, runValidators: true })
     );
     //update all users concurrently. Collect all these individual promises into an array or takes an iterable (like an array) of promises and returns a single Promise. This returned Promise resolves when all the input promises have resolved, or rejects as soon as any of the input promises reject.
     await Promise.all(updateAdminUserStatus);
 
-    res.status(StatusCodes.OK).json({ msg: "Success! User(s) status toggled" });
+    res.status(StatusCodes.OK).json({ msg: "Success! User(s) status active" });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin: " + error.message);
+  }
+};
+
+//UPDATE USER STATUS, DEACTIVATE
+const deActivateStatus = async (req, res) => {
+  const updateThisStatus = req.body.data;
+  const neverUpdate = "6881e99a77338227e497193d"; //Protected Admin Id
+
+  if (updateThisStatus.includes(neverUpdate)) {
+    throw new CustomError.BadRequestError("You cannot update Administrator");
+  }
+  //$in matches document where _id match (or is in) any of the values in array filteredArray
+  //can also be used in array of objects
+  try {
+    // Get users whose status should be toggled
+    const users = await User.find({ _id: { $in: updateThisStatus } });
+    // console.log(users);
+    // Toggle each user's active status and update them
+    const updateAdminUserStatus = users.map((user) =>
+      User.findByIdAndUpdate(user._id, { active: false }, { new: true, runValidators: true })
+    );
+    //update all users concurrently. Collect all these individual promises into an array or takes an iterable (like an array) of promises and returns a single Promise. This returned Promise resolves when all the input promises have resolved, or rejects as soon as any of the input promises reject.
+
+    await Promise.all(updateAdminUserStatus);
+
+    res.status(StatusCodes.OK).json({ msg: "Success! User(s) status inactive" });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin: " + error.message);
+  }
+};
+
+//UPDATE USER STATUS, RESUME
+const updateStatusToResume = async (req, res) => {
+  const updateThisStatus = req.body.data;
+  const neverUpdate = "6881e99a77338227e497193d"; //Protected Admin Id
+
+  if (updateThisStatus.includes(neverUpdate)) {
+    throw new CustomError.BadRequestError("You cannot update Administrator");
+  }
+  //$in matches document where _id match (or is in) any of the values in array filteredArray
+  //can also be used in array of objects
+  try {
+    // Get users whose status should be toggled
+    const users = await User.find({ _id: { $in: updateThisStatus } });
+    // console.log(users);
+    // Toggle each user's active status and update them
+    const updateAdminUserStatus = users.map((user) =>
+      User.findByIdAndUpdate(
+        user._id,
+        { employeeStatus: "resumed" },
+        { new: true, runValidators: true }
+      )
+    );
+
+    //update all users concurrently. Collect all these individual promises into an array or takes an iterable (like an array) of promises and returns a single Promise. This returned Promise resolves when all the input promises have resolved, or rejects as soon as any of the input promises reject.
+    await Promise.all(updateAdminUserStatus);
+
+    res.status(StatusCodes.OK).json({ msg: "Success! Employee(s) resumed" });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin: " + error.message);
+  }
+};
+
+//UPDATE USER STATUS, TERMINATE
+const updateStatusToTerminate = async (req, res) => {
+  const updateThisStatus = req.body.data;
+  const neverUpdate = "6881e99a77338227e497193d"; //Protected Admin Id
+
+  if (updateThisStatus.includes(neverUpdate)) {
+    throw new CustomError.BadRequestError("You cannot update Administrator");
+  }
+  //$in matches document where _id match (or is in) any of the values in array filteredArray
+  //can also be used in array of objects
+  try {
+    // Get users whose status should be toggled
+    const users = await User.find({ _id: { $in: updateThisStatus } });
+    // console.log(users);
+    // Toggle each user's active status and update them
+    const updateAdminUserStatus = users.map((user) =>
+      User.findByIdAndUpdate(
+        user._id,
+        { employeeStatus: "terminated" },
+        { new: true, runValidators: true }
+      )
+    );
+
+    //update all users concurrently. Collect all these individual promises into an array or takes an iterable (like an array) of promises and returns a single Promise. This returned Promise resolves when all the input promises have resolved, or rejects as soon as any of the input promises reject.
+    await Promise.all(updateAdminUserStatus);
+
+    res.status(StatusCodes.OK).json({ msg: "Success! Employee(s) resumed" });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin: " + error.message);
+  }
+};
+
+//Deactivate LOCATION STATUS
+const deactivateLocationStatus = async (req, res) => {
+  const updateThisLocation = req.body.data;
+
+  //$in matches document where _id match (or is in) any of the values in array filteredArray
+  //can also be used in array of objects
+  try {
+    // Get users whose status should be toggled
+    const outletLocation = await Location.find({ _id: { $in: updateThisLocation } });
+    // Toggle each user's active status and update them
+    const updateOutletLocationStatus = outletLocation.map((location) =>
+      Location.findByIdAndUpdate(
+        location._id,
+        { active: false },
+        { new: true, runValidators: true }
+      )
+    );
+    //update all users concurrently. Collect all these individual promises into an array or takes an iterable (like an array) of promises and returns a single Promise. This returned Promise resolves when all the input promises have resolved, or rejects as soon as any of the input promises reject.
+    await Promise.all(updateOutletLocationStatus);
+
+    res.status(StatusCodes.OK).json({ msg: "Success! Location Disabled" });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin: " + error.message);
+  }
+};
+
+//Activate LOCATION STATUS
+const activateLocationStatus = async (req, res) => {
+  const updateThisLocation = req.body.data;
+
+  //$in matches document where _id match (or is in) any of the values in array filteredArray
+  //can also be used in array of objects
+  try {
+    // Get users whose status should be toggled
+    const outletLocation = await Location.find({ _id: { $in: updateThisLocation } });
+    // Toggle each user's active status and update them
+    const updateOutletLocationStatus = outletLocation.map((location) =>
+      Location.findByIdAndUpdate(location._id, { active: true }, { new: true, runValidators: true })
+    );
+    //update all users concurrently. Collect all these individual promises into an array or takes an iterable (like an array) of promises and returns a single Promise. This returned Promise resolves when all the input promises have resolved, or rejects as soon as any of the input promises reject.
+    await Promise.all(updateOutletLocationStatus);
+
+    res.status(StatusCodes.OK).json({ msg: "Success! Location Enabled" });
   } catch (error) {
     throw new CustomError.BadRequestError("Please contact Admin: " + error.message);
   }
@@ -788,12 +1048,200 @@ const dashboard = async (req, res) => {
     throw new CustomError.BadRequestError("Error retrieving dashboard data: " + error.message);
   }
 };
+
+// OUTLET LOCATION CONTROLLER
+const outletLocation = async (req, res) => {
+  console.log(req.body);
+  console.log(req.files);
+  const { OutletName, OutletAddress, phoneNumber, category, timeRange } = JSON.parse(req.body.body);
+
+  if (!OutletName || !OutletAddress || !phoneNumber || !category || !timeRange) {
+    throw new CustomError.BadRequestError("Please provide all values");
+  }
+
+  // FILE FUNCTIONALITY
+  if (!req.files) {
+    throw new CustomError.BadRequestError("Please upload outlet Image");
+  }
+  const userImage = req.files.file;
+
+  if (!userImage.mimetype.startsWith("image")) {
+    throw new CustomError.BadRequestError("Please upload an Image File");
+  }
+
+  const maxSize = 5000000;
+  if (userImage.size > maxSize) {
+    throw new CustomError.BadRequestError("Please upload file smaller than 5MB");
+  }
+
+  try {
+    const result = await cloudinary.uploader.upload(userImage.tempFilePath, {
+      use_filename: true,
+      folder: "HR_ADMIN_PORTAL",
+    });
+    // unlink/delete the file
+    fs.unlinkSync(userImage.tempFilePath);
+    const imgURL = result.secure_url;
+
+    const locations = await Location.create({
+      OutletName,
+      OutletAddress,
+      phoneNumber,
+      category,
+      timeRange,
+      imgURL,
+      active: true,
+    });
+
+    console.log(locations);
+    res.status(StatusCodes.CREATED).json({ msg: "Outlet Location Created" });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Unable to create Location: " + error.message);
+  }
+};
+
+//GET ALL OUTLET LOCATIONS PRIVATE
+const getAllOutletLocation = async (req, res) => {
+  const AllOutletLocations = await Location.find()
+    .sort({ OutletName: 1 })
+    .select("-createdAt -updatedAt -__v");
+  res.status(StatusCodes.OK).json({
+    msg: "Outlet Locations retrieved",
+    AllOutletLocations,
+    count: AllOutletLocations.length,
+  });
+};
+
+//GET ALL OUTLET LOCATIONS PUBLIC
+const getAllOutletLocationPublic = async (req, res) => {
+  const AllOutletLocations = await Location.find({ active: true })
+    .sort({ OutletName: 1 })
+    .select("-createdAt -updatedAt -__v");
+  res.status(StatusCodes.OK).json({
+    msg: "Outlet Locations retrieved",
+    AllOutletLocations,
+    count: AllOutletLocations.length,
+  });
+};
+
+//DELETE USER
+const deleteLocation = async (req, res) => {
+  const deleteThisItem = req.body.ids;
+
+  //$in matches document where _id match (or is in) any of the values in array filteredArray
+  //can also be used in array of objects
+  const existingLocations = await Location.find({ _id: { $in: deleteThisItem } });
+
+  if (existingLocations.length === 0) {
+    throw new CustomError.BadRequestError("Location(s) not found");
+  }
+
+  try {
+    const result = await Location.deleteMany({
+      _id: { $in: deleteThisItem },
+    });
+    if (result.deletedCount === 0) {
+      throw new CustomError.BadRequestError("No location was deleted");
+    }
+    res.status(StatusCodes.OK).json({ msg: "Success! Location(s) deleted" });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
+  }
+};
+
+const adminEditLocation = async (req, res) => {
+  const { OutletName, OutletAddress, phoneNumber, category, timeRange, active, id } = JSON.parse(
+    req.body.body
+  );
+  // console.log(JSON.parse(req.body.body));
+  if (!OutletName || !OutletAddress || !phoneNumber || !category || !timeRange || !id) {
+    throw new CustomError.BadRequestError("Please provide all values");
+  }
+
+  let updatedLocation = JSON.parse(req.body.body);
+  // console.log(req.user);
+  const location = await Location.findOne({ _id: updatedLocation.id });
+  if (!location) {
+    throw new CustomError.BadRequestError("Location does not exist");
+  }
+
+  // IF FILE EXIST, RUN FILE FUNCTIONALITY
+  console.log(req.files);
+  if (req.files) {
+    const locationFile = req.files.file;
+    if (!locationFile.mimetype.startsWith("image")) {
+      throw new CustomError.BadRequestError("Please upload an Image File");
+    }
+    const maxSize = 5000000;
+    if (locationFile.size > maxSize) {
+      throw new CustomError.BadRequestError("Please upload file smaller than 5MB");
+    }
+
+    try {
+      //Upload to cloudinary
+      const result = await cloudinary.uploader.upload(req.files.file.tempFilePath, {
+        use_filename: true,
+        folder: "HR_ADMIN_PORTAL",
+      });
+      //unlink/delete the file
+      fs.unlinkSync(locationFile.tempFilePath);
+
+      const mainLocationData = {
+        ...updatedLocation,
+        imgURL: result.secure_url,
+      };
+
+      const updatedThisLocation = await Location.findOneAndUpdate(
+        { _id: updatedLocation.id },
+        {
+          ...mainLocationData,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
+      return res.status(StatusCodes.OK).json({
+        msg: "Location Updated",
+      });
+    } catch (error) {
+      throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
+    }
+  } else {
+    try {
+      const mainLocationData = {
+        ...updatedLocation,
+      };
+      //
+      console.log(mainLocationData);
+      const updatedThisLocation = await Location.findOneAndUpdate(
+        { _id: updatedLocation.id },
+        {
+          ...mainLocationData,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
+      return res.status(StatusCodes.OK).json({
+        msg: "Location Updated",
+      });
+    } catch (error) {
+      throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
+    }
+  }
+};
 //////////////////////////////////////////////////////////
 
 module.exports = {
   updateGuarantor,
   updateNOKData,
   getAllUsers,
+  getAllResumedUsers,
+  getAllTerminatedUsers,
   getAllAdminUsers,
   getAllBioData,
   getAllNOK,
@@ -814,4 +1262,16 @@ module.exports = {
   getGuaDataFromDateRange,
   getNDADataFromDateRange,
   dashboard,
+  outletLocation,
+  getAllOutletLocation,
+  getAllOutletLocationPublic,
+  deleteLocation,
+  adminEditLocation,
+  deactivateLocationStatus,
+  activateLocationStatus,
+  deActivateStatus,
+  updateStatusToResume,
+  updateStatusToTerminate,
+  getTerminatedEmployeeUsersFromDateRange,
+  getResumedEmployeeUsersFromDateRange,
 };

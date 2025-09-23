@@ -70,11 +70,24 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   column-gap: 30px;
-  row-gap: 40px;
+  row-gap: 25px;
   justify-content: space-around;
   justify-items: center;
   transition: all 0.5s ease-in-out;
-  padding: 50px 50px;
+  padding: 20px 20px;
+}
+
+.bioDataProfileMainBody > .bioDataProfileBody {
+  width: 100%;
+  height: auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 30px;
+  row-gap: 25px;
+  justify-content: space-around;
+  justify-items: center;
+  transition: all 0.5s ease-in-out;
+  padding: 60px 60px;
 }
 
 .singleProfile {

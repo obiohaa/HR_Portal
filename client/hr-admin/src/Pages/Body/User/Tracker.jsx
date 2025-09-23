@@ -54,18 +54,24 @@ const Tracker = () => {
             <FaUserPlus className="user_icon" />
           </div>
           <div className={`${steps >= 1 ? "bioData on" : "bioData"}`}>Bio Data</div>
+
+          {/*  */}
           <div className={`${steps >= 2 ? "circle active" : "circle"}`}>
             <FaUsers className="user_icon" />
+            <div className={`${steps >= 2 ? "nextOfKin on" : "nextOfKin"}`}>Next of Kin</div>
           </div>
-          <div className={`${steps >= 2 ? "nextOfKin on" : "nextOfKin"}`}>Next of Kin</div>
+
+          {/*  */}
           <div className={`${steps >= 3 ? "circle active" : "circle"}`}>
             <FaUserSecret className="user_icon" />
+            <div className={`${steps >= 3 ? "nda on" : "nda"}`}>NDA</div>
           </div>
-          <div className={`${steps >= 3 ? "guarantor on" : "guarantor"}`}>Guarantor</div>
+
+          {/*  */}
           <div className={`${steps >= 4 ? "circle active" : "circle"}`}>
             <FaFileCircleXmark className="user_icon" />
+            <div className={`${steps >= 4 ? "guarantor on" : "guarantor"}`}>Guarantor</div>
           </div>
-          <div className={`${steps >= 4 ? "nda on" : "nda"}`}>NDA</div>
         </div>
       </div>
       <div className="formsContainer">
@@ -74,9 +80,9 @@ const Tracker = () => {
         ) : steps === 2 ? (
           <Next_of_kin />
         ) : steps === 3 ? (
-          <Guarantor />
-        ) : steps === 4 ? (
           <NDA />
+        ) : steps === 4 ? (
+          <Guarantor />
         ) : (
           <PageLoading />
         )}

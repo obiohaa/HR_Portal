@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { axiosFetchFormData } from "../../../Utils/axiosFetch";
+import { axiosFetchFormData, axiosFetch } from "../../../Utils/axiosFetch";
 import { useForm } from "react-hook-form";
 import { useGlobalContext } from "../../../Context/userContext";
 import capitalizeFirstLetter from "../../../Components/ToUpperCase";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
 import { toast } from "react-toastify";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import PageLoading from "../../../Components/Checks/PageLoading";
 import Modal from "../../../Components/Modal/Modal";
 
@@ -34,6 +34,45 @@ const BioData = () => {
     handleSubmit,
     setError,
   } = useForm();
+
+  //GET LOCATION RECORD
+  const {
+    isLoading: Loading,
+    error,
+    data,
+  } = useQuery({
+    queryKey: ["adminBioDataOneKeys"],
+    retryOnMount: true, //do not retry on mount
+    refetchOnWindowFocus: false, //do not refetch on window focus
+    refetchOnReconnect: true, //do not refetch on reconnect
+    refetchOnMount: true, //do not refetch on mount
+    refetchInterval: true, //do not refetch at intervals
+    refetchIntervalInBackground: false, //do not refetch in background
+    queryFn: async () => {
+      const { data } = await axiosFetch.get("/admins/getAllOutletLocationPublic");
+      return data;
+    },
+  });
+
+  if (error) {
+    toast.error(
+      <div>
+        <span>
+          {error.response ? error.response.data.msg : "Something went wrong contact Admin"}
+        </span>
+      </div>,
+      {
+        position: "top-center",
+        autoClose: 8000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastBad",
+      }
+    );
+  }
 
   //Using react query to handle the API call
   const queryClient = useQueryClient();
@@ -573,6 +612,55 @@ const BioData = () => {
               )}
               <label htmlFor="levelOfEducation" className="form_label">
                 Level of Education
+              </label>
+            </div>
+            <div className="formBioData">
+              <input
+                type="text"
+                id="jobName"
+                className="form_input"
+                placeholder=" "
+                autoComplete="off"
+                formNoValidate
+                {...register("jobName", {
+                  required: "Job Name is required!",
+                  minLength: {
+                    value: 2,
+                    message: "Minimum characters of 2 letters.",
+                  },
+                  maxLength: {
+                    value: 40,
+                    message: "Maximum characters of 40 letters.",
+                  },
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message: "Alphabets only!",
+                  },
+                })}
+              />
+              {errors.jobName && <p className="bioError">{errors.jobName.message}</p>}
+              <label htmlFor="jobName" className="form_label">
+                Job Name
+              </label>
+            </div>
+            <div className="formBioData selectFormBioData">
+              <select
+                name="jobLocation"
+                id="jobLocation"
+                className="form_input"
+                autoComplete="off"
+                {...register("jobLocation", {
+                  required: "Job Location is required!",
+                })}>
+                {data?.AllOutletLocations.map((location) => (
+                  <option key={location.OutletName} value={location.OutletName}>
+                    {location.OutletName}
+                  </option>
+                ))}
+              </select>
+              {errors.jobLocation && <p className="bioError">{errors.jobLocation.message}</p>}
+              <label htmlFor="jobLocation" className="form_label">
+                Job Location
               </label>
             </div>
             <div className="formBioData">

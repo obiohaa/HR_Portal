@@ -87,14 +87,14 @@ const Modal = () => {
                 </p>
               ) : userStepState.currentStep === 3 ? (
                 <p>
-                  This form has been filled and submitted, if you intend to view or edit your
-                  Guarantor's form, form, please contact your HR Admin for assistance
-                </p>
-              ) : (
-                <p>
                   This agreement has been checked and submitted, if you intend to view or read the
                   NDA form, click here: or go to your user profile to view and read the NDA form
                   form.
+                </p>
+              ) : (
+                <p>
+                  This form has been filled and submitted, if you intend to view or edit your
+                  Guarantor's form, form, please contact your HR Admin for assistance
                 </p>
               )}
             </div>

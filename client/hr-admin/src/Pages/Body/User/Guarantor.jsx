@@ -107,7 +107,7 @@ const Guarantor = () => {
 
   return (
     <div className="formsContainerBody">
-      {userStepState && userStepState.completedStep >= 3 ? (
+      {userStepState && userStepState.completedStep >= 4 ? (
         <Modal />
       ) : (
         <form

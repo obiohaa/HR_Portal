@@ -19,6 +19,7 @@ import capitalizeFirstLetter from "../../../../Components/ToUpperCase";
 import ReactPaginate from "react-paginate";
 import { toast } from "react-toastify";
 import NoData from "../../../../Components/Modal/NoData";
+import "../adminUser.css";
 
 const AddAdmin = () => {
   const [selected, setSelected] = useState([]);
@@ -38,7 +39,14 @@ const AddAdmin = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewUser, setViewUser] = useState(null);
   const [editUser, setEditUser] = useState(null);
+  const [selectPerPage, setSelectPerPage] = useState(false);
   const modalRef = useRef(null);
+  const modalRefAgainAgain = useRef(null);
+  // Get initial itemsPerPage from localStorage (or default to 5)
+  const [itemsPerPage, setItemsPerPage] = useState(() => {
+    const saved = localStorage.getItem("itemsPerPage");
+    return saved ? Number(saved) : 5;
+  });
 
   //GET ALL ADMIN USERS
   const { data, isLoading, error } = useQuery({
@@ -97,7 +105,13 @@ const AddAdmin = () => {
 
     const filterQuery = data.AllBioData.filter((user) => {
       const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
-      return fullName.includes(query) || user.email?.toLowerCase().includes(query);
+      return (
+        user.jobLocation?.toLowerCase().includes(query) ||
+        user.staffId?.toLowerCase().includes(query) ||
+        user.jobName?.toLowerCase().includes(query) ||
+        fullName.includes(query) ||
+        user.email?.toLowerCase().includes(query)
+      );
     });
     setPaginationData(filterQuery);
     //Controls what page to display when you search, in this case page 1
@@ -107,7 +121,6 @@ const AddAdmin = () => {
 
   // PAGINATION SECTION
   const [itemOffset, setItemOffset] = useState(0);
-  const itemsPerPage = 2;
 
   useEffect(() => {
     const endOffset = itemOffset + itemsPerPage;
@@ -116,13 +129,25 @@ const AddAdmin = () => {
     setPageCount(Math.ceil(paginationData.length / itemsPerPage));
     // console.log(currentItems);
     // Invoke when user click to request another page.
-  }, [itemOffset, paginationData]);
+  }, [itemOffset, paginationData, itemsPerPage]);
 
   const handlePageClick = (event) => {
     const newOffset = (event.selected * itemsPerPage) % paginationData.length;
     // console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
     setItemOffset(newOffset);
   };
+
+  const handleItemsPerPageChange = (value) => {
+    const newValue = Number(value);
+    setItemsPerPage(newValue);
+    localStorage.setItem("itemsPerPage", newValue); // persist choice
+    setItemOffset(0); // reset to first page
+    setSelectPerPage(false); // close the dropdown after selection
+  };
+
+  const start = itemOffset + 1;
+  const end = Math.min(itemOffset + itemsPerPage, paginationData.length);
+  const total = paginationData.length;
   // PAGINATION SECTION END
 
   // CHECKBOX SECTION
@@ -168,6 +193,24 @@ const AddAdmin = () => {
   }, [selectedItemId]);
 
   //END USE EFFECT FUNCTION TO MAKE THE OPEN OPTIONS CLOSE ON MOUSE DOWN OR ON CLICK.
+
+  //USE EFFECT FUNCTION TO MAKE THE OPEN STATUS OPTIONS CLOSE ON MOUSE DOWN OR ON CLICK.
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRefAgainAgain.current && !modalRefAgainAgain.current.contains(event.target)) {
+        setSelectPerPage(false);
+      }
+    };
+
+    if (selectPerPage) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [selectPerPage]);
+  //END USE EFFECT FUNCTION TO MAKE THE OPEN STATUS OPTIONS CLOSE ON MOUSE DOWN OR ON CLICK.
 
   // HANDLE DELETE
   // const handleDelete = (id) => {
@@ -262,14 +305,19 @@ const AddAdmin = () => {
                     component. */}
                     <Checkbox
                       name="all"
-                      value={data && data.AllBioData && data.AllBioData.length === selected.length}
+                      value={
+                        data &&
+                        data.AllBioData &&
+                        data.AllBioData.length > 0 &&
+                        data.AllBioData.length === selected.length
+                      }
                       updateValue={selectAll}></Checkbox>
                   </th>
                   <th>Name</th>
-                  <th>DOB</th>
-                  <th>State</th>
-                  <th>Gender</th>
-                  <th>M-Status</th>
+                  <th>Staff ID</th>
+                  <th>Job Name</th>
+                  <th>Location</th>
+                  <th>Status</th>
                   <th>Number</th>
                   <th>Action</th>
                 </tr>
@@ -277,8 +325,23 @@ const AddAdmin = () => {
               <tbody>
                 {currentItems && currentItems.length >= 1 ? (
                   currentItems.map((item) => {
+                    const isChecked = selected.includes(item._id);
                     return (
-                      <tr key={item._id} style={{ position: "relative" }}>
+                      <tr
+                        key={item._id}
+                        style={{ position: "relative", cursor: "pointer" }}
+                        onClick={(e) => {
+                          // prevent row-click from firing when clicking on buttons or checkbox
+                          if (
+                            e.target.type === "checkbox" ||
+                            e.target.tagName === "BUTTON" ||
+                            e.target.closest(".actionIcon")
+                          ) {
+                            return;
+                          }
+
+                          handleSelect(!isChecked, item._id);
+                        }}>
                         <td>
                           <Checkbox
                             name={item._id}
@@ -289,12 +352,17 @@ const AddAdmin = () => {
                           {capitalizeFirstLetter(item.firstName)}{" "}
                           {capitalizeFirstLetter(item.lastName)}
                         </td>
-                        <td>{item && item.dateOfBirth.split("T")[0]}</td>
-                        <td>{item.state_of_origin}</td>
+                        {/* <td>{item && item.dateOfBirth.split("T")[0]}</td> */}
+                        <td>{item.staffId}</td>
+                        <td>{item.jobName}</td>
                         <td>
-                          <div>{item.gender}</div>
+                          <div>{item.jobLocation}</div>
                         </td>
-                        <td>{item.maritalStatus}</td>
+                        <td>
+                          {item.user
+                            ? capitalizeFirstLetter(item.user.employeeStatus)
+                            : "Employee Status"}
+                        </td>
                         <td>
                           <div>{item.phoneNumber}</div>
                         </td>
@@ -305,39 +373,21 @@ const AddAdmin = () => {
                               setSelectedItemId((prev) => (prev === item._id ? null : item._id));
                             }}
                           />
-
-                          {selectedItemId === item._id && (
-                            <div
-                              ref={modalRef}
-                              style={{
-                                position: "absolute",
-                                top: "-100%",
-                                right: "60%",
-                                transform: "translateY(-50%)",
-                                backgroundColor: "#fff",
-                                border: "1px solid #ccc",
-                                borderRadius: "8px",
-                                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-                                zIndex: 999999,
-                                padding: "5px",
-                                display: "flex",
-                                flexDirection: "column",
-                                gap: "5px",
-                                minWidth: "230px",
-                              }}
-                              onClick={(e) => e.stopPropagation()}>
-                              <button className="sideButton" onClick={() => viewThisUser(item)}>
-                                <FaRegEye /> View
-                              </button>
-                              <button className="sideButton" onClick={() => editThisUser(item)}>
-                                <FaPencil /> Edit
-                              </button>
-                              {/* <button className="sideButton" onClick={() => handleDelete(item._id)}>
-                                {" "}
-                                <FaTrashCan /> Delete
-                              </button> */}
-                            </div>
-                          )}
+                          <div className="selectedItemIdClass">
+                            {selectedItemId === item._id && (
+                              <div
+                                ref={modalRef}
+                                className="dropdownBox"
+                                onClick={(e) => e.stopPropagation()}>
+                                <button className="sideButton" onClick={() => viewThisUser(item)}>
+                                  <FaRegEye /> View
+                                </button>
+                                <button className="sideButton" onClick={() => editThisUser(item)}>
+                                  <FaPencil /> Edit
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     );
@@ -358,7 +408,7 @@ const AddAdmin = () => {
             onPageChange={handlePageClick}
             pageRangeDisplayed={5}
             pageCount={pageCount}
-            previousLabel="< previous"
+            previousLabel="< prev"
             renderOnZeroPageCount={null}
             containerClassName="pagination"
             pageLinkClassName="page-num"
@@ -366,6 +416,35 @@ const AddAdmin = () => {
             nextLinkClassName="page-num"
             activeLinkClassName="active"
           />
+
+          <div className="selectPerPageClass">
+            {selectPerPage && (
+              <div
+                ref={modalRefAgainAgain}
+                className="dropDownPagination"
+                onClick={(e) => e.stopPropagation()}>
+                <button className="sideButton" onClick={() => handleItemsPerPageChange(5)}>
+                  5 / Page
+                </button>
+                <button className="sideButton" onClick={() => handleItemsPerPageChange(10)}>
+                  10 / Page
+                </button>
+                <button className="sideButton" onClick={() => handleItemsPerPageChange(20)}>
+                  20 / Page
+                </button>
+              </div>
+            )}
+            <button
+              className="btnAdmin"
+              onClick={() => {
+                setSelectPerPage(!selectPerPage);
+              }}>
+              {itemsPerPage} / Page
+            </button>
+          </div>
+          <div>
+            Showing {start} - {end} of {total}
+          </div>
         </div>
       </div>
     </div>

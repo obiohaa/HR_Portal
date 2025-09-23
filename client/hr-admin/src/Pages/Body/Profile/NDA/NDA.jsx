@@ -3,6 +3,7 @@ import { useGlobalContext } from "../../../../Context/userContext";
 import ProfileModal from "../../../../Components/Modal/ProfileModal";
 import capitalizeFirstLetter from "../../../../Components/ToUpperCase";
 import AgreeModal from "../../../../Components/Modal/AgreeModal";
+import "../profile.css";
 
 const NDA = () => {
   const { user, userStepState, isModalOpen } = useGlobalContext();

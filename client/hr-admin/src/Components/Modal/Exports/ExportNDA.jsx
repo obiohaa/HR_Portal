@@ -136,7 +136,7 @@ const ExportNDA = () => {
                   <button
                     disabled={isLoading}
                     type="submit"
-                    className="submitBtn editProfileBtn"
+                    className="submitBtn exportBtn"
                     value="Login"
                     formNoValidate>
                     {isLoading ? <Loading /> : "Submit"}

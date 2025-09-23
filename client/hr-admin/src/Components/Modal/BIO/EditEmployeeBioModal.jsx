@@ -5,8 +5,8 @@ import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useGlobalContext } from "../../../Context/userContext";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { axiosFetchFormData } from "../../../Utils/axiosFetch";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { axiosFetchFormData, axiosFetch } from "../../../Utils/axiosFetch";
 import { FaRegEyeSlash, FaRegEye, FaX } from "react-icons/fa6";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
 // import capitalizeFirstLetter from "../Components/ToUpperCase";
@@ -20,7 +20,7 @@ import {
 } from "../../UserData";
 
 const EditEmployeeBioModal = ({ editUser }) => {
-  console.log(editUser);
+  // console.log(editUser);
   const { closeEditModal } = useGlobalContext();
   const [fileName, setFileName] = useState(null);
   const [fileError, setFileError] = useState({ msg: "" });
@@ -36,44 +36,45 @@ const EditEmployeeBioModal = ({ editUser }) => {
     setError,
   } = useForm({});
 
-  //GET THE BIO DATA RECORD
-  // const { isLoading: Loading, error } = useQuery({
-  //   queryKey: ["adminBioDataOneKey"],
-  //   retryOnMount: true, //do not retry on mount
-  //   refetchOnWindowFocus: false, //do not refetch on window focus
-  //   refetchOnReconnect: true, //do not refetch on reconnect
-  //   refetchOnMount: true, //do not refetch on mount
-  //   refetchInterval: false, //do not refetch at intervals
-  //   refetchIntervalInBackground: false, //do not refetch in background
-  //   queryFn: async () => {
-  //     const { data } = await axiosFetch.get("/admins/getAllBioDataPerUser/" + editUser._id);
-  //     setUpdateData(data.AllBioDataPerUser[0]);
-  //     setPensionStatus(data.AllBioDataPerUser[0].pension);
-  //     setMarriageStatus(data.AllBioDataPerUser[0].maritalStatus);
-  //     return data;
-  //   },
-  // });
-
+  //GET LOCATION RECORD
+  const {
+    isLoading: Loading,
+    error,
+    data,
+  } = useQuery({
+    queryKey: ["adminBioDataOneKeys"],
+    retryOnMount: true, //do not retry on mount
+    refetchOnWindowFocus: false, //do not refetch on window focus
+    refetchOnReconnect: true, //do not refetch on reconnect
+    refetchOnMount: true, //do not refetch on mount
+    refetchInterval: true, //do not refetch at intervals
+    refetchIntervalInBackground: false, //do not refetch in background
+    queryFn: async () => {
+      const { data } = await axiosFetch.get("/admins/getAllOutletLocation");
+      return data;
+    },
+  });
   // console.log(error);
-  // if (error) {
-  //   toast.error(
-  //     <div>
-  //       <span>
-  //         {error.response ? error.response.data.msg : "Something went wrong contact Admin"}
-  //       </span>
-  //     </div>,
-  //     {
-  //       position: "top-center",
-  //       autoClose: 8000,
-  //       hideProgressBar: true,
-  //       closeOnClick: false,
-  //       pauseOnHover: true,
-  //       draggable: true,
-  //       progress: undefined,
-  //       className: "toastBad",
-  //     }
-  //   );
-  // }
+
+  if (error) {
+    toast.error(
+      <div>
+        <span>
+          {error.response ? error.response.data.msg : "Something went wrong contact Admin"}
+        </span>
+      </div>,
+      {
+        position: "top-center",
+        autoClose: 8000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastBad",
+      }
+    );
+  }
 
   //Using react query to handle the API call to post updated BIO DATA
   const queryClient = useQueryClient();
@@ -118,14 +119,13 @@ const EditEmployeeBioModal = ({ editUser }) => {
     values.id = editUser._id;
     try {
       if (fileName && fileName.size > 5000000) {
-        setFileError({ msg: "File size must be less than 5MB" });
-      } else {
-        const formData = new FormData();
-        formData.append("file", fileName);
-        formData.append("body", JSON.stringify(values));
-        console.log(formData);
-        updateBioData(formData);
+        return setFileError({ msg: "File size must be less than 5MB" });
       }
+      const formData = new FormData();
+      formData.append("file", fileName);
+      formData.append("body", JSON.stringify(values));
+      // console.log(formData);
+      updateBioData(formData);
     } catch (error) {
       console.log(error);
       //To place an error so that it does not belong to any field we use root and not email or password or any field name
@@ -142,6 +142,9 @@ const EditEmployeeBioModal = ({ editUser }) => {
       firstName: editUser ? editUser.firstName : "firstName",
       lastName: editUser ? editUser.lastName : "lastName",
       middleName: editUser ? editUser.middleName : "middleName",
+      staffId: editUser ? editUser.staffId : "Staff ID",
+      jobLocation: editUser ? editUser.jobLocation : "Job Location",
+      jobName: editUser ? editUser.jobName : "Job Name",
       bankAccountNumber: editUser ? editUser.bankAccountNumber : "Bank Account Number",
       bankName: editUser ? editUser.bankName : "Bank Name",
       dateOfBirth: editUser ? editUser.dateOfBirth.split("T")[0] : "Date Of Birth",
@@ -273,6 +276,84 @@ const EditEmployeeBioModal = ({ editUser }) => {
                     {errors.lastName && <p className="bioError">{errors.lastName.message}</p>}
                     <label htmlFor="lastName" className="form_label">
                       Last Name
+                    </label>
+                  </div>
+                  <div className="formBioData">
+                    <input
+                      type="text"
+                      id="staffId"
+                      className="form_input"
+                      placeholder=" "
+                      autoComplete="off"
+                      formNoValidate
+                      {...register("staffId", {
+                        required: "Staff Id is required!",
+                        minLength: {
+                          value: 13,
+                          message: "Minimum characters of 13 letters.",
+                        },
+                        maxLength: {
+                          value: 13,
+                          message: "Maximum characters of 13 letters.",
+                        },
+                        pattern: {
+                          value: /^[A-Z]{2}\/\d{2}\/\d{2}\/\d{4}$/,
+                          message: "Format must be like TP/22/07/1234",
+                        },
+                      })}
+                    />
+                    {errors.staffId && <p className="bioError">{errors.staffId.message}</p>}
+                    <label htmlFor="staffId" className="form_label">
+                      Staff ID
+                    </label>
+                  </div>
+                  <div className="formBioData selectFormBioData">
+                    <select
+                      name="jobLocation"
+                      id="jobLocation"
+                      className="form_input"
+                      autoComplete="off"
+                      {...register("jobLocation", {
+                        required: "Job Location is required!",
+                      })}>
+                      {data?.AllOutletLocations.map((location) => (
+                        <option key={location.OutletName} value={location.OutletName}>
+                          {location.OutletName}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.jobLocation && <p className="bioError">{errors.jobLocation.message}</p>}
+                    <label htmlFor="jobLocation" className="form_label">
+                      Job Location
+                    </label>
+                  </div>
+                  <div className="formBioData">
+                    <input
+                      type="text"
+                      id="jobName"
+                      className="form_input"
+                      placeholder=" "
+                      autoComplete="off"
+                      formNoValidate
+                      {...register("jobName", {
+                        required: "Job Name is required!",
+                        minLength: {
+                          value: 2,
+                          message: "Minimum characters of 2 letters.",
+                        },
+                        maxLength: {
+                          value: 40,
+                          message: "Maximum characters of 40 letters.",
+                        },
+                        pattern: {
+                          value: /^[A-Za-z\s]+$/,
+                          message: "Alphabets only!",
+                        },
+                      })}
+                    />
+                    {errors.jobName && <p className="bioError">{errors.jobName.message}</p>}
+                    <label htmlFor="jobName" className="form_label">
+                      Job Name
                     </label>
                   </div>
                   <div className="formBioData">

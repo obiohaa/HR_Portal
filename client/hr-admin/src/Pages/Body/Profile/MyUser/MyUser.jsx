@@ -4,6 +4,7 @@ import ProfileModal from "../../../../Components/Modal/ProfileModal";
 import EditUserModal from "../../../../Components/Modal/EditUserModal";
 import PageLoading from "../../../../Components/Checks/PageLoading";
 import capitalizeFirstLetter from "../../../../Components/ToUpperCase";
+import "../profile.css";
 
 const MyUser = () => {
   const { openModal, user, isModalOpen } = useGlobalContext();
@@ -45,6 +46,7 @@ const MyUser = () => {
             <h2 className="loggedInUserName">
               {capitalizeFirstLetter(user?.firstName)} {capitalizeFirstLetter(user?.lastName)}
             </h2>
+            <p style={{ fontSize: "20px", padding: "5px 0 5px 0" }}>{user?.staffId}</p>
             <p className="loggedInUserEmail">{user?.email}</p>
             <button type="submit" className="btn btnProfile" onClick={openModal}>
               EDIT

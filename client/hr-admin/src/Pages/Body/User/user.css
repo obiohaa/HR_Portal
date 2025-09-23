@@ -29,9 +29,10 @@
 }
 
 .progressContainer {
+  width: 90%;
   display: flex;
   justify-content: space-between;
-  margin: 0.7rem 0;
+  margin: 0.7rem auto;
   position: relative;
 }
 
@@ -82,7 +83,7 @@
 .bioData {
   position: absolute;
   bottom: -40%;
-  left: 0%;
+  /* left: 0%; */
 }
 
 .bioData.on {
@@ -92,27 +93,27 @@
 .nextOfKin {
   position: absolute;
   bottom: -40%;
-  left: 30.5%;
+  /* left: 30.5%; */
 }
 
 .nextOfKin.on {
   color: #2c3e50;
 }
 
-.guarantor {
+.nda {
   position: absolute;
   bottom: -45%;
-  left: 62%;
+  /* left: 64%; */
 }
 
 .guarantor.on {
   color: #2c3e50;
 }
 
-.nda {
+.guarantor {
   position: absolute;
   bottom: -45%;
-  left: 95%;
+  /* left: 93%; */
 }
 
 .nda.on {
@@ -240,7 +241,49 @@
   transition: all 0.3s ease-in;
 }
 
+.left_time_input {
+  position: absolute;
+  appearance: none;
+  top: 0;
+  left: 0;
+  width: 45%;
+  height: 40px;
+  font-size: 1rem;
+  border: 1px solid gray;
+  border-radius: 4px;
+  color: black;
+  outline: none;
+  padding: 0 1.1rem;
+  background: none;
+  transition: all 0.3s ease-in;
+}
+
+.right_time_input {
+  position: absolute;
+  appearance: none;
+  top: 0;
+  right: 0;
+  width: 45%;
+  height: 40px;
+  font-size: 1rem;
+  border: 1px solid gray;
+  border-radius: 4px;
+  color: black;
+  outline: none;
+  padding: 0 1.1rem;
+  background: none;
+  transition: all 0.3s ease-in;
+}
+
 .form_input:focus {
+  border-color: var(--clr-primary-2);
+}
+
+.left_time_input:focus {
+  border-color: var(--clr-primary-2);
+}
+
+.right_time_input:focus {
   border-color: var(--clr-primary-2);
 }
 

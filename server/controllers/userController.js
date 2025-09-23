@@ -18,6 +18,7 @@ const cloudinary = require("cloudinary").v2;
 const crypto = require("crypto");
 const fs = require("fs");
 
+// ROUTES
 const getAllUsers = async (req, res) => {
   const users = await User.find({ role: "user" }).select("-password");
   res.status(StatusCodes.OK).json({ users });
@@ -91,11 +92,14 @@ const updateNOKData = async (req, res) => {
 };
 
 const showCurrentUser = async (req, res) => {
-  console.log(req.user);
-  const loggedInUser = await User.findOne({ _id: req.user.userId }).select("-password");
+  const loggedInUser = await User.findOne({ _id: req.user.userId })
+    .populate("bioData", "staffId -_id -user")
+    .select("-password -verificationToken -passwordToken -passwordTokenExpirationDate -__v");
+  // console.log(loggedInUser);
   const tokenUser = createTokenUser(loggedInUser);
   res.status(StatusCodes.OK).json({ user: tokenUser });
 };
+
 // update user with user.save()
 const updateUser = async (req, res) => {
   const { firstName, lastName, email, password } = JSON.parse(req.body.body);
@@ -245,7 +249,7 @@ const updateBioData = async (req, res) => {
   }
 
   // IF FILE EXIST, RUN FILE FUNCTIONALITY
-  console.log(req.files);
+  // console.log(req.files);
   if (req.files) {
     const userFile = req.files.file;
     if (!userFile.mimetype.startsWith("application")) {
@@ -375,6 +379,8 @@ const bioData = async (req, res) => {
     spouseName,
     pensionCompany,
     pensionPin,
+    jobLocation,
+    jobName,
   } = JSON.parse(req.body.body);
   // console.log(JSON.parse(req.body.body));
   if (
@@ -387,7 +393,9 @@ const bioData = async (req, res) => {
     !bankName ||
     !bankAccountNumber ||
     !pension ||
-    !levelOfEducation
+    !levelOfEducation ||
+    !jobLocation ||
+    !jobName
   ) {
     throw new CustomError.BadRequestError("Please provide all values");
   }
@@ -411,9 +419,9 @@ const bioData = async (req, res) => {
   if (userFile.size > maxSize) {
     throw new CustomError.BadRequestError("Please upload file smaller than 5MB");
   }
-  console.log("bio");
-  console.log(userBioData);
-  console.log(req.user);
+  // console.log("bio");
+  // console.log(userBioData);
+  // console.log(req.user);
   try {
     //move to a local folder
     // const filePath = path.join(__dirname, "../public/fileUploads/" + `${userFile.name}`);
@@ -425,12 +433,12 @@ const bioData = async (req, res) => {
       use_filename: true,
       folder: "HR_ADMIN_PORTAL",
     });
-    console.log(result);
+    // console.log(result);
     //unlink/delete the file
     fs.unlinkSync(req.files.file.tempFilePath);
-    console.log("inside");
-    console.log(userBioData);
-    console.log(req.user);
+    // console.log("inside");
+    // console.log(userBioData);
+    // console.log(req.user);
     const mainUserBioData = {
       ...userBioData,
       UserFileUrl: result.secure_url,
@@ -439,7 +447,7 @@ const bioData = async (req, res) => {
       email: req.user.email,
       user: req.user.userId,
     };
-    console.log(mainUserBioData);
+    // console.log(mainUserBioData);
     //Add do database
     const UserBioData = await BioData.create(mainUserBioData);
     if (UserBioData.createdAt) {

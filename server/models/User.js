@@ -48,7 +48,11 @@ const UserSchema = new mongoose.Schema(
     passwordToken: {
       type: String,
     },
-
+    employeeStatus: {
+      type: String,
+      enum: ["registered", "resumed", "terminated"],
+      default: "registered",
+    },
     passwordTokenExpirationDate: {
       type: Date,
     },
@@ -57,10 +61,10 @@ const UserSchema = new mongoose.Schema(
     },
     active: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
 UserSchema.pre("save", async function () {
@@ -75,6 +79,14 @@ UserSchema.methods.comparePassword = async function (canditatePassword) {
   const isMatch = await bcrypt.compare(canditatePassword, this.password);
   return isMatch;
 };
+
+// Virtual relation
+UserSchema.virtual("bioData", {
+  ref: "BioData",
+  localField: "_id", // match User._id
+  foreignField: "user", // match BioData.user
+  justOne: true,
+});
 
 module.exports = mongoose.model("User", UserSchema);
 // By default, Mongoose discards fields not defined in the schema (strict: true by default) If you want to save undefined fields, explicitly allow it

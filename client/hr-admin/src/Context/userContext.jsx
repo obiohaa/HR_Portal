@@ -1,8 +1,6 @@
 import React from "react";
 import { createContext, useState, useContext } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { axiosFetch } from "../Utils/axiosFetch";
-// import { toast } from "react-toastify";
+
 // import PageLoading from "../Components/PageLoading";
 
 const AppContext = createContext();
@@ -22,9 +20,9 @@ const AppProvider = ({ children }) => {
     setUser(user);
   };
 
-  // const removeUser = () => {
-  //   setUser(null);
-  // };
+  const removeUser = () => {
+    setUser(null);
+  };
 
   const toggleNavbar = () => {
     setDropDownOpen(!DropDownOpen);
@@ -75,29 +73,16 @@ const AppProvider = ({ children }) => {
     setIsExportModalOpen(false);
   };
 
-  useQuery({
-    queryKey: ["currentUser"],
-    retryOnMount: true, //do not retry on mount
-    refetchOnWindowFocus: false, //do not refetch on window focus
-    refetchOnReconnect: false, //do not refetch on reconnect
-    refetchOnMount: true, //do not refetch on mount
-    refetchInterval: false, //do not refetch at intervals
-    refetchIntervalInBackground: true, //do not refetch in background
-    queryFn: async () => {
-      const { data } = await axiosFetch.get("/users/showMe");
-      saveUser(data.user);
-      return data;
-    },
-    onError: () => {
-      // console.log(error);
-      // removeUser();
-    },
-  });
+  // if (error.response?.status === 401) {
+  //   window.alert("Session expired. Please log in again.");
+  //   window.location.href = "/login"; // or use navigate
+  // }
 
   return (
     <AppContext.Provider
       value={{
         user,
+        removeUser,
         saveUser,
         toggleNavbar,
         isBarOpen,

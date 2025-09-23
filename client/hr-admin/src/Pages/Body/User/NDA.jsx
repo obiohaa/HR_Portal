@@ -56,7 +56,7 @@ const NDA = () => {
 
   return (
     <div className="formsContainerBody">
-      {userStepState && userStepState.completedStep >= 4 ? (
+      {userStepState && userStepState.completedStep >= 3 ? (
         <Modal />
       ) : (
         <div className="NDAForm">

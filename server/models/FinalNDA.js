@@ -24,6 +24,11 @@ const finalNDASchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    bioData: {
+      type: mongoose.Types.ObjectId,
+      ref: "BioData",
+      required: true,
+    },
   },
   { timestamps: true }
 );

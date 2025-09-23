@@ -13,23 +13,35 @@ export const exportToExcel = (data, fileName) => {
     { label: "Verified", key: "isVerified" },
     { label: "Image URL", key: "imgURL" },
     { label: "Active", key: "active" },
+    { label: "Employee Status", key: "employeeStatus" },
+    { label: "Staff ID", key: "bioData.staffId" },
     { label: "Created At", key: "createdAt" },
   ];
 
   const formattedData = data.map((item) => {
     const row = {};
     headerMap.forEach(({ label, key }) => {
-      let value = item[key];
-      if (value instanceof Date) {
-        value = new Date(value).toLocaleDateString(); // format date
+      // Support nested keys like "bioData.staffId"
+      const keys = key.split(".");
+      let value = item;
+      for (const k of keys) {
+        value = value ? value[k] : undefined;
       }
-      row[label] = value ?? ""; // handle undefined/null
+
+      // format dates nicely
+      if (value instanceof Date) {
+        value = new Date(value).toLocaleDateString();
+      } else if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value)) {
+        // If it's an ISO date string, format it
+        value = new Date(value).toLocaleDateString();
+      }
+
+      row[label] = value ?? "";
     });
     return row;
   });
 
   const worksheet = XLSX.utils.json_to_sheet(formattedData);
-  console.log(worksheet);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
 

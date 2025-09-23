@@ -29,6 +29,7 @@ const ExportBio = () => {
       axiosFetch.post("/admins/getBioDataFromDateRange", exportDates),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["registerAdmin"] });
+      // console.log(data.data.AllBioData);
       exportToExcel(data.data.AllBioData, "BIO DATA");
       //   exportToCSV(data.data.AllBioData, "BIO DATA");
       reset();
@@ -60,7 +61,7 @@ const ExportBio = () => {
 
   const onSubmit = async (values) => {
     try {
-      console.log(values);
+      // console.log(values);
       exportDates(values);
       // reset();
     } catch (error) {
@@ -136,7 +137,7 @@ const ExportBio = () => {
                   <button
                     disabled={isLoading}
                     type="submit"
-                    className="submitBtn editProfileBtn"
+                    className="submitBtn exportBtn"
                     value="Login"
                     formNoValidate>
                     {isLoading ? <Loading /> : "Submit"}

@@ -10,6 +10,7 @@ import { axiosFetch } from "../../../Utils/axiosFetch";
 import { FaRegEyeSlash, FaRegEye, FaX } from "react-icons/fa6";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
 import { exportToExcel } from "../../../Utils/Excel/EmployeeExportFunction";
+import Loading from "../../Checks/Loading";
 
 const ExportEmployee = () => {
   const { closeExportModal } = useGlobalContext();
@@ -29,7 +30,7 @@ const ExportEmployee = () => {
       axiosFetch.post("/admins/getEmployeeUsersFromDateRange", exportDates),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["registerAdmin"] });
-      console.log(data.data.employeeUsers);
+      // console.log(data.data.employeeUsers);
       exportToExcel(data.data.employeeUsers, "Employee DATA");
       //   exportToCSV(data.data.AllBioData, "BIO DATA");
       reset();
@@ -137,7 +138,7 @@ const ExportEmployee = () => {
                   <button
                     disabled={isLoading}
                     type="submit"
-                    className="submitBtn editProfileBtn"
+                    className="submitBtn exportBtn"
                     value="Login"
                     formNoValidate>
                     {isLoading ? <Loading /> : "Submit"}

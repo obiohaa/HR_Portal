@@ -15,6 +15,17 @@ const BioDataSchema = new mongoose.Schema(
       minlength: 2,
       maxlength: 50,
     },
+    staffId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    jobLocation: {
+      type: String,
+    },
+    jobName: {
+      type: String,
+    },
     email: {
       type: String,
     },

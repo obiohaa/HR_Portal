@@ -27,7 +27,6 @@ const authenticateUser = async (req, res, next) => {
     attachCookiesToResponse({ res, user: payload.user, refreshToken: existingToken.refreshToken });
 
     req.user = payload.user;
-    console.log(req.user);
 
     next();
   } catch (error) {

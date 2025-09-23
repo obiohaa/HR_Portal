@@ -5,6 +5,9 @@ import {
   FaRegEye,
   FaPencil,
   FaTrashCan,
+  FaCheck,
+  FaXmark,
+  FaPlay,
 } from "react-icons/fa6";
 import { useGlobalContext } from "../../../../Context/userContext";
 import DeleteEmployeeModal from "../../../../Components/Modal/DeleteEmployeeModal";
@@ -19,6 +22,7 @@ import capitalizeFirstLetter from "../../../../Components/ToUpperCase";
 import ReactPaginate from "react-paginate";
 import { toast } from "react-toastify";
 import NoData from "../../../../Components/Modal/NoData";
+import "../adminUser.css";
 
 const Employee = () => {
   const [selected, setSelected] = useState([]);
@@ -39,7 +43,16 @@ const Employee = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewUser, setViewUser] = useState(null);
   const [editUser, setEditUser] = useState(null);
+  const [statusClicked, setStatusClicked] = useState(false);
+  const [selectPerPage, setSelectPerPage] = useState(false);
   const modalRef = useRef(null);
+  const modalRefAgain = useRef(null);
+  const modalRefAgainAgain = useRef(null);
+  // Get initial itemsPerPage from localStorage (or default to 5)
+  const [itemsPerPage, setItemsPerPage] = useState(() => {
+    const saved = localStorage.getItem("itemsPerPage");
+    return saved ? Number(saved) : 5;
+  });
 
   //GET ALL ADMIN USERS
   const { data, isLoading } = useQuery({
@@ -53,7 +66,7 @@ const Employee = () => {
     queryFn: async () => {
       const { data } = await axiosFetch.get("/admins/getAllUsers");
       console.log(data.employeeUsers);
-      console.log(data.employeeUsers.length);
+      // console.log(data.employeeUsers.length);
       setPaginationData(data.employeeUsers);
       setSelected([]);
       //   setItemOffset(0);
@@ -103,6 +116,74 @@ const Employee = () => {
   });
   //END UPDATE ADMIN USERS
 
+  //DEACTIVATE EMPLOYEE STATUS
+  const { mutate: updateStatusToDeactivate, isLoading: isLocationLoading } = useMutation({
+    mutationFn: async (updateStatusToDeactivate) =>
+      axiosFetch.patch("/admins/deActivateStatus", { data: updateStatusToDeactivate }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["adminEmployee"] });
+      toast.success(data.data.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastGood",
+      });
+      //   reset();
+      //   setFileName(null);
+    },
+    onError: (error) => {
+      toast.error(error.response.data.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastBad",
+      });
+    },
+  });
+  //END DEACTIVATE EMPLOYEE STATUS
+
+  //UPDATE EMPLOYEE STATUS TO RESUME
+  const { mutate: updateStatusToResume, isLoading: isResumeLoading } = useMutation({
+    mutationFn: async (updateStatusToResume) =>
+      axiosFetch.patch("/admins/updateStatusToResume", { data: updateStatusToResume }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["adminEmployee"] });
+      toast.success(data.data.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastGood",
+      });
+      //   reset();
+      //   setFileName(null);
+    },
+    onError: (error) => {
+      toast.error(error.response.data.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastBad",
+      });
+    },
+  });
+  //END UPDATE EMPLOYEE STATUS TO RESUME
+
   // SEARCH SECTION
   const handleSearch = (e) => {
     e.preventDefault();
@@ -121,7 +202,6 @@ const Employee = () => {
 
   // PAGINATION SECTION
   const [itemOffset, setItemOffset] = useState(0);
-  const itemsPerPage = 2;
 
   useEffect(() => {
     const endOffset = itemOffset + itemsPerPage;
@@ -130,13 +210,25 @@ const Employee = () => {
     setPageCount(Math.ceil(paginationData.length / itemsPerPage));
     // console.log(currentItems);
     // Invoke when user click to request another page.
-  }, [itemOffset, paginationData]);
+  }, [itemOffset, paginationData, itemsPerPage]);
 
   const handlePageClick = (event) => {
     const newOffset = (event.selected * itemsPerPage) % paginationData.length;
     // console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
     setItemOffset(newOffset);
   };
+
+  const handleItemsPerPageChange = (value) => {
+    const newValue = Number(value);
+    setItemsPerPage(newValue);
+    localStorage.setItem("itemsPerPage", newValue); // persist choice
+    setItemOffset(0); // reset to first page
+    setSelectPerPage(false); // close the dropdown after selection
+  };
+
+  const start = itemOffset + 1;
+  const end = Math.min(itemOffset + itemsPerPage, paginationData.length);
+  const total = paginationData.length;
   // PAGINATION SECTION END
 
   // CHECKBOX SECTION
@@ -183,6 +275,42 @@ const Employee = () => {
 
   //END USE EFFECT FUNCTION TO MAKE THE OPEN OPTIONS CLOSE ON MOUSE DOWN OR ON CLICK.
 
+  //USE EFFECT FUNCTION TO MAKE THE OPEN STATUS OPTIONS CLOSE ON MOUSE DOWN OR ON CLICK.
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRefAgain.current && !modalRefAgain.current.contains(event.target)) {
+        setStatusClicked(false);
+      }
+    };
+
+    if (statusClicked) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [statusClicked]);
+  //END USE EFFECT FUNCTION TO MAKE THE OPEN STATUS OPTIONS CLOSE ON MOUSE DOWN OR ON CLICK.
+
+  //USE EFFECT FUNCTION TO MAKE THE OPEN STATUS OPTIONS CLOSE ON MOUSE DOWN OR ON CLICK.
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRefAgainAgain.current && !modalRefAgainAgain.current.contains(event.target)) {
+        setSelectPerPage(false);
+      }
+    };
+
+    if (selectPerPage) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [selectPerPage]);
+  //END USE EFFECT FUNCTION TO MAKE THE OPEN STATUS OPTIONS CLOSE ON MOUSE DOWN OR ON CLICK.
+
   // HANDLE DELETE
   const handleDelete = (id) => {
     openDelModal();
@@ -200,13 +328,23 @@ const Employee = () => {
     setSelectedItemId(null);
   };
   // END HANDLE DELETE
-  //EDIT ADMIN USER STATUS
-  const updateAdminStatus = () => {
-    console.log("update status");
-    console.log(selected);
+  //UPDATE LOCATION STATUS
+  const activateLocation = () => {
     updateUserStatus(selected);
+    setSelectedItemId(null);
+    setStatusClicked(!statusClicked);
   };
-  //END EDIT ADMIN USER STATUS
+  const deActivateLocation = () => {
+    updateStatusToDeactivate(selected);
+    setSelectedItemId(null);
+    setStatusClicked(!statusClicked);
+  };
+  const resumeEmployee = () => {
+    updateStatusToResume(selected);
+    setSelectedItemId(null);
+    setStatusClicked(!statusClicked);
+  };
+  //END UPDATE LOCATION STATUS
 
   // VIEW THIS USER
   const viewThisUser = (item) => {
@@ -223,7 +361,7 @@ const Employee = () => {
   };
   //END EDIT THIS USER
   // console.log(selected);
-  if (isLoading || isLoadingStatus) {
+  if (isLoading || isLoadingStatus || isLocationLoading || isResumeLoading) {
     return <PageLoading />;
   }
 
@@ -246,10 +384,40 @@ const Employee = () => {
             />
           </div>
           <div className="actionButtons">
+            {statusClicked && (
+              <div
+                ref={modalRefAgain}
+                style={{
+                  position: "absolute",
+                  top: "70%",
+                  right: "21%",
+                  backgroundColor: "#fff",
+                  border: "1px solid #ccc",
+                  borderRadius: "8px",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                  zIndex: 999999,
+                  padding: "5px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "5px",
+                  minWidth: "230px",
+                }}
+                onClick={(e) => e.stopPropagation()}>
+                <button className="sideButton" onClick={activateLocation}>
+                  <FaCheck /> Activate
+                </button>
+                <button className="sideButton" onClick={deActivateLocation}>
+                  <FaXmark /> Deactivate
+                </button>
+                <button className="sideButton" onClick={resumeEmployee}>
+                  <FaPlay /> Resume
+                </button>
+              </div>
+            )}
             <button
               className="btnAdmin"
               disabled={selected && selected.length == 0}
-              onClick={updateAdminStatus}>
+              onClick={() => setStatusClicked(!statusClicked)}>
               Status
             </button>
             <button
@@ -276,14 +444,18 @@ const Employee = () => {
                     <Checkbox
                       name="all"
                       value={
-                        data && data.employeeUsers && data.employeeUsers.length === selected.length
+                        data &&
+                        data.employeeUsers &&
+                        data.employeeUsers.length > 0 &&
+                        data.employeeUsers.length === selected.length
                       }
                       updateValue={selectAll}></Checkbox>
                   </th>
                   <th>Name</th>
+                  <th>Staff ID</th>
                   <th>Email</th>
                   <th>Role</th>
-                  <th>Active</th>
+                  <th>Status</th>
                   <th>Created</th>
                   <th>Verified</th>
                   <th>Action</th>
@@ -292,8 +464,23 @@ const Employee = () => {
               <tbody>
                 {currentItems && currentItems.length >= 1 ? (
                   currentItems.map((item) => {
+                    const isChecked = selected.includes(item._id);
                     return (
-                      <tr key={item._id} style={{ position: "relative" }}>
+                      <tr
+                        key={item._id}
+                        style={{ position: "relative", cursor: "pointer" }}
+                        onClick={(e) => {
+                          // prevent row-click from firing when clicking on buttons or checkbox
+                          if (
+                            e.target.type === "checkbox" ||
+                            e.target.tagName === "BUTTON" ||
+                            e.target.closest(".actionIcon")
+                          ) {
+                            return;
+                          }
+
+                          handleSelect(!isChecked, item._id);
+                        }}>
                         <td>
                           <Checkbox
                             name={item._id}
@@ -304,11 +491,12 @@ const Employee = () => {
                           {capitalizeFirstLetter(item.firstName)}{" "}
                           {capitalizeFirstLetter(item.lastName)}
                         </td>
+                        <td>{item.bioData === null ? "Nill" : item.bioData.staffId}</td>
                         <td>{item.email}</td>
                         <td>{item.role}</td>
                         <td>
                           <div className={item.active ? "tagGreen" : "tagRed"}>
-                            {item.active.toString()}
+                            {item.active.toString() === true.toString() ? "Active" : "Inactive"}
                           </div>
                         </td>
                         <td>{item.createdAt.split("T")[0]}</td>
@@ -325,38 +513,27 @@ const Employee = () => {
                             }}
                           />
 
-                          {selectedItemId === item._id && (
-                            <div
-                              ref={modalRef}
-                              style={{
-                                position: "absolute",
-                                top: "-100%",
-                                right: "60%",
-                                transform: "translateY(-50%)",
-                                backgroundColor: "#fff",
-                                border: "1px solid #ccc",
-                                borderRadius: "8px",
-                                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-                                zIndex: 999999,
-                                padding: "5px",
-                                display: "flex",
-                                flexDirection: "column",
-                                gap: "5px",
-                                minWidth: "230px",
-                              }}
-                              onClick={(e) => e.stopPropagation()}>
-                              <button className="sideButton" onClick={() => viewThisUser(item)}>
-                                <FaRegEye /> View
-                              </button>
-                              <button className="sideButton" onClick={() => editThisUser(item)}>
-                                <FaPencil /> Edit
-                              </button>
-                              <button className="sideButton" onClick={() => handleDelete(item._id)}>
-                                {" "}
-                                <FaTrashCan /> Delete
-                              </button>
-                            </div>
-                          )}
+                          <div className="selectedItemIdClass">
+                            {selectedItemId === item._id && (
+                              <div
+                                ref={modalRef}
+                                className="dropdownBox"
+                                onClick={(e) => e.stopPropagation()}>
+                                <button className="sideButton" onClick={() => viewThisUser(item)}>
+                                  <FaRegEye /> View
+                                </button>
+                                <button className="sideButton" onClick={() => editThisUser(item)}>
+                                  <FaPencil /> Edit
+                                </button>
+                                <button
+                                  className="sideButton"
+                                  onClick={() => handleDelete(item._id)}>
+                                  {" "}
+                                  <FaTrashCan /> Delete
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     );
@@ -377,7 +554,7 @@ const Employee = () => {
             onPageChange={handlePageClick}
             pageRangeDisplayed={5}
             pageCount={pageCount}
-            previousLabel="< previous"
+            previousLabel="< prev"
             renderOnZeroPageCount={null}
             containerClassName="pagination"
             pageLinkClassName="page-num"
@@ -385,6 +562,35 @@ const Employee = () => {
             nextLinkClassName="page-num"
             activeLinkClassName="active"
           />
+
+          <div className="selectPerPageClass">
+            {selectPerPage && (
+              <div
+                ref={modalRefAgainAgain}
+                className="dropDownPagination"
+                onClick={(e) => e.stopPropagation()}>
+                <button className="sideButton" onClick={() => handleItemsPerPageChange(5)}>
+                  5 / Page
+                </button>
+                <button className="sideButton" onClick={() => handleItemsPerPageChange(10)}>
+                  10 / Page
+                </button>
+                <button className="sideButton" onClick={() => handleItemsPerPageChange(20)}>
+                  20 / Page
+                </button>
+              </div>
+            )}
+            <button
+              className="btnAdmin"
+              onClick={() => {
+                setSelectPerPage(!selectPerPage);
+              }}>
+              {itemsPerPage} / Page
+            </button>
+          </div>
+          <div>
+            Showing {start} - {end} of {total}
+          </div>
         </div>
       </div>
     </div>

@@ -149,7 +149,7 @@ const login = async (req, res) => {
 
   if (!user.active) {
     throw new CustomError.UnauthenticatedError(
-      "This user has been deactivated, please contact the admin"
+      "This user is not fully activated, please contact the HR Admin"
     );
   }
 
@@ -161,6 +161,21 @@ const login = async (req, res) => {
   //check for existing token
   const existingToken = await Token.findOne({ user: user._id });
 
+  //This uses the old existingToken when a user logs in for refresh Token
+  // if (existingToken) {
+  //   const { isValid } = existingToken;
+
+  //   if (!isValid) {
+  //     throw new CustomError.UnauthenticatedError("Invalid Credentials");
+  //   }
+
+  //   refreshToken = existingToken.refreshToken;
+  //   attachCookiesToResponse({ res, user: tokenUser, refreshToken });
+  //   res.status(StatusCodes.OK).json({ user: tokenUser });
+  //   return;
+  // }
+
+  //While this updates the user refreshToken and attach it to cookies
   if (existingToken) {
     const { isValid } = existingToken;
 
@@ -168,8 +183,21 @@ const login = async (req, res) => {
       throw new CustomError.UnauthenticatedError("Invalid Credentials");
     }
 
-    refreshToken = existingToken.refreshToken;
-    attachCookiesToResponse({ res, user: tokenUser, refreshToken });
+    refreshToken = crypto.randomBytes(40).toString("hex");
+
+    const userTokenUpdated = await Token.findOneAndUpdate(
+      { user: user._id },
+      {
+        refreshToken: refreshToken,
+        lastLogin: Date.now(),
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    attachCookiesToResponse({ res, user: tokenUser, refreshToken: userTokenUpdated.refreshToken });
     res.status(StatusCodes.OK).json({ user: tokenUser });
     return;
   }
@@ -177,7 +205,8 @@ const login = async (req, res) => {
   refreshToken = crypto.randomBytes(40).toString("hex");
   const userAgent = req.headers["user-agent"]; //another was to get attributes from request like req.get('origin')
   const ip = req.ip;
-  const userToken = { refreshToken, ip, userAgent, user: user._id };
+  const lastLogin = Date.now();
+  const userToken = { refreshToken, ip, userAgent, user: user._id, lastLogin };
   await Token.create(userToken);
 
   attachCookiesToResponse({ res, user: tokenUser, refreshToken });

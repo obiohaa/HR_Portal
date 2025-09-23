@@ -8,6 +8,7 @@ import EditBioDataModal from "../EditBioDataModal";
 // import { useQuery } from "@tanstack/react-query";
 // import { axiosFetch } from "../../../Utils/axiosFetch";
 import PageLoading from "../../Checks/PageLoading";
+import FormatThisDate from "../../FormatThisDate";
 
 const EmployeeBioModal = ({ viewUser }) => {
   console.log(viewUser);
@@ -58,7 +59,7 @@ const EmployeeBioModal = ({ viewUser }) => {
   // PREPARING THE USER BIO FILE FOR DOWNLOAD
   //SENDING THE DATA TO PDF
   const downloadAttach = () => {
-    console.log("click");
+    // console.log("click");
     const downLoadAttachUrl = updateData.UserFileUrl.replace("/upload/", "/upload/fl_attachment/");
     window.open(downLoadAttachUrl, "_blank");
   };
@@ -100,6 +101,30 @@ const EmployeeBioModal = ({ viewUser }) => {
                     </div>
 
                     <div className="singleProfile">
+                      <p className="profileLabel">Staff ID</p>
+                      <h4 className="profileName">
+                        {updateData ? updateData.staffId : "Staff ID"}
+                      </h4>
+                      <div className="profileLine"></div>
+                    </div>
+
+                    <div className="singleProfile">
+                      <p className="profileLabel">Job Location</p>
+                      <h4 className="profileName">
+                        {updateData ? updateData.jobLocation : "Job Location"}
+                      </h4>
+                      <div className="profileLine"></div>
+                    </div>
+
+                    <div className="singleProfile">
+                      <p className="profileLabel">Job Name</p>
+                      <h4 className="profileName">
+                        {updateData ? updateData.jobName : "Job Name"}
+                      </h4>
+                      <div className="profileLine"></div>
+                    </div>
+
+                    <div className="singleProfile">
                       <p className="profileLabel">Email Address</p>
                       <h4 className="profileName">
                         {updateData ? updateData.email : "Email"}
@@ -112,7 +137,7 @@ const EmployeeBioModal = ({ viewUser }) => {
                     <div className="singleProfile">
                       <p className="profileLabel">Date of Birth</p>
                       <h4 className="profileName">
-                        {updateData ? updateData.dateOfBirth.split("T")[0] : "Date of Birth"}
+                        {updateData ? FormatThisDate(updateData.dateOfBirth) : "Date of Birth"}
                       </h4>
                       <div className="profileLine"></div>
                     </div>

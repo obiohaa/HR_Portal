@@ -6,6 +6,7 @@ import ProfileModal from "../../../../Components/Modal/ProfileModal";
 import { useQuery } from "@tanstack/react-query";
 import { axiosFetch } from "../../../../Utils/axiosFetch";
 import PageLoading from "../../../../Components/Checks/PageLoading";
+import "../profile.css";
 
 const NOK = () => {
   const { userStepState, openModal, isModalOpen } = useGlobalContext();
@@ -20,8 +21,7 @@ const NOK = () => {
     refetchIntervalInBackground: true, //do not refetch in background
     queryFn: async () => {
       const { data } = await axiosFetch.get(`/users/getSingleNOK`);
-      console.log(data);
-      console.log(data.userNOK);
+
       return data;
     },
   });

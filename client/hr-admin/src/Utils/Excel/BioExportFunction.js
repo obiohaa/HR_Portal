@@ -9,6 +9,10 @@ export const exportToExcel = (data, fileName) => {
     { label: "First Name", key: "firstName" },
     { label: "Middle Name", key: "middleName" },
     { label: "Last Name", key: "lastName" },
+    { label: "Staff ID", key: "staffId" },
+    { label: "Job Location", key: "jobLocation" },
+    { label: "Status", key: "user.employeeStatus" },
+    { label: "Job Name", key: "jobName" },
     { label: "Email", key: "email" },
     { label: "Date of Birth", key: "dateOfBirth" },
     { label: "State of Origin", key: "state_of_origin" },
@@ -29,17 +33,27 @@ export const exportToExcel = (data, fileName) => {
   const formattedData = data.map((item) => {
     const row = {};
     headerMap.forEach(({ label, key }) => {
-      let value = item[key];
-      if (value instanceof Date) {
-        value = new Date(value).toLocaleDateString(); // format date
+      // Support nested keys like "bioData.staffId"
+      const keys = key.split(".");
+      let value = item;
+      for (const k of keys) {
+        value = value ? value[k] : undefined;
       }
-      row[label] = value ?? ""; // handle undefined/null
+
+      // format dates nicely
+      if (value instanceof Date) {
+        value = new Date(value).toLocaleDateString();
+      } else if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value)) {
+        // If it's an ISO date string, format it
+        value = new Date(value).toLocaleDateString();
+      }
+
+      row[label] = value ?? "";
     });
     return row;
   });
 
   const worksheet = XLSX.utils.json_to_sheet(formattedData);
-  console.log(worksheet);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
 
@@ -54,7 +68,6 @@ export const exportToExcel = (data, fileName) => {
 
   saveAs(blob, `Report_${fileName}.xlsx`);
 };
-
 //EXPORT TO CSV
 // export const exportToCSV = (data, fileName) => {
 //   if (!data || data.length === 0) return;

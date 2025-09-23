@@ -74,6 +74,11 @@ const GuarantorSchema = new mongoose.Schema(
     signedPolicy: {
       type: String,
     },
+    bioData: {
+      type: mongoose.Types.ObjectId,
+      ref: "BioData",
+      required: true,
+    },
   },
   { timestamps: true },
   { strict: true }

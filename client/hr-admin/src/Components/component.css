@@ -160,7 +160,7 @@
   /* padding: 1.5rem; */
   padding-bottom: 1.5rem;
   background-color: white;
-  width: 55%;
+  width: 60%;
   /* border-top: 4px solid var(--clr-primary-2); */
   transition: all 0.5s ease-in-out;
 }
@@ -317,7 +317,11 @@
   transition: all 0.5s ease-in-out;
 }
 
-.editProfileBtn {
+/* .editProfileBtn {
+  margin-top: 70px;
+} */
+
+.exportBtn {
   margin-top: 70px;
 }
 

@@ -6,11 +6,13 @@ import EditBioDataModal from "../../../../Components/Modal/EditBioDataModal";
 import { useQuery } from "@tanstack/react-query";
 import { axiosFetch } from "../../../../Utils/axiosFetch";
 import PageLoading from "../../../../Components/Checks/PageLoading";
+import FormatThisDate from "../../../../Components/FormatThisDate";
+import "../profile.css";
 
 const BioData = () => {
   const { userStepState, openModal, isModalOpen } = useGlobalContext();
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["bioDataKey", "currentUser"],
     retryOnMount: true, //do not retry on mount
     refetchOnWindowFocus: true, //do not refetch on window focus
@@ -26,8 +28,8 @@ const BioData = () => {
     },
   });
 
-  console.log(error);
-  console.log(data);
+  // console.log(error);
+  // console.log(data);
   // console.log(userData);
 
   // PREPARING THE USER BIO FILE FOR DOWNLOAD
@@ -77,6 +79,22 @@ const BioData = () => {
               </div>
 
               <div className="singleProfile">
+                <p className="profileLabel">Job Location</p>
+                <h4 className="profileName">
+                  {data && data.userBio ? data.userBio.jobLocation : "Job Location"}
+                </h4>
+                <div className="profileLine"></div>
+              </div>
+
+              <div className="singleProfile">
+                <p className="profileLabel">Job Name</p>
+                <h4 className="profileName">
+                  {data && data.userBio ? data.userBio.jobName : "Job Name"}
+                </h4>
+                <div className="profileLine"></div>
+              </div>
+
+              <div className="singleProfile">
                 <p className="profileLabel">Email Address</p>
                 <h4 className="profileName">
                   {data && data.userBio ? data.userBio.email : "Email"}
@@ -89,7 +107,9 @@ const BioData = () => {
               <div className="singleProfile">
                 <p className="profileLabel">Date of Birth</p>
                 <h4 className="profileName">
-                  {data && data.userBio ? data.userBio.dateOfBirth.split("T")[0] : "Date of Birth"}
+                  {data && data.userBio
+                    ? FormatThisDate(data.userBio.dateOfBirth)
+                    : "Date of Birth"}
                 </h4>
                 <div className="profileLine"></div>
               </div>

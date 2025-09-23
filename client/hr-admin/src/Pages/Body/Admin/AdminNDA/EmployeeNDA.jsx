@@ -19,6 +19,7 @@ import capitalizeFirstLetter from "../../../../Components/ToUpperCase";
 import ReactPaginate from "react-paginate";
 import { toast } from "react-toastify";
 import NoData from "../../../../Components/Modal/NoData";
+import "../adminUser.css";
 
 const EmployeeNDA = () => {
   const [selected, setSelected] = useState([]);
@@ -39,7 +40,14 @@ const EmployeeNDA = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewUser, setViewUser] = useState(null);
   const [editUser, setEditUser] = useState(null);
+  const [selectPerPage, setSelectPerPage] = useState(false);
   const modalRef = useRef(null);
+  const modalRefAgainAgain = useRef(null);
+  // Get initial itemsPerPage from localStorage (or default to 5)
+  const [itemsPerPage, setItemsPerPage] = useState(() => {
+    const saved = localStorage.getItem("itemsPerPage");
+    return saved ? Number(saved) : 5;
+  });
 
   //GET ALL ADMIN USERS
   const { data, isLoading, error } = useQuery({
@@ -96,7 +104,7 @@ const EmployeeNDA = () => {
     setSearchQuery(query);
 
     const filterQuery = data.AllNDA.filter((user) => {
-      const employeeFullName = `${user.user.firstName} ${user.user.lastName}`.toLowerCase();
+      const employeeFullName = `${user?.user?.firstName} ${user?.user?.lastName}`.toLowerCase();
       return employeeFullName.includes(query);
     });
     setPaginationData(filterQuery);
@@ -107,7 +115,6 @@ const EmployeeNDA = () => {
   // console.log(paginationData);
   // PAGINATION SECTION
   const [itemOffset, setItemOffset] = useState(0);
-  const itemsPerPage = 2;
 
   useEffect(() => {
     const endOffset = itemOffset + itemsPerPage;
@@ -116,13 +123,25 @@ const EmployeeNDA = () => {
     setPageCount(Math.ceil(paginationData.length / itemsPerPage));
     // console.log(currentItems);
     // Invoke when user click to request another page.
-  }, [itemOffset, paginationData]);
+  }, [itemOffset, paginationData, itemsPerPage]);
 
   const handlePageClick = (event) => {
     const newOffset = (event.selected * itemsPerPage) % paginationData.length;
     // console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
     setItemOffset(newOffset);
   };
+
+  const handleItemsPerPageChange = (value) => {
+    const newValue = Number(value);
+    setItemsPerPage(newValue);
+    localStorage.setItem("itemsPerPage", newValue); // persist choice
+    setItemOffset(0); // reset to first page
+    setSelectPerPage(false); // close the dropdown after selection
+  };
+
+  const start = itemOffset + 1;
+  const end = Math.min(itemOffset + itemsPerPage, paginationData.length);
+  const total = paginationData.length;
   // PAGINATION SECTION END
 
   // CHECKBOX SECTION
@@ -168,6 +187,24 @@ const EmployeeNDA = () => {
   }, [selectedItemId]);
 
   //END USE EFFECT FUNCTION TO MAKE THE OPEN OPTIONS CLOSE ON MOUSE DOWN OR ON CLICK.
+
+  //USE EFFECT FUNCTION TO MAKE THE OPEN STATUS OPTIONS CLOSE ON MOUSE DOWN OR ON CLICK.
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRefAgainAgain.current && !modalRefAgainAgain.current.contains(event.target)) {
+        setSelectPerPage(false);
+      }
+    };
+
+    if (selectPerPage) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [selectPerPage]);
+  //END USE EFFECT FUNCTION TO MAKE THE OPEN STATUS OPTIONS CLOSE ON MOUSE DOWN OR ON CLICK.
 
   // HANDLE DELETE
   const handleDelete = (id) => {
@@ -262,7 +299,12 @@ const EmployeeNDA = () => {
                     component. */}
                     <Checkbox
                       name="all"
-                      value={data && data.AllNDA && data.AllNDA.length === selected.length}
+                      value={
+                        data &&
+                        data.AllNDA &&
+                        data.AllNDA.length > 0 &&
+                        data.AllNDA.length === selected.length
+                      }
                       updateValue={selectAll}></Checkbox>
                   </th>
                   <th>Employee</th>
@@ -274,8 +316,23 @@ const EmployeeNDA = () => {
               <tbody>
                 {currentItems && currentItems.length >= 1 ? (
                   currentItems.map((item) => {
+                    const isChecked = selected.includes(item._id);
                     return (
-                      <tr key={item._id} style={{ position: "relative" }}>
+                      <tr
+                        key={item._id}
+                        style={{ position: "relative", cursor: "pointer" }}
+                        onClick={(e) => {
+                          // prevent row-click from firing when clicking on buttons or checkbox
+                          if (
+                            e.target.type === "checkbox" ||
+                            e.target.tagName === "BUTTON" ||
+                            e.target.closest(".actionIcon")
+                          ) {
+                            return;
+                          }
+
+                          handleSelect(!isChecked, item._id);
+                        }}>
                         <td>
                           <Checkbox
                             name={item._id}
@@ -302,46 +359,30 @@ const EmployeeNDA = () => {
                           <FaArrowsUpDownLeftRight
                             className="actionIcon"
                             onClick={() => {
-                              //   setSelectedItemId((prev) => (prev === item._id ? null : item._id));
+                              // setSelectedItemId((prev) => (prev === item._id ? null : item._id));
                             }}
                           />
-
-                          {selectedItemId === item._id && (
-                            <div
-                              ref={modalRef}
-                              style={{
-                                position: "absolute",
-                                top: "-100%",
-                                right: "60%",
-                                transform: "translateY(-50%)",
-                                backgroundColor: "#fff",
-                                border: "1px solid #ccc",
-                                borderRadius: "8px",
-                                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-                                zIndex: 999999,
-                                padding: "5px",
-                                display: "flex",
-                                flexDirection: "column",
-                                gap: "5px",
-                                minWidth: "230px",
-                              }}
-                              onClick={(e) => e.stopPropagation()}>
-                              <button className="sideButton" onClick={() => viewThisUser(item)}>
-                                <FaRegEye /> View
-                              </button>
-                              <button className="sideButton" onClick={() => editThisUser(item)}>
-                                <FaPencil /> Edit
-                              </button>
-                              {item.isCompleted === 0 && (
+                          <div className="selectedItemIdClass">
+                            {selectedItemId === item._id && (
+                              <div
+                                ref={modalRef}
+                                className="dropdownBox"
+                                onClick={(e) => e.stopPropagation()}>
+                                <button className="sideButton" onClick={() => viewThisUser(item)}>
+                                  <FaRegEye /> View
+                                </button>
+                                <button className="sideButton" onClick={() => editThisUser(item)}>
+                                  <FaPencil /> Edit
+                                </button>
                                 <button
                                   className="sideButton"
                                   onClick={() => handleDelete(item._id)}>
                                   {" "}
                                   <FaTrashCan /> Delete
                                 </button>
-                              )}
-                            </div>
-                          )}
+                              </div>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     );
@@ -362,7 +403,7 @@ const EmployeeNDA = () => {
             onPageChange={handlePageClick}
             pageRangeDisplayed={5}
             pageCount={pageCount}
-            previousLabel="< previous"
+            previousLabel="< prev"
             renderOnZeroPageCount={null}
             containerClassName="pagination"
             pageLinkClassName="page-num"
@@ -370,6 +411,35 @@ const EmployeeNDA = () => {
             nextLinkClassName="page-num"
             activeLinkClassName="active"
           />
+
+          <div className="selectPerPageClass">
+            {selectPerPage && (
+              <div
+                ref={modalRefAgainAgain}
+                className="dropDownPagination"
+                onClick={(e) => e.stopPropagation()}>
+                <button className="sideButton" onClick={() => handleItemsPerPageChange(5)}>
+                  5 / Page
+                </button>
+                <button className="sideButton" onClick={() => handleItemsPerPageChange(10)}>
+                  10 / Page
+                </button>
+                <button className="sideButton" onClick={() => handleItemsPerPageChange(20)}>
+                  20 / Page
+                </button>
+              </div>
+            )}
+            <button
+              className="btnAdmin"
+              onClick={() => {
+                setSelectPerPage(!selectPerPage);
+              }}>
+              {itemsPerPage} / Page
+            </button>
+          </div>
+          <div>
+            Showing {start} - {end} of {total}
+          </div>
         </div>
       </div>
     </div>

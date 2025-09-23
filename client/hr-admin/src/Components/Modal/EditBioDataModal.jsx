@@ -5,8 +5,8 @@ import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useGlobalContext } from "../../Context/userContext";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { axiosFetchFormData } from "../../Utils/axiosFetch";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { axiosFetchFormData, axiosFetch } from "../../Utils/axiosFetch";
 import { FaRegEyeSlash, FaRegEye, FaX } from "react-icons/fa6";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
 // import capitalizeFirstLetter from "../Components/ToUpperCase";
@@ -14,6 +14,7 @@ import { MdCloudUpload, MdDelete } from "react-icons/md";
 import { stateCapital, genderOptions, maritalStatus, pension, levelOfEducation } from "../UserData";
 
 const EditBioDataModal = ({ userBio }) => {
+  console.log(userBio);
   const { closeModal, saveUser } = useGlobalContext();
   const [fileName, setFileName] = useState(null);
   const [fileError, setFileError] = useState({ msg: "" });
@@ -27,6 +28,46 @@ const EditBioDataModal = ({ userBio }) => {
     handleSubmit,
     setError,
   } = useForm({});
+
+  //GET LOCATION RECORD
+  const {
+    isLoading: Loading,
+    error,
+    data,
+  } = useQuery({
+    queryKey: ["adminBioDataOneKeys"],
+    retryOnMount: true, //do not retry on mount
+    refetchOnWindowFocus: false, //do not refetch on window focus
+    refetchOnReconnect: true, //do not refetch on reconnect
+    refetchOnMount: true, //do not refetch on mount
+    refetchInterval: true, //do not refetch at intervals
+    refetchIntervalInBackground: false, //do not refetch in background
+    queryFn: async () => {
+      const { data } = await axiosFetch.get("/admins/getAllOutletLocationPublic");
+      return data;
+    },
+  });
+  // console.log(error);
+
+  if (error) {
+    toast.error(
+      <div>
+        <span>
+          {error.response ? error.response.data.msg : "Something went wrong contact Admin"}
+        </span>
+      </div>,
+      {
+        position: "top-center",
+        autoClose: 8000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastBad",
+      }
+    );
+  }
 
   //Using react query to handle the API call
   const queryClient = useQueryClient();
@@ -95,6 +136,9 @@ const EditBioDataModal = ({ userBio }) => {
       firstName: userBio.firstName,
       lastName: userBio.lastName,
       middleName: userBio.middleName,
+      jobLocation: userBio.jobLocation,
+      jobName: userBio.jobName,
+
       bankAccountNumber: userBio.bankAccountNumber,
       bankName: userBio.bankName,
       dateOfBirth: userBio.dateOfBirth.split("T")[0],
@@ -226,6 +270,55 @@ const EditBioDataModal = ({ userBio }) => {
                     {errors.lastName && <p className="bioError">{errors.lastName.message}</p>}
                     <label htmlFor="lastName" className="form_label">
                       Last Name
+                    </label>
+                  </div>
+                  <div className="formBioData selectFormBioData">
+                    <select
+                      name="jobLocation"
+                      id="jobLocation"
+                      className="form_input"
+                      autoComplete="off"
+                      {...register("jobLocation", {
+                        required: "Job Location is required!",
+                      })}>
+                      {data?.AllOutletLocations.map((location) => (
+                        <option key={location.OutletName} value={location.OutletName}>
+                          {location.OutletName}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.jobLocation && <p className="bioError">{errors.jobLocation.message}</p>}
+                    <label htmlFor="jobLocation" className="form_label">
+                      Job Location
+                    </label>
+                  </div>
+                  <div className="formBioData">
+                    <input
+                      type="text"
+                      id="jobName"
+                      className="form_input"
+                      placeholder=" "
+                      autoComplete="off"
+                      formNoValidate
+                      {...register("jobName", {
+                        required: "Job Name is required!",
+                        minLength: {
+                          value: 2,
+                          message: "Minimum characters of 2 letters.",
+                        },
+                        maxLength: {
+                          value: 40,
+                          message: "Maximum characters of 40 letters.",
+                        },
+                        pattern: {
+                          value: /^[A-Za-z\s]+$/,
+                          message: "Alphabets only!",
+                        },
+                      })}
+                    />
+                    {errors.jobName && <p className="bioError">{errors.jobName.message}</p>}
+                    <label htmlFor="jobName" className="form_label">
+                      Job Name
                     </label>
                   </div>
                   <div className="formBioData">
