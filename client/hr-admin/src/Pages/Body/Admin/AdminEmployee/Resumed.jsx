@@ -411,7 +411,7 @@ const Resumed = () => {
                   <FaXmark /> Deactivate
                 </button>
                 <button className="sideButton" onClick={terminate}>
-                  <FaLock /> Terminate
+                  <FaLock /> Exit
                 </button>
               </div>
             )}

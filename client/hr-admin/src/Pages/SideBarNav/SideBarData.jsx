@@ -58,8 +58,8 @@ const AdminSideBar = [
       },
       {
         id: 3,
-        url: "/Resigned-employee",
-        text: "Resigned",
+        url: "/exited-employee",
+        text: "exited",
       },
     ],
   },

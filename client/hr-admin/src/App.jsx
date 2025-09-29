@@ -62,7 +62,7 @@ function App() {
           <Route path="/admin-NOK" element={<AdminNOK />} />
           <Route path="/Registered-employee" element={<Employee />} />
           <Route path="/Resumed-employee" element={<Resumed />} />
-          <Route path="/Resigned-employee" element={<Terminated />} />
+          <Route path="/exited-employee" element={<Terminated />} />
           <Route path="/nda" element={<NdaProfile />} />
           <Route path="/job_opening" element={<JobOpening />} />
           <Route path="/pdfPagebioDATA" element={<BDJSONpdf />} />
