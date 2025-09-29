@@ -317,9 +317,23 @@
   transition: all 0.5s ease-in-out;
 }
 
+.New_formContainerEdit {
+  width: 100%;
+  height: auto;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  row-gap: 20px;
+  justify-content: center;
+  transition: all 0.5s ease-in-out;
+}
+
 /* .editProfileBtn {
   margin-top: 70px;
 } */
+
+.jobBtn {
+  margin-top: 20px;
+}
 
 .exportBtn {
   margin-top: 70px;

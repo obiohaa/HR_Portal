@@ -17,6 +17,7 @@ const {
 const cloudinary = require("cloudinary").v2;
 const crypto = require("crypto");
 const fs = require("fs");
+require("dotenv").config();
 
 // ROUTES
 const getAllUsers = async (req, res) => {
@@ -631,16 +632,29 @@ const guarantorUser = async (req, res) => {
     const user = req.user.userId;
     const firstName = req.user.firstName;
     const lastName = req.user.lastName;
-    const origin = "https://hr-portal.theplace.com.ng";
+    const origin = process.env.PRODUCTION_ORIGIN;
     // const origin = "http://localhost:5173";
 
-    console.log(user);
-    console.log(firstName);
-    console.log(lastName);
-    console.log(origin);
+    // console.log(user);
+    // console.log(firstName);
+    // console.log(lastName);
+    // console.log(origin);
 
-    const emailOneAlreadyExists = await Guarantor.findOne({ guarantorOneEmail: oneEmail });
-    const emailTwoAlreadyExists = await Guarantor.findOne({ guarantorTwoEmail: twoEmail });
+    const emailOneAlreadyExists = await Guarantor.findOne({
+      $or: [{ guarantorOneEmail: oneEmail }, { guarantorTwoEmail: oneEmail }],
+    });
+
+    const emailTwoAlreadyExists = await Guarantor.findOne({
+      $or: [{ guarantorOneEmail: twoEmail }, { guarantorTwoEmail: twoEmail }],
+    });
+
+    if (emailOneAlreadyExists && emailOneAlreadyExists.isCompleted == true) {
+      throw new CustomError.BadRequestError("Guarantor completed," + " " + `${oneEmail}`);
+    }
+
+    if (emailTwoAlreadyExists && emailTwoAlreadyExists.isCompleted == true) {
+      throw new CustomError.BadRequestError("Guarantor completed," + " " + `${twoEmail}`);
+    }
 
     console.log(emailOneAlreadyExists);
     console.log(emailTwoAlreadyExists);
@@ -841,10 +855,8 @@ const updateGuarantor = async (req, res) => {
         await StepState.findOneAndUpdate(
           { user: guarantorData.user },
           {
-            currentStep: 4,
-            nextStep: 5,
-            completed: false,
-            completedStep: 3,
+            completed: true,
+            completedStep: 4,
           },
           {
             new: true,
@@ -887,6 +899,7 @@ const updateGuarantor = async (req, res) => {
 
 const finalAgreement = async (req, res) => {
   const { finalAgreement } = req.body;
+  console.log(finalAgreement);
   if (!finalAgreement) {
     throw new CustomError.BadRequestError("Please provide all values");
   }
@@ -894,6 +907,12 @@ const finalAgreement = async (req, res) => {
   const userStepState = await StepState.findOne({ user: req.user.userId });
   if (!userStepState) {
     throw new CustomError.BadRequestError("This user does not exist");
+  }
+
+  const finalAG = await finalNDA.findOne({ user: req.user.userId });
+  console.log(finalAG);
+  if (finalAG && finalAG.finalAgreement === true) {
+    throw new CustomError.BadRequestError("Agreement already signed");
   }
 
   try {
@@ -904,7 +923,6 @@ const finalAgreement = async (req, res) => {
       lastName: req.user.lastName,
     };
 
-    console.log(finalUserAgreementData);
     const finalUserAgreement = await finalNDA.create(finalUserAgreementData);
     if (!finalUserAgreement) {
       throw new CustomError.BadRequestError("Final Agreement not created, try again");
@@ -914,8 +932,10 @@ const finalAgreement = async (req, res) => {
     const updateStepState = await StepState.findOneAndUpdate(
       { user: req.user.userId },
       {
-        completed: true,
-        completedStep: userStepState.completedStep + 1,
+        completed: false,
+        currentStep: 4,
+        nextStep: 5,
+        completedStep: 3,
       },
       {
         new: true,

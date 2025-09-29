@@ -11,7 +11,7 @@ const NDA = () => {
   console.log(user);
   return (
     <div className="bioDataProfileContainer">
-      {userStepState && userStepState.completedStep <= 3 ? (
+      {userStepState && userStepState.completedStep <= 2 ? (
         <ProfileModal />
       ) : (
         <div className="NDAProfileForm">

@@ -7,7 +7,7 @@ import { useGlobalContext } from "../../../../Context/userContext";
 import { FaChessKing, FaUsers, FaFileCircleXmark, FaUserSecret, FaUser } from "react-icons/fa6";
 
 const EmployeeMainDash = () => {
-  const { userStepState, user, saveUser, setUserStepState } = useGlobalContext();
+  const { userStepState, saveUser, setUserStepState } = useGlobalContext();
   // console.log(user);
 
   // Fetch the current user data
@@ -158,32 +158,32 @@ const EmployeeMainDash = () => {
         </div>
         <div
           className={
-            userStepState && userStepState.completedStep >= 4
+            userStepState && userStepState.completedStep >= 3
               ? "employeeDashSingle dashColoured"
               : "employeeDashSingle dashNotColoured"
           }>
           <span className="toolTipText">
-            N.D.A {userStepState && userStepState.completedStep >= 4 ? "Signed" : ""}
+            N.D.A {userStepState && userStepState.completedStep >= 3 ? "Signed" : ""}
           </span>
           <FaFileCircleXmark
             className={
-              userStepState && userStepState.completedStep >= 4
+              userStepState && userStepState.completedStep >= 3
                 ? "dashIconColoured"
                 : "dashIconNotColoured"
             }
           />
           <div
             className={
-              userStepState && userStepState.completedStep >= 4 ? "dividerColoured" : "divider"
+              userStepState && userStepState.completedStep >= 3 ? "dividerColoured" : "divider"
             }></div>
           <div
             className={
-              userStepState && userStepState.completedStep >= 4 ? "dashCountColoured" : "dashCount"
+              userStepState && userStepState.completedStep >= 3 ? "dashCountColoured" : "dashCount"
             }>
-            {userStepState && userStepState.completedStep >= 4 ? "1" : "0"}
+            {userStepState && userStepState.completedStep >= 3 ? "1" : "0"}
           </div>
         </div>
-        {user && user.role === "admin" && (
+        {/* {user && user.role === "admin" && (
           <div
             className={
               userStepState && userStepState.completedStep >= 5
@@ -213,7 +213,7 @@ const EmployeeMainDash = () => {
               {userStepState && userStepState.completedStep >= 5 ? "1" : "0"}
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

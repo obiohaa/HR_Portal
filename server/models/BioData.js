@@ -17,7 +17,6 @@ const BioDataSchema = new mongoose.Schema(
     },
     staffId: {
       type: String,
-      required: true,
       unique: true,
     },
     jobLocation: {

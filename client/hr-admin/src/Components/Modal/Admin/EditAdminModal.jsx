@@ -192,7 +192,7 @@ const EditAdminModal = ({ editUser }) => {
                         })}
                       />
                       {errors.email && <p className="bioError">{errors.email.message}</p>}
-                      <label htmlFor="firstName" className="form_label">
+                      <label htmlFor="email" className="form_label">
                         Email
                       </label>
                     </div>

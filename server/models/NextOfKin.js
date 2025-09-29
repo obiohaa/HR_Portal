@@ -34,7 +34,6 @@ const NextOfKinSchema = new mongoose.Schema(
     bioData: {
       type: mongoose.Types.ObjectId,
       ref: "BioData",
-      required: true,
     },
   },
   { timestamps: true }

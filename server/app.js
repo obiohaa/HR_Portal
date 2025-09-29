@@ -35,8 +35,8 @@ const errorHandlerMiddleware = require("./middleware/error-handler");
 
 //others
 const corOptions = {
-  // origin: "http://localhost:5173",
-  origin: "https://hr-portal.theplace.com.ng",
+  origin: "http://localhost:5173",
+  // origin: "https://hr-portal.theplace.com.ng",
   credentials: true,
   methods: ["GET", "HEAD", "POST", "PATCH", "PUT", "DELETE", "UPDATE"],
   allowedHeader: ["Content-Type", "Authorization"],

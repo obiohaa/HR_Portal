@@ -9,10 +9,10 @@ import {
   FaXmark,
 } from "react-icons/fa6";
 import { useGlobalContext } from "../../../../Context/userContext";
-import AddLocation from "../../../../Components/Modal/Outlets/AddLocation";
-import DeleteLocationModal from "../../../../Components/Modal/DeleteLocationModal";
+import AddJob from "../../../../Components/Modal/JOBS/AddJob";
+import DeleteJobModal from "../../../../Components/Modal/DeleteJobModal";
 import ViewLocationModal from "../../../../Components/Modal/ViewLocationModal";
-import EditLocation from "../../../../Components/Modal/Outlets/EditLocation";
+import EditJob from "../../../../Components/Modal/JOBS/EditJob";
 import Checkbox from "../../../../Components/CheckBoxTest";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { axiosFetch } from "../../../../Utils/axiosFetch";
@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 import NoData from "../../../../Components/Modal/NoData";
 import TimeRangeDisplay from "../OutletLocations/DisplayOpenTime";
 import "../adminUser.css";
+import ReadMore from "../../../../Components/ReadMore";
 
 const AdminJobOpening = () => {
   const [selected, setSelected] = useState([]);
@@ -32,8 +33,8 @@ const AdminJobOpening = () => {
     isModalOpen,
     openDelModal,
     isDeleteModalOpen,
-    isViewModalOpen,
-    openViewModal,
+    // isViewModalOpen,
+    // openViewModal,
     openEditModal,
     isEditModalOpen,
   } = useGlobalContext();
@@ -41,7 +42,7 @@ const AdminJobOpening = () => {
   const [currentItems, setCurrentItems] = useState([]);
   const [pageCount, setPageCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [viewUser, setViewUser] = useState(null);
+  // const [viewUser, setViewUser] = useState(null);
   const [editUser, setEditUser] = useState(null);
   const [statusClicked, setStatusClicked] = useState(false);
   const [selectPerPage, setSelectPerPage] = useState(false);
@@ -56,7 +57,7 @@ const AdminJobOpening = () => {
 
   //GET ALL ADMIN USERS
   const { data, isLoading, error } = useQuery({
-    queryKey: ["outletLocation"],
+    queryKey: ["outletJobs"],
     retryOnMount: true, //do not retry on mount
     refetchOnWindowFocus: false, //do not refetch on window focus
     refetchOnReconnect: true, //do not refetch on reconnect
@@ -64,10 +65,8 @@ const AdminJobOpening = () => {
     refetchInterval: false, //do not refetch at intervals
     refetchIntervalInBackground: true, //do not refetch in background
     queryFn: async () => {
-      const { data } = await axiosFetch.get("/admins/getAllOutletLocation");
-      console.log(data);
-
-      setPaginationData(data.AllOutletLocations);
+      const { data } = await axiosFetch.get("/admins/getOutletJobs");
+      setPaginationData(data.AllOutletJobs);
       setSelected([]);
       setItemOffset(0);
       return data;
@@ -77,7 +76,7 @@ const AdminJobOpening = () => {
   //USE STALE DATA IF AVAILABLE
   // This will set the pagination data to the fetched data when it is available
   useEffect(() => {
-    data && setPaginationData(data.AllOutletLocations);
+    data && setPaginationData(data.AllOutletJobs);
   }, [data]);
 
   if (error) {
@@ -104,11 +103,11 @@ const AdminJobOpening = () => {
   //UPDATE LOCATION STATUS
   const queryClient = useQueryClient();
   //ACTIVATE LOCATION
-  const { mutate: updateUserStatus, isLoading: isLoadingStatus } = useMutation({
-    mutationFn: async (updateUserStatus) =>
-      axiosFetch.patch("/admins/activateLocationStatus", { data: updateUserStatus }),
+  const { mutate: updateJobStatus, isLoading: isLoadingStatus } = useMutation({
+    mutationFn: async (updateJobStatus) =>
+      axiosFetch.patch("/admins/activateJobStatus", { id: updateJobStatus }),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["outletLocation"] });
+      queryClient.invalidateQueries({ queryKey: ["outletJobs"] });
       toast.success(data.data.msg, {
         position: "top-center",
         autoClose: 5000,
@@ -137,11 +136,11 @@ const AdminJobOpening = () => {
   });
 
   //DEACTIVATE LOCATION
-  const { mutate: updateLocationStatus, isLoading: isLocationLoading } = useMutation({
-    mutationFn: async (updateLocationStatus) =>
-      axiosFetch.patch("/admins/deactivateLocationStatus", { data: updateLocationStatus }),
+  const { mutate: updateJobStatusInActive, isLoading: isLocationLoading } = useMutation({
+    mutationFn: async (updateJobStatusInActive) =>
+      axiosFetch.patch("/admins/deactivateJobStatus", { id: updateJobStatusInActive }),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["outletLocation"] });
+      queryClient.invalidateQueries({ queryKey: ["outletJobs"] });
       toast.success(data.data.msg, {
         position: "top-center",
         autoClose: 5000,
@@ -176,11 +175,19 @@ const AdminJobOpening = () => {
     const query = e.target.value.trim().toLowerCase();
     setSearchQuery(query);
 
-    const filterQuery = data.AllOutletLocations.filter((location) => {
-      const outletName = `${location.OutletName}`.toLowerCase();
-      const category = `${location.category}`.toLowerCase();
-      const status = `${location.active}`.toLowerCase();
-      return outletName.includes(query) || category.includes(query) || status.includes(query);
+    const filterQuery = data.AllOutletJobs.filter((outletJobs) => {
+      const openPosition = `${outletJobs.OpenPosition}`.toLowerCase();
+      const state = `${outletJobs.State}`.toLowerCase();
+      const status = `${outletJobs.active}`.toLowerCase();
+      const qualifications = outletJobs.qualification?.some((q) =>
+        q.toLowerCase().includes(query.toLowerCase())
+      );
+      return (
+        openPosition.includes(query) ||
+        state.includes(query) ||
+        status.includes(query) ||
+        qualifications
+      );
     });
     setPaginationData(filterQuery);
     //Controls what page to display when you search, in this case page 1
@@ -235,7 +242,7 @@ const AdminJobOpening = () => {
     //if unchecked, hence false, the setSelected is updated to an empty array
     if (value) {
       // if true
-      const mappedValue = data.AllOutletLocations.map((item) => {
+      const mappedValue = data.AllOutletJobs.map((item) => {
         return item._id;
       });
       setSelected(mappedValue); // select all
@@ -320,23 +327,24 @@ const AdminJobOpening = () => {
 
   //UPDATE LOCATION STATUS
   const activateLocation = () => {
-    updateUserStatus(selected);
+    updateJobStatus(selected);
     setSelectedItemId(null);
     setStatusClicked(!statusClicked);
   };
   const deActivateLocation = () => {
-    updateLocationStatus(selected);
+    // console.log(selected);
+    updateJobStatusInActive(selected);
     setSelectedItemId(null);
     setStatusClicked(!statusClicked);
   };
   //END UPDATE LOCATION STATUS
 
   // VIEW THIS USER
-  const viewThisUser = (item) => {
-    setViewUser(item);
-    setSelectedItemId(null);
-    openViewModal();
-  };
+  // const viewThisUser = (item) => {
+  //   setViewUser(item);
+  //   setSelectedItemId(null);
+  //   openViewModal();
+  // };
   // END VIEW THIS USER
   // EDIT THIS USER
   const editThisUser = (item) => {
@@ -353,10 +361,10 @@ const AdminJobOpening = () => {
 
   return (
     <div className="bioDataProfileContainer">
-      {isModalOpen && <AddLocation />}
-      {isDeleteModalOpen && <DeleteLocationModal deletedItem={selected} />}
-      {isViewModalOpen && <ViewLocationModal viewUser={viewUser} />}
-      {isEditModalOpen && <EditLocation editUser={editUser} />}
+      {isModalOpen && <AddJob />}
+      {isDeleteModalOpen && <DeleteJobModal deletedItem={selected} />}
+      {/* {isViewModalOpen && <ViewLocationModal viewUser={viewUser} />} */}
+      {isEditModalOpen && <EditJob editUser={editUser} />}
       <div className="addAdminBody">
         <div className="addAdminControl">
           <div className="searchBar">
@@ -410,7 +418,7 @@ const AdminJobOpening = () => {
               Delete
             </button>
             <button className="btnAdmin" onClick={openModal}>
-              Add Outlet
+              Add Job(s)
             </button>
           </div>
         </div>
@@ -428,17 +436,16 @@ const AdminJobOpening = () => {
                       name="all"
                       value={
                         data &&
-                        data.AllOutletLocations &&
-                        data.AllOutletLocations.length > 0 &&
-                        data.AllOutletLocations.length === selected.length
+                        data.AllOutletJobs &&
+                        data.AllOutletJobs.length > 0 &&
+                        data.AllOutletJobs.length === selected.length
                       }
                       updateValue={selectAll}></Checkbox>
                   </th>
-                  <th>Outlet Name</th>
-                  <th>Outlet Address</th>
-                  <th>Phone Number</th>
-                  <th>Opening Time</th>
+                  <th>Open Positions</th>
+                  <th>Qualification</th>
                   <th>State</th>
+                  <th>Description</th>
                   <th>Status</th>
                   <th>Action</th>
                 </tr>
@@ -469,14 +476,11 @@ const AdminJobOpening = () => {
                             value={isChecked}
                             updateValue={handleSelect}></Checkbox>
                         </td>
-                        <td>{capitalizeFirstLetter(item?.OutletName)} </td>
-                        <td>{item.OutletAddress}</td>
-                        <td>{item.phoneNumber}</td>
-                        <td>
-                          {/* {item?.timeRange.start} - {item?.timeRange.end} */}
-                          {TimeRangeDisplay(item?.timeRange)}
-                        </td>
-                        <td>{capitalizeFirstLetter(item.category)}</td>
+                        <td>{capitalizeFirstLetter(item?.OpenPosition)} </td>
+                        <td>{item?.qualification.join(", ")}</td>
+                        <td>{item?.State}</td>
+                        <td>{<ReadMore description={item?.JobDescription} />}</td>
+
                         <td>
                           <div className={item.active ? "tagGreen" : "tagRed"}>
                             {item.active.toString() === true.toString() ? "Active" : "Inactive"}
@@ -496,9 +500,9 @@ const AdminJobOpening = () => {
                                 ref={modalRef}
                                 className="dropdownBox"
                                 onClick={(e) => e.stopPropagation()}>
-                                <button className="sideButton" onClick={() => viewThisUser(item)}>
+                                {/* <button className="sideButton" onClick={() => viewThisUser(item)}>
                                   <FaRegEye /> View
-                                </button>
+                                </button> */}
                                 <button className="sideButton" onClick={() => editThisUser(item)}>
                                   <FaPencil /> Edit
                                 </button>

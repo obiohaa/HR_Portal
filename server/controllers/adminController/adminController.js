@@ -5,6 +5,7 @@ const Guarantor = require("../../models/Guarantor");
 const NextOfKin = require("../../models/NextOfKin");
 const finalNDA = require("../../models/FinalNDA");
 const Location = require("../../models/Location");
+const Job = require("../../models/Jobs");
 const { StatusCodes } = require("http-status-codes");
 const path = require("path");
 const CustomError = require("../../errors");
@@ -1234,6 +1235,165 @@ const adminEditLocation = async (req, res) => {
     }
   }
 };
+
+// ADD JOB OPENING HERE
+const outletJobs = async (req, res) => {
+  console.log(req.body);
+
+  const { OpenPosition, JobDescription, qualification, State } = req.body;
+
+  if (!OpenPosition || !JobDescription || !qualification?.length || !State) {
+    throw new CustomError.BadRequestError("Please provide all values");
+  }
+
+  let outletJobData = req.body;
+  // console.log(req.user);
+
+  try {
+    const mainOutletJobData = {
+      ...outletJobData,
+    };
+    //
+
+    const locations = await Job.create({
+      ...mainOutletJobData,
+    });
+
+    return res.status(StatusCodes.OK).json({
+      msg: "Job Created",
+    });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
+  }
+};
+
+//GET ALL OUTLET JOBS PRIVATE
+const getOutletJobs = async (req, res) => {
+  const AllOutletJobs = await Job.find().sort({ createdAt: -1 }).select(" -updatedAt -__v");
+  res.status(StatusCodes.OK).json({
+    msg: "Outlet Jobs retrieved",
+    AllOutletJobs,
+    count: AllOutletJobs.length,
+  });
+};
+
+//GET ALL OUTLET JOBS PUBLIC
+const getOutletJobsPublic = async (req, res) => {
+  const AllOutletJobs = await Job.find({ active: true })
+    .sort({ createdAt: 1 })
+    .select(" -updatedAt -__v");
+  res.status(StatusCodes.OK).json({
+    msg: "Outlet Jobs retrieved",
+    AllOutletJobs,
+    count: AllOutletJobs.length,
+  });
+};
+
+// EDIT JOBS
+const adminEditJobs = async (req, res) => {
+  const { OpenPosition, JobDescription, qualification, State, id } = req.body;
+
+  // console.log(JSON.parse(req.body.body));
+  if (!OpenPosition || !JobDescription || !qualification?.length || !State || !id) {
+    throw new CustomError.BadRequestError("Please provide all values");
+  }
+
+  let updatedJob = req.body;
+  // console.log(req.user);
+  const job = await Job.findOne({ _id: updatedJob.id });
+  if (!job) {
+    throw new CustomError.BadRequestError("Job does not exist");
+  }
+
+  try {
+    const updatedThisJob = await Job.findOneAndUpdate(
+      { _id: updatedJob.id },
+      {
+        ...updatedJob,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    return res.status(StatusCodes.OK).json({
+      msg: "Job Updated",
+    });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
+  }
+};
+
+// DELETE JOB
+//DELETE USER
+const deleteJob = async (req, res) => {
+  const deleteThisItem = req.body.ids;
+  //$in matches document where _id match (or is in) any of the values in array filteredArray
+  //can also be used in array of objects
+  const existingJobs = await Job.find({ _id: { $in: deleteThisItem } });
+
+  if (existingJobs.length === 0) {
+    throw new CustomError.BadRequestError("Job(s) not found");
+  }
+
+  try {
+    const result = await Job.deleteMany({
+      _id: { $in: deleteThisItem },
+    });
+    if (result.deletedCount === 0) {
+      throw new CustomError.BadRequestError("No Job(s) was deleted");
+    }
+    res.status(StatusCodes.OK).json({ msg: "Success! Job(s) deleted" });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
+  }
+};
+
+//Deactivate JOB STATUS
+const deactivateJobStatus = async (req, res) => {
+  const updateThisJob = req.body.id;
+  //$in matches document where _id match (or is in) any of the values in array filteredArray
+  //can also be used in array of objects
+  try {
+    // Get users whose status should be toggled
+    const outletJob = await Job.find({ _id: { $in: updateThisJob } });
+    // Toggle each user's active status and update them
+    const updateOutletJobStatus = outletJob.map((job) =>
+      Job.findByIdAndUpdate(job._id, { active: false }, { new: true, runValidators: true })
+    );
+    // console.log(updateOutletJobStatus);
+    //update all users concurrently. Collect all these individual promises into an array or takes an iterable (like an array) of promises and returns a single Promise. This returned Promise resolves when all the input promises have resolved, or rejects as soon as any of the input promises reject.
+    await Promise.all(updateOutletJobStatus);
+
+    res.status(StatusCodes.OK).json({ msg: "Success! Job(s) Disabled" });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin: " + error.message);
+  }
+};
+
+//Activate JOB STATUS
+const activateJobStatus = async (req, res) => {
+  const updateThisJob = req.body.id;
+
+  //$in matches document where _id match (or is in) any of the values in array filteredArray
+  //can also be used in array of objects
+  try {
+    // Get users whose status should be toggled
+    const outletJob = await Job.find({ _id: { $in: updateThisJob } });
+    // Toggle each user's active status and update them
+    const updateOutletJobStatus = outletJob.map((job) =>
+      Job.findByIdAndUpdate(job._id, { active: true }, { new: true, runValidators: true })
+    );
+    //update all users concurrently. Collect all these individual promises into an array or takes an iterable (like an array) of promises and returns a single Promise. This returned Promise resolves when all the input promises have resolved, or rejects as soon as any of the input promises reject.
+    await Promise.all(updateOutletJobStatus);
+
+    res.status(StatusCodes.OK).json({ msg: "Success! Job(s) Enabled" });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin: " + error.message);
+  }
+};
+
 //////////////////////////////////////////////////////////
 
 module.exports = {
@@ -1274,4 +1434,11 @@ module.exports = {
   updateStatusToTerminate,
   getTerminatedEmployeeUsersFromDateRange,
   getResumedEmployeeUsersFromDateRange,
+  outletJobs,
+  getOutletJobs,
+  getOutletJobsPublic,
+  adminEditJobs,
+  deleteJob,
+  deactivateJobStatus,
+  activateJobStatus,
 };

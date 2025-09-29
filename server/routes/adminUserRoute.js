@@ -39,6 +39,13 @@ const {
   getAllResumedUsers,
   getResumedEmployeeUsersFromDateRange,
   getTerminatedEmployeeUsersFromDateRange,
+  outletJobs,
+  getOutletJobs,
+  getOutletJobsPublic,
+  adminEditJobs,
+  deleteJob,
+  activateJobStatus,
+  deactivateJobStatus,
 } = require("../controllers/adminController/adminController");
 
 router.route("/dashboard").get(authenticateUser, authorizePermissions("admin"), dashboard);
@@ -46,6 +53,11 @@ router
   .route("/getAllOutletLocation")
   .get(authenticateUser, authorizePermissions("admin"), getAllOutletLocation);
 router.route("/getAllOutletLocationPublic").get(getAllOutletLocationPublic);
+
+router.route("/getOutletJobs").get(authenticateUser, authorizePermissions("admin"), getOutletJobs);
+
+router.route("/getOutletJobsPublic").get(getOutletJobsPublic);
+
 router.route("/getAllUsers").get(authenticateUser, authorizePermissions("admin"), getAllUsers);
 router
   .route("/getAllResumedUsers")
@@ -71,6 +83,8 @@ router
 
 router.route("/deleteUser").delete(authenticateUser, authorizePermissions("admin"), deleteUser);
 
+router.route("/deleteJob").delete(authenticateUser, authorizePermissions("admin"), deleteJob);
+
 router
   .route("/deleteLocation")
   .delete(authenticateUser, authorizePermissions("admin"), deleteLocation);
@@ -79,6 +93,10 @@ router.route("/updateStatus").patch(authenticateUser, authorizePermissions("admi
 router
   .route("/deActivateStatus")
   .patch(authenticateUser, authorizePermissions("admin"), deActivateStatus);
+
+router
+  .route("/adminEditJobs")
+  .patch(authenticateUser, authorizePermissions("admin"), adminEditJobs);
 
 router
   .route("/updateStatusToResume")
@@ -117,6 +135,17 @@ router
   .route("/deactivateLocationStatus")
   .patch(authenticateUser, authorizePermissions("admin"), deactivateLocationStatus);
 
+//////////
+router
+  .route("/deactivateJobStatus")
+  .patch(authenticateUser, authorizePermissions("admin"), deactivateJobStatus);
+
+router
+  .route("/activateJobStatus")
+  .patch(authenticateUser, authorizePermissions("admin"), activateJobStatus);
+
+///////////////
+
 router
   .route("/getEmployeeUsersFromDateRange")
   .post(authenticateUser, authorizePermissions("admin"), getEmployeeUsersFromDateRange);
@@ -147,6 +176,8 @@ router
 router
   .route("/outletLocations")
   .post(authenticateUser, authorizePermissions("admin"), outletLocation);
+
+router.route("/outletJobs").post(authenticateUser, authorizePermissions("admin"), outletJobs);
 
 router
   .route("/getAllBioDataPerUser/:id")

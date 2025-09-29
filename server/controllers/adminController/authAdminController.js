@@ -7,10 +7,11 @@ const { sendAdminVerificationEmail } = require("../../utils");
 const cloudinary = require("cloudinary").v2;
 const fs = require("fs");
 const crypto = require("crypto");
+require("dotenv").config();
 
 const register = async (req, res) => {
-  console.log(req.body);
-  console.log(req.files);
+  // console.log(req.body);
+  // console.log(req.files);
   const { firstName, lastName, email, password } = JSON.parse(req.body.body);
 
   if (!firstName || !lastName || !email || !password) {
@@ -57,7 +58,8 @@ const register = async (req, res) => {
       imgURL,
     });
 
-    const origin = "https://hr-portal.theplace.com.ng";
+    const origin = process.env.PRODUCTION_ORIGIN;
+    // const origin = "https://hr-portal.theplace.com.ng";
     // const origin = "http://localhost:5173";
     // const newOrigin = 'https://react-node-user-workflow-front-end.netlify.app'; //production
 
@@ -93,7 +95,7 @@ const register = async (req, res) => {
       imgURL,
     });
 
-    const origin = "https://hr-portal.theplace.com.ng";
+    const origin = process.env.PRODUCTION_ORIGIN;
     // const origin = "http://localhost:5173";
     // const newOrigin = 'https://react-node-user-workflow-front-end.netlify.app'; //production
 
