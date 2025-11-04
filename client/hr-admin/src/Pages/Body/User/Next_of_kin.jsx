@@ -27,7 +27,7 @@ const Next_of_kin = () => {
   const { mutate: nextOfKinUser, isLoading } = useMutation({
     mutationFn: async (nextOfKinUser) => axiosFetch.post("/users/nextOfKinData", nextOfKinUser),
     onSuccess: (data) => {
-      console.log(data);
+      // console.log(data);
       queryClient.invalidateQueries({ queryKey: ["bioDataKey"] });
       toast.success(data.data.steps.msg, {
         position: "top-center",
@@ -60,7 +60,7 @@ const Next_of_kin = () => {
     mutationFn: async (previousStep) =>
       axiosFetch.post("/users/updateUserPrevStepState", { previousStep }),
     onSuccess: (data) => {
-      console.log(data);
+      // console.log(data);
       queryClient.invalidateQueries({ queryKey: ["bioDataKey"] });
       toast.success(data.data.steps.msg, {
         position: "top-center",

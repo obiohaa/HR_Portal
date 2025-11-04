@@ -65,8 +65,8 @@ const Resumed = () => {
     refetchIntervalInBackground: true, //do not refetch in background
     queryFn: async () => {
       const { data } = await axiosFetch.get("/admins/getAllResumedUsers");
-      console.log(data.employeeUsers);
-      console.log(data.employeeUsers.length);
+      // console.log(data.employeeUsers);
+      // console.log(data.employeeUsers.length);
       setPaginationData(data.employeeUsers);
       setSelected([]);
       //   setItemOffset(0);
@@ -373,6 +373,7 @@ const Resumed = () => {
       {isEditModalOpen && <EditAdminEmployeeModal editUser={editUser} />}
       {isExportModalOpen && <ExportResumed editUser={editUser} />}
       <div className="addAdminBody">
+        <span className="pageTitle">Resumed Employees </span>
         <div className="addAdminControl">
           <div className="searchBar">
             <FaSistrix className="searchIcon" />

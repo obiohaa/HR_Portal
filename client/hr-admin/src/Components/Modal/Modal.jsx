@@ -1,5 +1,6 @@
 import React from "react";
 import "../component.css";
+import { NavLink } from "react-router-dom";
 import CheckMark from "../Checks/CheckMark";
 import { toast } from "react-toastify";
 import { axiosFetch } from "../../Utils/axiosFetch";
@@ -76,20 +77,29 @@ const Modal = () => {
               {userStepState && userStepState.currentStep === 1 ? (
                 <p>
                   This form has been filled and submitted, if you intend to view or edit your Bio
-                  Data form, click here: or go to your user profile to view and edit your Bio Data
-                  form.
+                  Data form, click here:{" "}
+                  <NavLink className="modalLink" to="/biodata">
+                    View Bio Data
+                  </NavLink>{" "}
+                  or go to your user profile to view and edit your Bio Data form.
                 </p>
               ) : userStepState.currentStep === 2 ? (
                 <p>
                   This form has been filled and submitted, if you intend to view or edit your Next
-                  of Kin form, click here: or go to your user profile to view and edit your Next of
-                  Kin form.
+                  of Kin form, click here:{" "}
+                  <NavLink className="modalLink" to="/nextofkin">
+                    View Next of Kin
+                  </NavLink>{" "}
+                  or go to your user profile to view and edit your Next of Kin form.
                 </p>
               ) : userStepState.currentStep === 3 ? (
                 <p>
                   This agreement has been checked and submitted, if you intend to view or read the
-                  NDA form, click here: or go to your user profile to view and read the NDA form
-                  form.
+                  NDA form, click here:{" "}
+                  <NavLink className="modalLink" to="/nda">
+                    View NDA
+                  </NavLink>{" "}
+                  or go to your user profile to view and read the NDA form form.
                 </p>
               ) : (
                 <p>

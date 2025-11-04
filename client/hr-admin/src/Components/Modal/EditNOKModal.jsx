@@ -60,7 +60,7 @@ const EditNOKModal = ({ userNOK }) => {
 
   const onSubmit = async (values) => {
     try {
-      console.log(values);
+      // console.log(values);
       updateNOKData(values);
       // reset();
     } catch (error) {

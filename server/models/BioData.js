@@ -49,6 +49,9 @@ const BioDataSchema = new mongoose.Schema(
     phoneNumber: {
       type: Number,
     },
+    bank: {
+      type: String,
+    },
     bankName: {
       type: String,
     },

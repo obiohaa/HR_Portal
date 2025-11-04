@@ -96,8 +96,8 @@ const showCurrentUser = async (req, res) => {
   const loggedInUser = await User.findOne({ _id: req.user.userId })
     .populate("bioData", "staffId -_id -user")
     .select("-password -verificationToken -passwordToken -passwordTokenExpirationDate -__v");
-  // console.log(loggedInUser);
-  const tokenUser = createTokenUser(loggedInUser);
+  const tokenExpiry = req.user.expiry;
+  const tokenUser = createTokenUser(loggedInUser, tokenExpiry);
   res.status(StatusCodes.OK).json({ user: tokenUser });
 };
 
@@ -157,7 +157,7 @@ const updateUser = async (req, res) => {
 
       const tokenUser = createTokenUser(user);
       attachCookiesToResponse({ res, user: tokenUser });
-      res.status(StatusCodes.OK).json({ user: tokenUser });
+      res.status(StatusCodes.OK).json({ user: tokenUser, msg: "User details updated" });
     } else {
       user.firstName = firstName;
       user.lastName = lastName;
@@ -180,7 +180,7 @@ const updateUser = async (req, res) => {
 
       const tokenUser = createTokenUser(user);
       attachCookiesToResponse({ res, user: tokenUser });
-      res.status(StatusCodes.OK).json({ user: tokenUser });
+      res.status(StatusCodes.OK).json({ user: tokenUser, msg: "User details updated" });
     }
   } catch (error) {
     throw new CustomError.BadRequestError("Please contact Admin," + " " + `${error.message}`);
@@ -218,6 +218,7 @@ const updateBioData = async (req, res) => {
     maritalStatus,
     houseAddress,
     phoneNumber,
+    bank,
     bankName,
     bankAccountNumber,
     pension,
@@ -226,7 +227,7 @@ const updateBioData = async (req, res) => {
     pensionCompany,
     pensionPin,
   } = JSON.parse(req.body.body);
-  // console.log(JSON.parse(req.body.body));
+  console.log(JSON.parse(req.body.body));
   if (
     !firstName ||
     !lastName ||
@@ -235,6 +236,7 @@ const updateBioData = async (req, res) => {
     !maritalStatus ||
     !houseAddress ||
     !phoneNumber ||
+    !bank ||
     !bankName ||
     !bankAccountNumber ||
     !pension ||
@@ -253,12 +255,12 @@ const updateBioData = async (req, res) => {
   // console.log(req.files);
   if (req.files) {
     const userFile = req.files.file;
-    if (!userFile.mimetype.startsWith("application")) {
-      throw new CustomError.BadRequestError("Please upload a PDF or Doc File");
+    if (!userFile.mimetype.startsWith("application") && !userFile.mimetype.startsWith("image")) {
+      throw new CustomError.BadRequestError("Please upload either PDF or Image File");
     }
-    const maxSize = 5000000;
+    const maxSize = 4000000;
     if (userFile.size > maxSize) {
-      throw new CustomError.BadRequestError("Please upload file smaller than 5MB");
+      throw new CustomError.BadRequestError("Please upload file smaller than 4MB");
     }
 
     try {
@@ -373,6 +375,7 @@ const bioData = async (req, res) => {
     maritalStatus,
     houseAddress,
     phoneNumber,
+    bank,
     bankName,
     bankAccountNumber,
     pension,
@@ -391,6 +394,7 @@ const bioData = async (req, res) => {
     !maritalStatus ||
     !houseAddress ||
     !phoneNumber ||
+    !bank ||
     !bankName ||
     !bankAccountNumber ||
     !pension ||
@@ -413,12 +417,13 @@ const bioData = async (req, res) => {
     throw new CustomError.BadRequestError("No File Uploaded");
   }
   const userFile = req.files.file;
-  if (!userFile.mimetype.startsWith("application")) {
-    throw new CustomError.BadRequestError("Please upload a PDF or Doc File");
+  console.log(userFile);
+  if (!userFile.mimetype.startsWith("application") && !userFile.mimetype.startsWith("image")) {
+    throw new CustomError.BadRequestError("Please upload either PDF or Image File");
   }
-  const maxSize = 5000000;
+  const maxSize = 4000000;
   if (userFile.size > maxSize) {
-    throw new CustomError.BadRequestError("Please upload file smaller than 5MB");
+    throw new CustomError.BadRequestError("Please upload file smaller than 4MB");
   }
   // console.log("bio");
   // console.log(userBioData);

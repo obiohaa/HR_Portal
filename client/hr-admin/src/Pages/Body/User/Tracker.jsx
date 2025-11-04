@@ -24,7 +24,7 @@ const Tracker = () => {
       const { currentStep } = data.currentUserStepState;
       setSteps(currentStep);
       setUserStepState(data.currentUserStepState);
-      console.log(data);
+      // console.log(data);
       return data;
     },
     onError: (error) => {

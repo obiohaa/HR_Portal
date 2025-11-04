@@ -15,6 +15,8 @@ import {
   maritalStatus,
   pension,
   levelOfEducation,
+  bank,
+  bankNames,
 } from "../../../Components/UserData";
 
 //When i have onChange in a select field, the react-hook-form validation does not work, i guess because it uses onChange function too. To validate i used my custom validation.
@@ -24,9 +26,9 @@ const BioData = () => {
   const [fileError, setFileError] = useState({ msg: "" });
   const [marriageStatus, setMarriageStatus] = useState("");
   const [pensionStatus, setPensionStatus] = useState("");
+  const [bankStatus, setBankStatus] = useState("");
 
   const { user, userStepState, setUserStepState } = useGlobalContext();
-  console.log(userStepState);
   const {
     register,
     reset,
@@ -79,7 +81,7 @@ const BioData = () => {
   const { mutate: bioDataUser, isLoading } = useMutation({
     mutationFn: async (bioDataUser) => axiosFetchFormData.post("/users/bioData", bioDataUser),
     onSuccess: (data) => {
-      console.log(data.data.stepState.updateUserStepState);
+      // console.log(data.data.stepState.updateUserStepState);
       setUserStepState(data.data.stepState.updateUserStepState);
       queryClient.invalidateQueries({ queryKey: ["bioDataKey"] });
       toast.success(data.data.steps.msg, {
@@ -113,15 +115,17 @@ const BioData = () => {
     try {
       if (fileName === null) {
         setFileError({ msg: "CV is required" });
-      } else if (fileName.size > 5000000) {
-        setFileError({ msg: "File size must be less than 5MB" });
-      } else {
-        const formData = new FormData();
-        formData.append("file", fileName);
-        formData.append("body", JSON.stringify(values));
-        bioDataUser(formData);
-        // reset();
+        return;
       }
+      if (fileName.size > 4000000) {
+        setFileError({ msg: "File size must be less than 4MB" });
+        return;
+      }
+      const formData = new FormData();
+      formData.append("file", fileName);
+      formData.append("body", JSON.stringify(values));
+      bioDataUser(formData);
+      // reset();
     } catch (error) {
       console.log(error);
       //To place an error so that it does not belong to any field we use root and not email or password or any field name
@@ -133,13 +137,17 @@ const BioData = () => {
 
   //handles marriage status state
   const handleChange = (event) => {
-    console.log(event.target.value);
     setMarriageStatus(event.target.value);
   };
 
-  //handles pension status
+  //handles pension status state
   const handlePensionChange = (event) => {
     setPensionStatus(event.target.value);
+  };
+
+  //handles bank status state
+  const handleBankChange = (event) => {
+    setBankStatus(event.target.value);
   };
 
   if (isLoading) {
@@ -450,78 +458,119 @@ const BioData = () => {
                 Email Address
               </label>
             </div>
-            <div className="formBioData">
-              <input
-                type="text"
-                id="bankName"
-                name="bankName"
+            <div className="formBioData selectFormBioData">
+              <select
+                name="bank"
+                id="bank"
                 className="form_input"
-                placeholder=" "
-                autoComplete="off"
-                {...register("bankName", {
-                  required: "Bank name is required!",
-                  minLength: {
-                    value: 3,
-                    message: "Minimum characters of 3 letters.",
-                  },
-                  maxLength: {
-                    value: 30,
-                    message: "Maximum characters of 30 letters.",
+                // {...register("bank")}
+                {...register("bank", {
+                  required: "bank status is required!",
+                  validate: {
+                    isValidState: () =>
+                      bank.some((bak) => bak.bank === bak.value) || "Invalid bank status selected",
                   },
                 })}
-              />
-              {errors.bankName && <p className="bioError">{errors.bankName.message}</p>}
-              <label htmlFor="bankName" className="form_label">
-                Bank Name
-              </label>
-            </div>
-
-            <div className="formBioData">
-              <input
-                type="number"
-                id="bankAccountNumber"
-                className="form_input"
-                placeholder=" "
-                autoComplete="off"
-                {...register("bankAccountNumber", {
-                  required: "Bank account number is required!",
-                  minLength: {
-                    value: 10,
-                    message: "Minimum characters of 11 letters.",
-                  },
-                  maxLength: {
-                    value: 10,
-                    message: "Maximum characters of 11 letters.",
-                  },
-                  pattern: {
-                    value: /^[0-9]*$/,
-                    message: "Numbers only!",
-                  },
+                onChange={handleBankChange}>
+                {bank.map((ban) => {
+                  return (
+                    <option key={ban.id} value={ban.value}>
+                      {ban.bank}
+                    </option>
+                  );
                 })}
-              />
-              {errors.bankAccountNumber && (
-                <p className="bioError">{errors.bankAccountNumber.message}</p>
-              )}
-              <label htmlFor="bankAccountNumber" className="form_label">
-                Bank Account Number
+              </select>
+              {errors.bank && <p className="bioError">{errors.bank.message}</p>}
+              <label htmlFor="bank" className="form_label">
+                Bank
               </label>
             </div>
+            {bankStatus === "Yes" && (
+              <div className="formBioData selectFormBioData">
+                <select
+                  name="bankName"
+                  id="bankName"
+                  className="form_input"
+                  // {...register("bank")}
+                  {...register("bankName", {
+                    required: "Bank name status is required!",
+                    validate: {
+                      isValidState: () =>
+                        bankNames.some((bakName) => bakName.bank === bakName.value) ||
+                        "Invalid bank name selected",
+                    },
+                  })}>
+                  {bankNames.map((ban) => {
+                    return (
+                      <option key={ban.id} value={ban.value}>
+                        {ban.bank}
+                      </option>
+                    );
+                  })}
+                </select>
+                {errors.bankName && <p className="bioError">{errors.bankName.message}</p>}
+                <label htmlFor="bankName" className="form_label">
+                  Bank Name
+                </label>
+              </div>
+            )}
+            {bankStatus === "Yes" && (
+              <div className="formBioData">
+                <input
+                  type="number"
+                  id="bankAccountNumber"
+                  className="form_input"
+                  placeholder=" "
+                  autoComplete="off"
+                  {...register("bankAccountNumber", {
+                    required: "Bank account number is required!",
+                    minLength: {
+                      value: 10,
+                      message: "Minimum characters of 10 letters.",
+                    },
+                    maxLength: {
+                      value: 10,
+                      message: "Maximum characters of 10 letters.",
+                    },
+                    pattern: {
+                      value: /^[0-9]*$/,
+                      message: "Numbers only!",
+                    },
+                  })}
+                />
+                {errors.bankAccountNumber && (
+                  <p className="bioError">{errors.bankAccountNumber.message}</p>
+                )}
+                <label htmlFor="bankAccountNumber" className="form_label">
+                  Bank Account Number
+                </label>
+              </div>
+            )}
             <div className="formBioData selectFormBioData">
               <select
                 name="pension"
                 id="pension"
                 className="form_input"
-                {...register("pension")}
+                // {...register("pension")}
+                {...register("pension", {
+                  required: "pension status is required!",
+                  validate: {
+                    isValidState: () =>
+                      pension.some((pen) => pen.pension === pen.value) ||
+                      "Invalid pension status selected",
+                  },
+                })}
                 onChange={handlePensionChange}>
                 {pension.map((pen) => {
                   return (
-                    <option key={pen.id} value={pen.pension}>
+                    <option key={pen.id} value={pen.value}>
                       {pen.pension}
                     </option>
                   );
                 })}
               </select>
-              <label htmlFor="gender" className="form_label">
+              {errors.pension && <p className="bioError">{errors.pension.message}</p>}
+              <label htmlFor="pension" className="form_label">
                 pension
               </label>
             </div>
@@ -649,9 +698,13 @@ const BioData = () => {
                 id="jobLocation"
                 className="form_input"
                 autoComplete="off"
+                defaultValue=""
                 {...register("jobLocation", {
                   required: "Job Location is required!",
                 })}>
+                <option value="" disabled>
+                  Select a Location
+                </option>
                 {data?.AllOutletLocations.map((location) => (
                   <option key={location.OutletName} value={location.OutletName}>
                     {location.OutletName}
@@ -694,7 +747,7 @@ const BioData = () => {
                 name="file"
                 className="upload_Doc"
                 // accept=".png, .jpeg, .jpg"
-                accept=".pdf"
+                accept=".pdf, .png, .jpeg, .jpg"
                 required
                 hidden
                 onChange={({ target: { files } }) => {

@@ -33,14 +33,14 @@
 
 .form {
   background-color: var(--clr-white);
-  width: 410px;
+  width: 380px;
   border-radius: 8px;
-  padding: 20px 40px;
+  padding: 15px 35px;
   box-shadow: 0 10px 25px rgba(92, 99, 105, 0.2);
 }
 
 .logo {
-  width: 160px;
+  width: 150px;
   margin: 0.9rem auto;
 }
 

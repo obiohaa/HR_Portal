@@ -48,6 +48,10 @@ function App() {
         <Route path="/forgot_password" element={<Reset_Password />} />
         <Route path="/user/reset_password" element={<Confirm_Password />} />
         <Route path="/employee_guarantor" element={<GuarantorMainForm />} />
+        <Route path="/pdfPagebioDATA" element={<BDJSONpdf />} />
+        <Route path="/pdfPagenok" element={<NOKJSON />} />
+        <Route path="/adminBIOPDF" element={<AdminBioPDF />} />
+        <Route path="/adminNOKPDF" element={<AdminNOKPDF />} />
         {/* Protected Routes (sidebar-wrapped) */}
         <Route element={<Junction />}>
           <Route path="/dashboard" element={<Dashboard />} />
@@ -65,10 +69,7 @@ function App() {
           <Route path="/exited-employee" element={<Terminated />} />
           <Route path="/nda" element={<NdaProfile />} />
           <Route path="/job_opening" element={<JobOpening />} />
-          <Route path="/pdfPagebioDATA" element={<BDJSONpdf />} />
-          <Route path="/pdfPagenok" element={<NOKJSON />} />
-          <Route path="/adminBIOPDF" element={<AdminBioPDF />} />
-          <Route path="/adminNOKPDF" element={<AdminNOKPDF />} />
+
           <Route path="/admin-guarantor" element={<AdminGuarantor />} />
           <Route path="/admin_jobs" element={<AdminJob />} />
           <Route path="/Outlet-locations" element={<OutletLocations />} />

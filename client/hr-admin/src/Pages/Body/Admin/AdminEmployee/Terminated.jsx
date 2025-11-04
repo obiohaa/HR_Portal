@@ -65,8 +65,8 @@ const Terminated = () => {
     refetchIntervalInBackground: true, //do not refetch in background
     queryFn: async () => {
       const { data } = await axiosFetch.get("/admins/getAllTerminatedUsers");
-      console.log(data.employeeUsers);
-      console.log(data.employeeUsers.length);
+      // console.log(data.employeeUsers);
+      // console.log(data.employeeUsers.length);
       setPaginationData(data.employeeUsers);
       setSelected([]);
       //   setItemOffset(0);
@@ -373,6 +373,7 @@ const Terminated = () => {
       {isEditModalOpen && <EditAdminEmployeeModal editUser={editUser} />}
       {isExportModalOpen && <ExportTerminated editUser={editUser} />}
       <div className="addAdminBody">
+        <span className="pageTitle">Exited Employees </span>
         <div className="addAdminControl">
           <div className="searchBar">
             <FaSistrix className="searchIcon" />

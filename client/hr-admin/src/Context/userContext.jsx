@@ -7,7 +7,7 @@ const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isBarOpen, setIsBarOpen] = useState(true);
+  const [isBarOpen, setIsBarOpen] = useState(false);
   const [DropDownOpen, setDropDownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -72,11 +72,6 @@ const AppProvider = ({ children }) => {
   const closeExportModal = () => {
     setIsExportModalOpen(false);
   };
-
-  // if (error.response?.status === 401) {
-  //   window.alert("Session expired. Please log in again.");
-  //   window.location.href = "/login"; // or use navigate
-  // }
 
   return (
     <AppContext.Provider

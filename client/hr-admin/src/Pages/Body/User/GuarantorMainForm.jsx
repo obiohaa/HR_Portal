@@ -32,8 +32,8 @@ const GuarantorMainForm = () => {
   const { mutate: guarantorMain, isLoading } = useMutation({
     mutationFn: async (guarantorMain) =>
       axiosFetchFormData.patch("/users/updateGuarantor", guarantorMain),
-    onSuccess: (data) => {
-      console.log(data);
+    onSuccess: () => {
+      // console.log(data);
       reset();
       setFileName(null);
       setImgName(null);
@@ -88,12 +88,12 @@ const GuarantorMainForm = () => {
       ) {
         values.verificationToken = query.get("token");
         values.email = query.get("email");
-        console.log(values);
+        // console.log(values);
         const formData = new FormData();
         formData.append("file", fileName);
         formData.append("file", imgName);
         formData.append("body", JSON.stringify(values));
-        console.log(formData);
+        // console.log(formData);
         guarantorMain(formData);
       }
     } catch (error) {

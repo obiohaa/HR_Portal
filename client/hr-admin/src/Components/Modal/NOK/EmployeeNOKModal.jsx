@@ -8,9 +8,10 @@ import EditBioDataModal from "../EditBioDataModal";
 // import { useQuery } from "@tanstack/react-query";
 // import { axiosFetch } from "../../../Utils/axiosFetch";
 import PageLoading from "../../Checks/PageLoading";
+const PDForigin = import.meta.env.VITE_PDF;
 
 const EmployeeNOKModal = ({ viewUser }) => {
-  console.log(viewUser);
+  // console.log(viewUser);
   const { closeViewModal } = useGlobalContext();
   const [updateData] = useState(viewUser);
 
@@ -127,10 +128,7 @@ const EmployeeNOKModal = ({ viewUser }) => {
                   <button
                     className="btn"
                     onClick={() =>
-                      window.open(
-                        `https://hr-portal.theplace.com.ng/AdminNOKPDF?id=${updateData._id}`,
-                        "_blank"
-                      )
+                      window.open(`${PDForigin}/AdminNOKPDF?id=${updateData._id}`, "_blank")
                     }>
                     Download
                   </button>

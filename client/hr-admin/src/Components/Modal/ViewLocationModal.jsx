@@ -5,7 +5,7 @@ import capitalizeFirstLetter from "../../Components/ToUpperCase";
 import TimeRangeDisplay from "../../Pages/Body/Admin/OutletLocations/DisplayOpenTime";
 
 const ViewLocationModal = ({ viewUser }) => {
-  console.log(viewUser);
+  // console.log(viewUser);
   const { closeViewModal } = useGlobalContext();
   //Inline styling for the background image
   const backgroundImage = viewUser?.imgURL;

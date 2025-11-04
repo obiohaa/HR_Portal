@@ -9,6 +9,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { axiosFetchFormData } from "../../../Utils/axiosFetch";
 import { FaX } from "react-icons/fa6";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
+import { stateCapital } from "../../../Components/UserData";
 
 const EditLocation = ({ editUser }) => {
   const { closeEditModal } = useGlobalContext();
@@ -19,7 +20,7 @@ const EditLocation = ({ editUser }) => {
   //   const togglePasswordVisibility = () => {
   //     setShowPassword((prevState) => !prevState);
   //   };
-  // console.log(userStepState);
+  // console.log(editUser);
 
   const {
     register,
@@ -205,32 +206,28 @@ const EditLocation = ({ editUser }) => {
                         Phone Number
                       </label>
                     </div>
-                    <div className="formBioData">
-                      <input
-                        type="text"
+                    <div className="formBioData selectFormBioData">
+                      <select
+                        name="State"
                         id="category"
                         className="form_input"
-                        placeholder=" "
                         autoComplete="off"
-                        formNoValidate
                         {...register("category", {
                           required: "State is required!",
-                          minLength: {
-                            value: 2,
-                            message: "Minimum characters of 2 letters.",
+                          validate: {
+                            isValidState: () =>
+                              stateCapital.some((state) => state.state === state.value) ||
+                              "Invalid state selected",
                           },
-                          maxLength: {
-                            value: 50,
-                            message: "Maximum characters of 50 letters.",
-                          },
-                          pattern: {
-                            value: /^[A-Za-z]+$/i,
-                            message: "Alphabets only!",
-                          },
-                        })}
-                      />
+                        })}>
+                        {stateCapital.map((state) => (
+                          <option key={state.id} value={state.value}>
+                            {state.state}
+                          </option>
+                        ))}
+                      </select>
                       {errors.category && <p className="bioError">{errors.category.message}</p>}
-                      <label htmlFor="firstName" className="form_label">
+                      <label htmlFor="category" className="form_label">
                         State
                       </label>
                     </div>

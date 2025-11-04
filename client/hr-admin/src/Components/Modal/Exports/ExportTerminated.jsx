@@ -30,7 +30,7 @@ const ExportTerminated = () => {
       axiosFetch.post("/admins/getTerminatedEmployeeUsersFromDateRange", exportDates),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["registerAdmin"] });
-      console.log(data.data.employeeUsers);
+      // console.log(data.data.employeeUsers);
       exportToExcel(data.data.employeeUsers, "Terminated Employee DATA");
       //   exportToCSV(data.data.AllBioData, "BIO DATA");
       reset();
@@ -62,7 +62,7 @@ const ExportTerminated = () => {
 
   const onSubmit = async (values) => {
     try {
-      console.log(values);
+      // console.log(values);
       exportDates(values);
       // reset();
     } catch (error) {

@@ -9,9 +9,10 @@ import EditBioDataModal from "../EditBioDataModal";
 // import { axiosFetch } from "../../../Utils/axiosFetch";
 import PageLoading from "../../Checks/PageLoading";
 import FormatThisDate from "../../FormatThisDate";
+const PDForigin = import.meta.env.VITE_PDF;
 
 const EmployeeBioModal = ({ viewUser }) => {
-  console.log(viewUser);
+  // console.log(viewUser);
   const { closeViewModal } = useGlobalContext();
   const [updateData] = useState(viewUser);
 
@@ -160,13 +161,15 @@ const EmployeeBioModal = ({ viewUser }) => {
                       </h4>
                       <div className="profileLine"></div>
                     </div>
-                    <div className="singleProfile">
-                      <p className="profileLabel">Spouse Name</p>
-                      <h4 className="profileName">
-                        {updateData ? updateData.spouseName : "Spouse Name"}
-                      </h4>
-                      <div className="profileLine"></div>
-                    </div>
+                    {updateData?.maritalStatus === "Married" && (
+                      <div className="singleProfile">
+                        <p className="profileLabel">Spouse Name</p>
+                        <h4 className="profileName">
+                          {updateData ? updateData.spouseName : "Spouse Name"}
+                        </h4>
+                        <div className="profileLine"></div>
+                      </div>
+                    )}
                     <div className="singleProfile">
                       <p className="profileLabel">House Address</p>
                       <h4 className="profileName">
@@ -185,38 +188,52 @@ const EmployeeBioModal = ({ viewUser }) => {
                       <div className="profileLine"></div>
                     </div>
                     <div className="singleProfile">
-                      <p className="profileLabel">Bank Name</p>
-                      <h4 className="profileName">
-                        {updateData ? updateData.bankName : "Bank Name"}
-                      </h4>
+                      <p className="profileLabel">Bank</p>
+                      <h4 className="profileName">{updateData ? updateData.bank : "Bank"}</h4>
                       <div className="profileLine"></div>
                     </div>
-                    <div className="singleProfile">
-                      <p className="profileLabel">Bank Account Number</p>
-                      <h4 className="profileName">
-                        {updateData ? updateData.bankAccountNumber : "Bank Account Number"}
-                      </h4>
-                      <div className="profileLine"></div>
-                    </div>
+                    {updateData?.bank === "Yes" && (
+                      <div className="singleProfile">
+                        <p className="profileLabel">Bank Name</p>
+                        <h4 className="profileName">
+                          {updateData ? updateData.bankName : "Bank Name"}
+                        </h4>
+                        <div className="profileLine"></div>
+                      </div>
+                    )}
+                    {updateData?.bank === "Yes" && (
+                      <div className="singleProfile">
+                        <p className="profileLabel">Bank Account Number</p>
+                        <h4 className="profileName">
+                          {updateData ? updateData.bankAccountNumber : "Bank Account Number"}
+                        </h4>
+                        <div className="profileLine"></div>
+                      </div>
+                    )}
                     <div className="singleProfile">
                       <p className="profileLabel">Pension</p>
                       <h4 className="profileName">{updateData ? updateData.pension : "Pension"}</h4>
                       <div className="profileLine"></div>
                     </div>
-                    <div className="singleProfile">
-                      <p className="profileLabel">Pension Company</p>
-                      <h4 className="profileName">
-                        {updateData ? updateData.pensionCompany : "Pension Company"}
-                      </h4>
-                      <div className="profileLine"></div>
-                    </div>
-                    <div className="singleProfile">
-                      <p className="profileLabel">Pension Account Number</p>
-                      <h4 className="profileName">
-                        {updateData ? updateData.pensionPin : "Pension Pin"}
-                      </h4>
-                      <div className="profileLine"></div>
-                    </div>
+                    {updateData?.pension === "Yes" && (
+                      <div className="singleProfile">
+                        <p className="profileLabel">Pension Company</p>
+                        <h4 className="profileName">
+                          {updateData ? updateData.pensionCompany : "Pension Company"}
+                        </h4>
+                        <div className="profileLine"></div>
+                      </div>
+                    )}
+
+                    {updateData?.pension === "Yes" && (
+                      <div className="singleProfile">
+                        <p className="profileLabel">Pension Account Number</p>
+                        <h4 className="profileName">
+                          {updateData ? updateData.pensionPin : "Pension Pin"}
+                        </h4>
+                        <div className="profileLine"></div>
+                      </div>
+                    )}
                     <div className="singleProfile">
                       <p className="profileLabel">Level of Education</p>
                       <h4 className="profileName">
@@ -224,7 +241,7 @@ const EmployeeBioModal = ({ viewUser }) => {
                       </h4>
                       <div className="profileLine"></div>
                     </div>
-                    <div className=" downloadCV" onClick={() => downloadAttach()}>
+                    <div className=" downloadCV singleProfile" onClick={() => downloadAttach()}>
                       <FaDownload className="downCV" />
                       <p className="CVprofileLabel">Download CV</p>
                     </div>
@@ -237,10 +254,7 @@ const EmployeeBioModal = ({ viewUser }) => {
                   <button
                     className="btn"
                     onClick={() =>
-                      window.open(
-                        `https://hr-portal.theplace.com.ng/adminBIOPDF?id=${updateData._id}`,
-                        "_blank"
-                      )
+                      window.open(`${PDForigin}/adminBIOPDF?id=${updateData._id}`, "_blank")
                     }>
                     Download
                   </button>

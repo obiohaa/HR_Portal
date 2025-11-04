@@ -61,7 +61,7 @@ const EmployeeNDA = () => {
     queryFn: async () => {
       const { data } = await axiosFetch.get("/admins/getAllNDA");
       // console.log(data);
-      console.log(data.AllNDA);
+      // console.log(data.AllNDA);
       // console.log(data.AllBioData.length);
       setPaginationData(data.AllNDA);
       setSelected([]);
@@ -258,6 +258,7 @@ const EmployeeNDA = () => {
       {isEditModalOpen && <EditEmployeeGuaModal editUser={editUser} />}
       {isExportModalOpen && <ExportNDA editUser={editUser} />}
       <div className="addAdminBody">
+        <span className="pageTitle">Non Disclosure Agreement </span>
         <div className="addAdminControl">
           <div className="searchBar">
             <FaSistrix className="searchIcon" />

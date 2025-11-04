@@ -35,11 +35,12 @@ const EditUserModal = ({ user }) => {
       axiosFetchFormData.patch("/users/updateUser", updateUserProfile),
     onSuccess: (data) => {
       saveUser(data.data.user);
+      // console.log(data.data);
       reset();
       setImgName(null);
       closeModal();
       queryClient.invalidateQueries({ queryKey: ["currentUser", "bioDataKey"] });
-      toast.success(data.data.steps.msg, {
+      toast.success(data.data.msg, {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: true,
@@ -74,7 +75,7 @@ const EditUserModal = ({ user }) => {
         const formData = new FormData();
         formData.append("file", imgName);
         formData.append("body", JSON.stringify(values));
-        console.log(formData);
+        // console.log(formData);
         updateUserProfile(formData);
         // reset();
       }
@@ -224,7 +225,7 @@ const EditUserModal = ({ user }) => {
                       <div
                         className="clickUpload"
                         onClick={() => document.querySelector(".upload_Doc").click()}>
-                        <label className="uploadDoc">Upload Passport</label>
+                        <label className="uploadDoc">Take Photo</label>
                         <MdCloudUpload className="uploadIcon" />
                       </div>
                       <div className="fileName">

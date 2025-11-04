@@ -70,7 +70,7 @@ const AddAdminModal = () => {
         const formData = new FormData();
         formData.append("file", imgName);
         formData.append("body", JSON.stringify(values));
-        console.log(formData);
+        // console.log(formData);
         regUser(formData);
         // reset();
       }

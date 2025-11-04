@@ -264,6 +264,7 @@ const AddAdmin = () => {
       {isEditModalOpen && <EditEmployeeBioModal editUser={editUser} />}
       {isExportModalOpen && <ExportBio editUser={editUser} />}
       <div className="addAdminBody">
+        <span className="pageTitle"> Bio Data </span>
         <div className="addAdminControl">
           <div className="searchBar">
             <FaSistrix className="searchIcon" />

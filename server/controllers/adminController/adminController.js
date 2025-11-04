@@ -393,19 +393,20 @@ const updateOneBioData = async (req, res) => {
   }
 
   const existStaffId = await BioData.findOne({ staffId: updatedUserBioData.staffId });
-  if (existStaffId) {
+  console.log(existStaffId);
+  if (existStaffId && existStaffId._id.toString() !== updatedUserBioData.id) {
     throw new CustomError.BadRequestError("Staff ID already exist, please use another one");
   }
   // IF FILE EXIST, RUN FILE FUNCTIONALITY
   // console.log(req.files);
   if (req.files) {
     const userFile = req.files.file;
-    if (!userFile.mimetype.startsWith("application")) {
-      throw new CustomError.BadRequestError("Please upload a PDF or Doc File");
+    if (!userFile.mimetype.startsWith("application") && !userFile.mimetype.startsWith("image")) {
+      throw new CustomError.BadRequestError("Please upload either PDF or Image File");
     }
-    const maxSize = 5000000;
+    const maxSize = 4000000;
     if (userFile.size > maxSize) {
-      throw new CustomError.BadRequestError("Please upload file smaller than 5MB");
+      throw new CustomError.BadRequestError("Please upload file smaller than 4MB");
     }
 
     try {
@@ -1032,6 +1033,8 @@ const dashboard = async (req, res) => {
     const totalNOK = await NextOfKin.countDocuments();
     const totalGuarantors = await Guarantor.countDocuments({ isCompleted: 1 });
     const totalNDA = await finalNDA.countDocuments();
+    const outletLocation = await Location.countDocuments({ active: "true" });
+    const openJobs = await Job.countDocuments({ active: "true" });
 
     res.status(StatusCodes.OK).json({
       msg: "Dashboard data retrieved successfully",
@@ -1043,6 +1046,8 @@ const dashboard = async (req, res) => {
         totalNOK,
         totalGuarantors,
         totalNDA,
+        outletLocation,
+        openJobs,
       },
     });
   } catch (error) {
@@ -1104,6 +1109,7 @@ const outletLocation = async (req, res) => {
 //GET ALL OUTLET LOCATIONS PRIVATE
 const getAllOutletLocation = async (req, res) => {
   const AllOutletLocations = await Location.find()
+    .collation({ locale: "en", strength: 2 })
     .sort({ OutletName: 1 })
     .select("-createdAt -updatedAt -__v");
   res.status(StatusCodes.OK).json({
@@ -1116,6 +1122,7 @@ const getAllOutletLocation = async (req, res) => {
 //GET ALL OUTLET LOCATIONS PUBLIC
 const getAllOutletLocationPublic = async (req, res) => {
   const AllOutletLocations = await Location.find({ active: true })
+    .collation({ locale: "en", strength: 2 })
     .sort({ OutletName: 1 })
     .select("-createdAt -updatedAt -__v");
   res.status(StatusCodes.OK).json({

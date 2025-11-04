@@ -261,4 +261,16 @@ const pension = [
   { id: 2, pension: "Yes", value: "Yes" },
 ];
 
-export { stateCapital, genderOptions, maritalStatus, levelOfEducation, pension };
+const bank = [
+  { id: 0, bank: "Bank account", value: "" },
+  { id: 1, bank: "No", value: "No" },
+  { id: 2, bank: "Yes", value: "Yes" },
+];
+
+const bankNames = [
+  { id: 0, bank: "Bank Name", value: "" },
+  { id: 1, bank: "GT Bank", value: "GT Bank" },
+  { id: 2, bank: "Zenith Bank", value: "Zenith Bank" },
+];
+
+export { stateCapital, genderOptions, maritalStatus, levelOfEducation, pension, bank, bankNames };

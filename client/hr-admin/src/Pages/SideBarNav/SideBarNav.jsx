@@ -2,41 +2,43 @@
 
 import React from "react";
 import { FaPowerOff } from "react-icons/fa6";
-import { Link, useNavigate } from "react-router-dom";
+// import { Link, useNavigate } from "react-router-dom";
 import capitalizeFirstLetter from "../../Components/ToUpperCase";
 import { useGlobalContext } from "../../Context/userContext";
 import Loading from "../../Components/Checks/Loading";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "react-toastify";
-import { axiosFetch } from "../../Utils/axiosFetch";
+// import { useMutation } from "@tanstack/react-query";
+// import { toast } from "react-toastify";
+// import { axiosFetch } from "../../Utils/axiosFetch";
 import SideBarContent from "./SideBarContent";
 import { AdminSideBar, EmployeeSideBar } from "./SideBarData";
+import { useLogout } from "../../Hooks/useLogout";
 import "./SideBarNav.css";
 
 const SideBarNav = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { isBarOpen, setIsBarOpen, user } = useGlobalContext();
+  const { logOutUser } = useLogout();
   //LOGOUT
   //Using react query to handle the API call
-  const { mutate: logOutUser } = useMutation({
-    mutationFn: async () => axiosFetch.delete("/auth/logout"),
-    onSuccess: (data) => {
-      navigate("/login");
-      toast.success(data.data.msg, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        className: "toastGood",
-      });
-    },
-    onError: () => {
-      navigate("/login");
-    },
-  });
+  // const { mutate: logOutUser } = useMutation({
+  //   mutationFn: async () => axiosFetch.delete("/auth/logout"),
+  //   onSuccess: (data) => {
+  //     navigate("/login");
+  //     toast.success(data.data.msg, {
+  //       position: "top-center",
+  //       autoClose: 5000,
+  //       hideProgressBar: true,
+  //       closeOnClick: true,
+  //       pauseOnHover: true,
+  //       draggable: true,
+  //       progress: undefined,
+  //       className: "toastGood",
+  //     });
+  //   },
+  //   onError: () => {
+  //     navigate("/login");
+  //   },
+  // });
 
   return (
     <div

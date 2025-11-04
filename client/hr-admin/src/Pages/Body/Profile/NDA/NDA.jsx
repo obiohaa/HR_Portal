@@ -7,8 +7,8 @@ import "../profile.css";
 
 const NDA = () => {
   const { user, userStepState, isModalOpen } = useGlobalContext();
-  console.log(userStepState);
-  console.log(user);
+  // console.log(userStepState);
+  // console.log(user);
   return (
     <div className="bioDataProfileContainer">
       {userStepState && userStepState.completedStep <= 2 ? (

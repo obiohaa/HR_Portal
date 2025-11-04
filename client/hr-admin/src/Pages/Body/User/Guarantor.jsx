@@ -23,7 +23,7 @@ const Guarantor = () => {
   const { mutate: guarantorUser, isLoading } = useMutation({
     mutationFn: async (guarantorUser) => axiosFetch.post("/users/guarantorUser", guarantorUser),
     onSuccess: (data) => {
-      console.log(data);
+      // console.log(data);
       queryClient.invalidateQueries({ queryKey: ["bioDataKey"] });
       toast.success(data.data.msg, {
         position: "top-center",
@@ -56,9 +56,9 @@ const Guarantor = () => {
     mutationFn: async (previousStep) =>
       axiosFetch.post("/users/updateUserPrevStepState", { previousStep }),
     onSuccess: (data) => {
-      console.log(data);
+      // console.log(data);
       queryClient.invalidateQueries({ queryKey: ["bioDataKey"] });
-      toast.success(data.data.steps.msg, {
+      toast.success(data.data.msg, {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: true,
@@ -90,7 +90,7 @@ const Guarantor = () => {
 
   const onSubmit = async (values) => {
     try {
-      console.log(values);
+      // console.log(values);
       guarantorUser(values);
     } catch (error) {
       console.log(error);

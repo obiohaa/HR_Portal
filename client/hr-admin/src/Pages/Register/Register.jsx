@@ -73,7 +73,7 @@ function Register() {
         const formData = new FormData();
         formData.append("file", imgName);
         formData.append("body", JSON.stringify(values));
-        console.log(formData);
+        // console.log(formData);
         regUser(formData);
         // reset();
       }
@@ -192,7 +192,7 @@ function Register() {
               <div
                 className="clickUpload"
                 onClick={() => document.querySelector(".upload_Doc").click()}>
-                <label className="uploadDoc">Upload Passport</label>
+                <label className="uploadDoc">Take Photo</label>
                 <MdCloudUpload className="uploadIcon" />
               </div>
               <div className="fileName">

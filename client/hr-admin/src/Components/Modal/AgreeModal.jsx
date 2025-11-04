@@ -14,7 +14,7 @@ const AgreeModal = () => {
   const { mutate: finalNDA, isLoading } = useMutation({
     mutationFn: async (finalNDA) => axiosFetch.post("/users/finalAgreement", finalNDA),
     onSuccess: (data) => {
-      console.log(data);
+      // console.log(data);
       queryClient.invalidateQueries({ queryKey: ["bioDataKey"] });
       toast.success(data.data.steps.msg, {
         position: "top-center",
@@ -45,7 +45,7 @@ const AgreeModal = () => {
 
   const onSubmit = async () => {
     try {
-      console.log("click");
+      // console.log("click");
       finalNDA({ finalAgreement: true });
       closeModal();
     } catch (error) {

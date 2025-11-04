@@ -4,6 +4,8 @@ import PageLoading from "../../../../Components/Checks/PageLoading";
 import { useQuery } from "@tanstack/react-query";
 import { axiosFetch } from "../../../../Utils/axiosFetch";
 import { useGlobalContext } from "../../../../Context/userContext";
+import useCountUp from "../../../../Hooks/useCountUp";
+import formatNumber from "../../../../Components/FormatNumber";
 import {
   FaChessKing,
   FaUsers,
@@ -11,6 +13,8 @@ import {
   FaUserSecret,
   FaUser,
   FaUserGear,
+  FaLocationDot,
+  FaBriefcase,
 } from "react-icons/fa6";
 
 const AdminMainDash = () => {
@@ -30,7 +34,7 @@ const AdminMainDash = () => {
     queryFn: async () => {
       const { data } = await axiosFetch.get("/users/showMe");
       saveUser(data.user);
-      console.log(data.user);
+      // console.log(data.user);
       return data;
     },
     onError: () => {},
@@ -46,13 +50,22 @@ const AdminMainDash = () => {
     refetchIntervalInBackground: true, //do not refetch in background
     queryFn: async () => {
       const { data } = await axiosFetch.get("/admins/dashboard");
-      console.log(data.msg);
-      console.log(data.dashData);
+      // console.log(data.msg);
+      // console.log(data.dashData);
       setDashData(data.dashData);
       return data;
     },
     onError: () => {},
   });
+
+  const totalBioData = useCountUp(dashData?.totalBioData || 0, 1000);
+  const totalNOK = useCountUp(dashData?.totalNOK || 0, 1000);
+  const totalGuarantors = useCountUp(dashData?.totalGuarantors || 0, 1000);
+  const totalNDA = useCountUp(dashData?.totalNDA || 0, 1000);
+  const totalEmployees = useCountUp(dashData?.totalEmployees || 0, 1000);
+  const totalAdmins = useCountUp(dashData?.totalAdmins || 0, 1000);
+  const totalLocations = useCountUp(dashData?.outletLocation || 0, 1000);
+  const totalOpenJobs = useCountUp(dashData?.openJobs || 0, 1000);
 
   //USE STALE DATA IF AVAILABLE
   // This will set the pagination data to the fetched data when it is available
@@ -87,9 +100,10 @@ const AdminMainDash = () => {
             }></div>
           <div
             className={dashData && dashData.totalBioData >= 1 ? "dashCountColoured" : "dashCount"}>
-            {dashData && dashData.totalBioData >= 1 ? dashData.totalBioData : "0"}
+            {formatNumber(totalBioData)}
           </div>
         </div>
+
         <div
           className={
             dashData && dashData.totalNOK >= 1
@@ -106,7 +120,7 @@ const AdminMainDash = () => {
           />
           <div className={dashData && dashData.totalNOK >= 1 ? "dividerColoured" : "divider"}></div>
           <div className={dashData && dashData.totalNOK >= 1 ? "dashCountColoured" : "dashCount"}>
-            {dashData && dashData.totalNOK >= 1 ? dashData.totalNOK : "0"}
+            {formatNumber(totalNOK)}
           </div>
         </div>
         <div
@@ -132,7 +146,7 @@ const AdminMainDash = () => {
             className={
               dashData && dashData.totalGuarantors >= 1 ? "dashCountColoured" : "dashCount"
             }>
-            {dashData && dashData.totalGuarantors >= 1 ? dashData.totalGuarantors : "0"}
+            {formatNumber(totalGuarantors)}
           </div>
         </div>
         <div
@@ -151,7 +165,7 @@ const AdminMainDash = () => {
           />
           <div className={dashData && dashData.totalNDA >= 1 ? "dividerColoured" : "divider"}></div>
           <div className={dashData && dashData.totalNDA >= 1 ? "dashCountColoured" : "dashCount"}>
-            {dashData && dashData.totalNDA >= 1 ? dashData.totalNDA : "0"}
+            {formatNumber(totalNDA)}
           </div>
         </div>
         <div
@@ -177,7 +191,7 @@ const AdminMainDash = () => {
             className={
               dashData && dashData.totalEmployees >= 1 ? "dashCountColoured" : "dashCount"
             }>
-            {dashData && dashData.totalEmployees >= 1 ? dashData.totalEmployees : "0"}
+            {formatNumber(totalEmployees)}
           </div>
         </div>
         {user && user.role === "admin" && (
@@ -201,10 +215,60 @@ const AdminMainDash = () => {
               }></div>
             <div
               className={dashData && dashData.totalAdmins >= 1 ? "dashCountColoured" : "dashCount"}>
-              {dashData && dashData.totalAdmins >= 1 ? dashData.totalAdmins : "0"}
+              {formatNumber(totalAdmins)}
             </div>
           </div>
         )}
+
+        <div
+          className={
+            dashData && dashData.outletLocation >= 1
+              ? "employeeDashSingle dashColoured"
+              : "employeeDashSingle dashNotColoured"
+          }>
+          <span className="toolTipText">
+            {dashData && dashData.outletLocation >= 1 ? dashData.outletLocation : "0"} Location(s)
+          </span>
+
+          <FaLocationDot
+            className={
+              dashData && dashData.outletLocation >= 1 ? "dashIconColoured" : "dashIconNotColoured"
+            }
+          />
+          <div
+            className={
+              dashData && dashData.outletLocation >= 1 ? "dividerColoured" : "divider"
+            }></div>
+          <div
+            className={
+              dashData && dashData.outletLocation >= 1 ? "dashCountColoured" : "dashCount"
+            }>
+            {formatNumber(totalLocations)}
+          </div>
+        </div>
+
+        {/*  */}
+
+        <div
+          className={
+            dashData && dashData.openJobs >= 1
+              ? "employeeDashSingle dashColoured"
+              : "employeeDashSingle dashNotColoured"
+          }>
+          <span className="toolTipText">
+            {dashData && dashData.openJobs >= 1 ? dashData.openJobs : "0"} Open Job(s)
+          </span>
+
+          <FaBriefcase
+            className={
+              dashData && dashData.openJobs >= 1 ? "dashIconColoured" : "dashIconNotColoured"
+            }
+          />
+          <div className={dashData && dashData.openJobs >= 1 ? "dividerColoured" : "divider"}></div>
+          <div className={dashData && dashData.openJobs >= 1 ? "dashCountColoured" : "dashCount"}>
+            {formatNumber(totalOpenJobs)}
+          </div>
+        </div>
       </div>
     </div>
   );

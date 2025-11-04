@@ -17,6 +17,8 @@ import {
   maritalStatus,
   pension,
   levelOfEducation,
+  bank,
+  bankNames,
 } from "../../UserData";
 
 const EditEmployeeBioModal = ({ editUser }) => {
@@ -26,6 +28,7 @@ const EditEmployeeBioModal = ({ editUser }) => {
   const [fileError, setFileError] = useState({ msg: "" });
   const [marriageStatus, setMarriageStatus] = useState("");
   const [pensionStatus, setPensionStatus] = useState("");
+  const [bankStatus, setBankStatus] = useState("");
   // const [updateData, setUpdateData] = useState("");
 
   const {
@@ -82,7 +85,7 @@ const EditEmployeeBioModal = ({ editUser }) => {
     mutationFn: async (updateBioData) =>
       axiosFetchFormData.patch("/admins/updateOneBioData", updateBioData),
     onSuccess: (data) => {
-      console.log(data.data.user);
+      // console.log(data.data.user);
       closeEditModal();
       //   reset();
       //   setFileName(null);
@@ -138,6 +141,8 @@ const EditEmployeeBioModal = ({ editUser }) => {
   useEffect(() => {
     setPensionStatus(editUser.pension);
     setMarriageStatus(editUser.maritalStatus);
+    setBankStatus(editUser.bank);
+
     reset({
       firstName: editUser ? editUser.firstName : "firstName",
       lastName: editUser ? editUser.lastName : "lastName",
@@ -145,6 +150,7 @@ const EditEmployeeBioModal = ({ editUser }) => {
       staffId: editUser ? editUser.staffId : "Staff ID",
       jobLocation: editUser ? editUser.jobLocation : "Job Location",
       jobName: editUser ? editUser.jobName : "Job Name",
+      bank: editUser ? editUser.bank : "Bank Account",
       bankAccountNumber: editUser ? editUser.bankAccountNumber : "Bank Account Number",
       bankName: editUser ? editUser.bankName : "Bank Name",
       dateOfBirth: editUser ? editUser.dateOfBirth.split("T")[0] : "Date Of Birth",
@@ -164,13 +170,17 @@ const EditEmployeeBioModal = ({ editUser }) => {
 
   //handles marriage status state
   const handleChange = (event) => {
-    console.log(event.target.value);
     setMarriageStatus(event.target.value);
   };
 
   //handles pension status
   const handlePensionChange = (event) => {
     setPensionStatus(event.target.value);
+  };
+
+  //handles bank status state
+  const handleBankChange = (event) => {
+    setBankStatus(event.target.value);
   };
 
   if (isLoading || !editUser) {
@@ -313,9 +323,13 @@ const EditEmployeeBioModal = ({ editUser }) => {
                       id="jobLocation"
                       className="form_input"
                       autoComplete="off"
+                      defaultValue=""
                       {...register("jobLocation", {
                         required: "Job Location is required!",
                       })}>
+                      <option value="" disabled>
+                        Select a Location
+                      </option>
                       {data?.AllOutletLocations.map((location) => (
                         <option key={location.OutletName} value={location.OutletName}>
                           {location.OutletName}
@@ -564,62 +578,96 @@ const EditEmployeeBioModal = ({ editUser }) => {
                       Email Address
                     </label>
                   </div>
-                  <div className="formBioData">
-                    <input
-                      type="text"
-                      id="bankName"
-                      name="bankName"
+                  <div className="formBioData selectFormBioData">
+                    <select
+                      name="bank"
+                      id="bank"
                       className="form_input"
-                      placeholder=" "
-                      autoComplete="off"
-                      {...register("bankName", {
-                        required: "Bank name is required!",
-                        minLength: {
-                          value: 3,
-                          message: "Minimum characters of 3 letters.",
-                        },
-                        maxLength: {
-                          value: 30,
-                          message: "Maximum characters of 30 letters.",
+                      // {...register("bank")}
+                      {...register("bank", {
+                        required: "bank status is required!",
+                        validate: {
+                          isValidState: () =>
+                            bank.some((bak) => bak.bank === bak.value) ||
+                            "Invalid bank status selected",
                         },
                       })}
-                    />
-                    {errors.bankName && <p className="bioError">{errors.bankName.message}</p>}
-                    <label htmlFor="bankName" className="form_label">
-                      Bank Name
+                      onChange={handleBankChange}>
+                      {bank.map((ban) => {
+                        return (
+                          <option key={ban.id} value={ban.value}>
+                            {ban.bank}
+                          </option>
+                        );
+                      })}
+                    </select>
+                    {errors.bank && <p className="bioError">{errors.bank.message}</p>}
+                    <label htmlFor="bank" className="form_label">
+                      Bank
                     </label>
                   </div>
 
-                  <div className="formBioData">
-                    <input
-                      type="number"
-                      id="bankAccountNumber"
-                      className="form_input"
-                      placeholder=" "
-                      autoComplete="off"
-                      {...register("bankAccountNumber", {
-                        required: "Bank account number is required!",
-                        minLength: {
-                          value: 10,
-                          message: "Minimum characters of 11 letters.",
-                        },
-                        maxLength: {
-                          value: 10,
-                          message: "Maximum characters of 11 letters.",
-                        },
-                        pattern: {
-                          value: /^[0-9]*$/,
-                          message: "Numbers only!",
-                        },
-                      })}
-                    />
-                    {errors.bankAccountNumber && (
-                      <p className="bioError">{errors.bankAccountNumber.message}</p>
-                    )}
-                    <label htmlFor="bankAccountNumber" className="form_label">
-                      Bank Account Number
-                    </label>
-                  </div>
+                  {bankStatus === "Yes" && (
+                    <div className="formBioData selectFormBioData">
+                      <select
+                        name="bankName"
+                        id="bankName"
+                        className="form_input"
+                        // {...register("bank")}
+                        {...register("bankName", {
+                          required: "Bank name status is required!",
+                          validate: {
+                            isValidState: () =>
+                              bankNames.some((bakName) => bakName.bank === bakName.value) ||
+                              "Invalid bank name selected",
+                          },
+                        })}>
+                        {bankNames.map((ban) => {
+                          return (
+                            <option key={ban.id} value={ban.value}>
+                              {ban.bank}
+                            </option>
+                          );
+                        })}
+                      </select>
+                      {errors.bankName && <p className="bioError">{errors.bankName.message}</p>}
+                      <label htmlFor="bankName" className="form_label">
+                        Bank Name
+                      </label>
+                    </div>
+                  )}
+                  {bankStatus === "Yes" && (
+                    <div className="formBioData">
+                      <input
+                        type="number"
+                        id="bankAccountNumber"
+                        className="form_input"
+                        placeholder=" "
+                        autoComplete="off"
+                        {...register("bankAccountNumber", {
+                          required: "Bank account number is required!",
+                          minLength: {
+                            value: 10,
+                            message: "Minimum characters of 10 letters.",
+                          },
+                          maxLength: {
+                            value: 10,
+                            message: "Maximum characters of 10 letters.",
+                          },
+                          pattern: {
+                            value: /^[0-9]*$/,
+                            message: "Numbers only!",
+                          },
+                        })}
+                      />
+                      {errors.bankAccountNumber && (
+                        <p className="bioError">{errors.bankAccountNumber.message}</p>
+                      )}
+                      <label htmlFor="bankAccountNumber" className="form_label">
+                        Bank Account Number
+                      </label>
+                    </div>
+                  )}
                   <div className="formBioData selectFormBioData">
                     <select
                       name="pension"
@@ -769,7 +817,7 @@ const EditEmployeeBioModal = ({ editUser }) => {
                       name="file"
                       className="upload_Doc"
                       // accept=".png, .jpeg, .jpg"
-                      accept=".pdf, .docx, .docx, .odt"
+                      accept=".pdf, .png, .jpeg, .jpg"
                       required
                       hidden
                       onChange={({ target: { files } }) => {

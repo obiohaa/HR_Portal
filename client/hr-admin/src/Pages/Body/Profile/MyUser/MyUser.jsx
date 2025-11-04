@@ -20,6 +20,7 @@ const MyUser = () => {
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",
     position: "relative",
+    zIndex: "2",
   };
 
   return (

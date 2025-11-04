@@ -8,9 +8,10 @@ import EditBioDataModal from "../EditBioDataModal";
 // import { useQuery } from "@tanstack/react-query";
 // import { axiosFetch } from "../../../Utils/axiosFetch";
 import PageLoading from "../../Checks/PageLoading";
+const PDForigin = import.meta.env.VITE_PDF;
 
 const EmployeeGuaModal = ({ viewUser }) => {
-  console.log(viewUser);
+  // console.log(viewUser);
   const { closeViewModal } = useGlobalContext();
   const [updateData] = useState(viewUser);
 
@@ -203,9 +204,7 @@ const EmployeeGuaModal = ({ viewUser }) => {
                   </button>
                   <button
                     className="btn"
-                    onClick={() =>
-                      window.open("https://hr-portal.theplace.com.ng/pdfPagebioDATA", "_blank")
-                    }>
+                    onClick={() => window.open(`${PDForigin}/pdfPagebioDATA`, "_blank")}>
                     Download
                   </button>
                 </div>

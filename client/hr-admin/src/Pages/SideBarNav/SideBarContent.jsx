@@ -36,9 +36,9 @@ const SideBarContent = ({ loginRole }) => {
                     activeDropdown === items.text || isParentActive(items.subNav) ? "active" : ""
                   }`}
                   onClick={() => handleDropdownClick(items.text)}>
-                  <div className="menuOptionsContent">
+                  <div className={isBarOpen ? "menuOptionsContent" : "menuOptionsContentSmall"}>
                     <span className="icon-img">{items.icon}</span>
-                    {isBarOpen && <span className="menu-text">{items.text}</span>}
+                    {isBarOpen && <span className="menu-texts">{items.text}</span>}
                   </div>
                   {!isBarOpen && <div className="tooltip">{items.text}</div>}
                   {isBarOpen && (
@@ -58,7 +58,7 @@ const SideBarContent = ({ loginRole }) => {
                         className={({ isActive }) =>
                           isActive ? "dropdown-menuOptions active" : "dropdown-menuOptions"
                         }>
-                        {subItem.text}
+                        {<span className="menu-texts">{subItem.text}</span>}
                       </NavLink>
                     ))}
                 </div>
@@ -70,9 +70,12 @@ const SideBarContent = ({ loginRole }) => {
                 className={({ isActive }) =>
                   isActive ? "dropdown-singleMenu active" : "dropdown-singleMenu"
                 }>
-                <div className="menuOptionsContent">
+                <div
+                  className={`singleOption ${
+                    isBarOpen ? "menuOptionsContent" : "menuOptionsContentSmall"
+                  }`}>
                   <span className="icon-img">{items.icon}</span>
-                  {isBarOpen && <span className="menu-text">{items.text}</span>}
+                  {isBarOpen && <span className="menu-texts">{items.text}</span>}
                   {!isBarOpen && <div className="tooltip">{items.text}</div>}
                 </div>
               </NavLink>

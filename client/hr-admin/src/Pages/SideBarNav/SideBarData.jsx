@@ -95,7 +95,7 @@ const AdminSideBar = [
   {
     id: 5,
     url: "#",
-    text: "Website Content",
+    text: "Web Content",
     icon: <FaGlobe />,
     iconClosed: <FaAngleRight />,
     subNav: [

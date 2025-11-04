@@ -8,6 +8,7 @@ import { axiosFetch } from "../../../../Utils/axiosFetch";
 import PageLoading from "../../../../Components/Checks/PageLoading";
 import FormatThisDate from "../../../../Components/FormatThisDate";
 import "../profile.css";
+const PDForigin = import.meta.env.VITE_PDF;
 
 const BioData = () => {
   const { userStepState, openModal, isModalOpen } = useGlobalContext();
@@ -22,8 +23,8 @@ const BioData = () => {
     refetchIntervalInBackground: true, //do not refetch in background
     queryFn: async () => {
       const { data } = await axiosFetch.get("/users/getSingleBioData");
-      console.log(data);
-      console.log(data.userBio);
+      // console.log(data);
+      // console.log(data.userBio);
       return data;
     },
   });
@@ -35,7 +36,7 @@ const BioData = () => {
   // PREPARING THE USER BIO FILE FOR DOWNLOAD
   //SENDING THE DATA TO PDF
   const downloadAttach = () => {
-    console.log("click");
+    // console.log("click");
     const downLoadAttachUrl = data.userBio.UserFileUrl.replace(
       "/upload/",
       "/upload/fl_attachment/"
@@ -134,13 +135,15 @@ const BioData = () => {
                 </h4>
                 <div className="profileLine"></div>
               </div>
-              <div className="singleProfile">
-                <p className="profileLabel">Spouse Name</p>
-                <h4 className="profileName">
-                  {data && data.userBio ? data.userBio.spouseName : "Spouse Name"}
-                </h4>
-                <div className="profileLine"></div>
-              </div>
+              {data && data.userBio && data.userBio.maritalStatus === "Married" && (
+                <div className="singleProfile">
+                  <p className="profileLabel">Spouse Name</p>
+                  <h4 className="profileName">
+                    {data && data.userBio ? data.userBio.spouseName : "Spouse Name"}
+                  </h4>
+                  <div className="profileLine"></div>
+                </div>
+              )}
               <div className="singleProfile">
                 <p className="profileLabel">House Address</p>
                 <h4 className="profileName">
@@ -159,19 +162,29 @@ const BioData = () => {
                 <div className="profileLine"></div>
               </div>
               <div className="singleProfile">
-                <p className="profileLabel">Bank Name</p>
-                <h4 className="profileName">
-                  {data && data.userBio ? data.userBio.bankName : "Bank Name"}
-                </h4>
+                <p className="profileLabel">Bank</p>
+                <h4 className="profileName">{data && data.userBio ? data.userBio.bank : "Bank"}</h4>
                 <div className="profileLine"></div>
               </div>
-              <div className="singleProfile">
-                <p className="profileLabel">Bank Account Number</p>
-                <h4 className="profileName">
-                  {data && data.userBio ? data.userBio.bankAccountNumber : "Bank Account Number"}
-                </h4>
-                <div className="profileLine"></div>
-              </div>
+              {data && data.userBio && data.userBio.bank === "Yes" && (
+                <div className="singleProfile">
+                  <p className="profileLabel">Bank Name</p>
+                  <h4 className="profileName">
+                    {data && data.userBio ? data.userBio.bankName : "Bank Name"}
+                  </h4>
+                  <div className="profileLine"></div>
+                </div>
+              )}
+              {data && data.userBio && data.userBio.bank === "Yes" && (
+                <div className="singleProfile">
+                  <p className="profileLabel">Bank Account Number</p>
+                  <h4 className="profileName">
+                    {data && data.userBio ? data.userBio.bankAccountNumber : "Bank Account Number"}
+                  </h4>
+                  <div className="profileLine"></div>
+                </div>
+              )}
+
               <div className="singleProfile">
                 <p className="profileLabel">Pension</p>
                 <h4 className="profileName">
@@ -179,20 +192,26 @@ const BioData = () => {
                 </h4>
                 <div className="profileLine"></div>
               </div>
-              <div className="singleProfile">
-                <p className="profileLabel">Pension Company</p>
-                <h4 className="profileName">
-                  {data && data.userBio ? data.userBio.pensionCompany : "Pension Company"}
-                </h4>
-                <div className="profileLine"></div>
-              </div>
-              <div className="singleProfile">
-                <p className="profileLabel">Pension Account Number</p>
-                <h4 className="profileName">
-                  {data && data.userBio ? data.userBio.pensionPin : "Pension Pin"}
-                </h4>
-                <div className="profileLine"></div>
-              </div>
+              {data && data.userBio && data.userBio.pension === "Yes" && (
+                <div className="singleProfile">
+                  <p className="profileLabel">Pension Company</p>
+                  <h4 className="profileName">
+                    {data && data.userBio ? data.userBio.pensionCompany : "Pension Company"}
+                  </h4>
+                  <div className="profileLine"></div>
+                </div>
+              )}
+
+              {data && data.userBio && data.userBio.pension === "Yes" && (
+                <div className="singleProfile">
+                  <p className="profileLabel">Pension Account Number</p>
+                  <h4 className="profileName">
+                    {data && data.userBio ? data.userBio.pensionPin : "Pension Pin"}
+                  </h4>
+                  <div className="profileLine"></div>
+                </div>
+              )}
+
               <div className="singleProfile">
                 <p className="profileLabel">Level of Education</p>
                 <h4 className="profileName">
@@ -200,7 +219,7 @@ const BioData = () => {
                 </h4>
                 <div className="profileLine"></div>
               </div>
-              <div className=" downloadCV" onClick={() => downloadAttach()}>
+              <div className=" downloadCV singleProfile" onClick={() => downloadAttach()}>
                 <FaDownload className="downCV" />
                 <p className="CVprofileLabel">Download CV</p>
               </div>
@@ -209,9 +228,7 @@ const BioData = () => {
           <div className="btns profileBtn">
             <button
               className="btn"
-              onClick={() =>
-                window.open("https://hr-portal.theplace.com.ng/pdfPagebioDATA", "_blank")
-              }>
+              onClick={() => window.open(`${PDForigin}/pdfPagebioDATA`, "_blank")}>
               Download
             </button>
             <button className="btn" onClick={openModal}>

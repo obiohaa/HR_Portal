@@ -60,7 +60,7 @@ const EmployeeNOK = () => {
     queryFn: async () => {
       const { data } = await axiosFetch.get("/admins/getAllNOK");
       // console.log(data);
-      console.log(data.AllNOK);
+      // console.log(data.AllNOK);
       setPaginationData(data.AllNOK);
       setSelected([]);
       //   setItemOffset(0);
@@ -257,6 +257,7 @@ const EmployeeNOK = () => {
       {isEditModalOpen && <EditEmployeeNOKModal editUser={editUser} />}
       {isExportModalOpen && <ExportNOK editUser={editUser} />}
       <div className="addAdminBody">
+        <span className="pageTitle">Next of Kin </span>
         <div className="addAdminControl">
           <div className="searchBar">
             <FaSistrix className="searchIcon" />

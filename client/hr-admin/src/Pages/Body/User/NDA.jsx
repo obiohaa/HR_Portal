@@ -18,7 +18,7 @@ const NDA = () => {
     mutationFn: async (previousStep) =>
       axiosFetch.post("/users/updateUserPrevStepState", { previousStep }),
     onSuccess: (data) => {
-      console.log(data);
+      // console.log(data);
       queryClient.invalidateQueries({ queryKey: ["bioDataKey"] });
       toast.success(data.data.steps.msg, {
         position: "top-center",

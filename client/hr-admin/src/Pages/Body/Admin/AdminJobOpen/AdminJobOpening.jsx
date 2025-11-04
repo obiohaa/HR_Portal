@@ -202,15 +202,15 @@ const AdminJobOpening = () => {
   useEffect(() => {
     const endOffset = itemOffset + itemsPerPage;
     // console.log(`Loading items from ${itemOffset} to ${endOffset}`);
-    setCurrentItems(paginationData.slice(itemOffset, endOffset));
-    setPageCount(Math.ceil(paginationData.length / itemsPerPage));
+    setCurrentItems(paginationData?.slice(itemOffset, endOffset));
+    setPageCount(Math.ceil(paginationData?.length / itemsPerPage));
     // console.log(currentItems);
     // Invoke when user click to request another page.
   }, [itemOffset, paginationData, itemsPerPage]);
 
   const handlePageClick = (event) => {
     const newOffset = (event.selected * itemsPerPage) % paginationData.length;
-    console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
+    // console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
     setItemOffset(newOffset);
   };
 
@@ -223,8 +223,8 @@ const AdminJobOpening = () => {
   };
 
   const start = itemOffset + 1;
-  const end = Math.min(itemOffset + itemsPerPage, paginationData.length);
-  const total = paginationData.length;
+  const end = Math.min(itemOffset + itemsPerPage, paginationData?.length);
+  const total = paginationData?.length;
   // PAGINATION SECTION END
 
   // CHECKBOX SECTION
@@ -366,6 +366,7 @@ const AdminJobOpening = () => {
       {/* {isViewModalOpen && <ViewLocationModal viewUser={viewUser} />} */}
       {isEditModalOpen && <EditJob editUser={editUser} />}
       <div className="addAdminBody">
+        <span className="pageTitle">Job Openings</span>
         <div className="addAdminControl">
           <div className="searchBar">
             <FaSistrix className="searchIcon" />
@@ -525,7 +526,7 @@ const AdminJobOpening = () => {
               </tbody>
             </table>
 
-            {currentItems.length <= 0 && <NoData />}
+            {currentItems?.length <= 0 && <NoData />}
           </div>
         </div>
         <div className="paginationBody">

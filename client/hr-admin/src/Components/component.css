@@ -185,6 +185,8 @@
 }
 
 .bioModal {
+  height: 600px;
+  overflow-x: auto;
   position: relative;
   border-radius: 8px;
   padding: 2rem;
@@ -455,4 +457,10 @@
   display: flex;
   justify-content: space-between;
   margin-top: 45px;
+}
+
+/* MODAL INFO CSS */
+.modalLink {
+  color: var(--clr-primary-2);
+  text-decoration: underline;
 }

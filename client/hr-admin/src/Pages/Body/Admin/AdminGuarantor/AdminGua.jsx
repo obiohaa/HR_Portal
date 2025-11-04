@@ -61,7 +61,7 @@ const AdminGua = () => {
     queryFn: async () => {
       const { data } = await axiosFetch.get("/admins/getAllGuarantor");
       // console.log(data);
-      console.log(data.AllGuarantor);
+      // console.log(data.AllGuarantor);
       // console.log(data.AllBioData.length);
       setPaginationData(data.AllGuarantor);
       setSelected([]);
@@ -261,6 +261,7 @@ const AdminGua = () => {
       {isEditModalOpen && <EditEmployeeGuaModal editUser={editUser} />}
       {isExportModalOpen && <ExportGua editUser={editUser} />}
       <div className="addAdminBody">
+        <span className="pageTitle">Guarantor </span>
         <div className="addAdminControl">
           <div className="searchBar">
             <FaSistrix className="searchIcon" />

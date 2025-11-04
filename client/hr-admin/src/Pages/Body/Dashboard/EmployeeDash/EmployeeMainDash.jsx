@@ -4,6 +4,8 @@ import PageLoading from "../../../../Components/Checks/PageLoading";
 import { useQuery } from "@tanstack/react-query";
 import { axiosFetch } from "../../../../Utils/axiosFetch";
 import { useGlobalContext } from "../../../../Context/userContext";
+// import useCountUp from "../../../../Hooks/useCountUp";
+// import formatNumber from "../../../../Components/FormatNumber";
 import { FaChessKing, FaUsers, FaFileCircleXmark, FaUserSecret, FaUser } from "react-icons/fa6";
 
 const EmployeeMainDash = () => {
@@ -22,7 +24,7 @@ const EmployeeMainDash = () => {
     queryFn: async () => {
       const { data } = await axiosFetch.get("/users/showMe");
       saveUser(data.user);
-      console.log(data.user);
+      // console.log(data.user);
       return data;
     },
     onError: () => {},
@@ -35,7 +37,7 @@ const EmployeeMainDash = () => {
       const { data } = await axiosFetch.get("/users/userStepState");
       // const { currentStep } = data.currentUserStepState;
       setUserStepState(data.currentUserStepState);
-      console.log(data);
+      // console.log(data);
       return data;
     },
     onError: () => {},

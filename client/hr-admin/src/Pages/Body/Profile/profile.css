@@ -1,13 +1,12 @@
 /* UPPER BACKGROUND IMAGE WITH PROFILE IMAGE IN USER PROFILE */
 .bioDataProfileContainer {
-  width: 90%;
+  width: 95%;
   overflow-y: auto;
   height: 95%;
-  margin: 10px auto;
-  /* margin-bottom: 10px; */
+  margin: 18px auto;
   border-radius: 10px;
-  /* padding: 1rem 2rem; */
   background-color: white !important;
+  z-index: 1;
 }
 
 .profile-modal-container {
@@ -32,7 +31,7 @@
   width: 220px;
   position: absolute;
   top: 50%;
-  right: 39.5%;
+  right: calc(50% - 110px);
   border-radius: 50%;
 }
 

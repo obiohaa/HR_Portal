@@ -7,7 +7,7 @@ import { useGlobalContext } from "../../../Context/userContext";
 import PageLoading from "../../../Components/Checks/PageLoading";
 
 const DeleteGUAModal = ({ deletedItem }) => {
-  console.log(deletedItem);
+  // console.log(deletedItem);
   const { closeDelModal } = useGlobalContext();
 
   // SEND TO DATABASE
@@ -45,7 +45,7 @@ const DeleteGUAModal = ({ deletedItem }) => {
   //END SEND TO DATABASE
 
   const sendDelete = () => {
-    console.log(deletedItem);
+    // console.log(deletedItem);
     deleteUser(deletedItem);
   };
 

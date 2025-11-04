@@ -66,7 +66,7 @@ const EditAdminEmployeeModal = ({ editUser }) => {
 
   const onSubmit = async (values) => {
     values.isVerified = emailVerify;
-    console.log(values);
+    // console.log(values);
     try {
       if (imgName && imgName.size > 5000000) {
         setImgError({ msg: "Passport size must be less than 5MB" });
@@ -74,7 +74,7 @@ const EditAdminEmployeeModal = ({ editUser }) => {
         const formData = new FormData();
         formData.append("file", imgName);
         formData.append("body", JSON.stringify(values));
-        console.log(formData);
+        // console.log(formData);
         editThisUser(formData);
       }
     } catch (error) {

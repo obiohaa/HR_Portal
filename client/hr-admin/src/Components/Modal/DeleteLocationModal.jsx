@@ -45,7 +45,6 @@ const DeleteLocationModal = ({ deletedItem }) => {
   //END SEND TO DATABASE
 
   const sendDelete = () => {
-    console.log(deletedItem);
     deleteLocation(deletedItem);
   };
 

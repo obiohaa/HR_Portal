@@ -65,7 +65,7 @@ const AddAdmin = () => {
     refetchIntervalInBackground: true, //do not refetch in background
     queryFn: async () => {
       const { data } = await axiosFetch.get("/admins/getAllAdminUsers");
-      console.log(data);
+      // console.log(data);
       // console.log(data.adminUsers);
       // console.log(data.adminUsers.length);
       setPaginationData(data.adminUsers);
@@ -179,7 +179,12 @@ const AddAdmin = () => {
 
     const filterQuery = data.adminUsers.filter((user) => {
       const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
-      return fullName.includes(query) || user.email?.toLowerCase().includes(query);
+      const status = `${user.active}`.toLowerCase();
+      return (
+        status.includes(query) ||
+        fullName.includes(query) ||
+        user.email?.toLowerCase().includes(query)
+      );
     });
     setPaginationData(filterQuery);
     //Controls what page to display when you search, in this case page 1
@@ -355,6 +360,7 @@ const AddAdmin = () => {
       {isViewModalOpen && <ViewUsersModal viewUser={viewUser} />}
       {isEditModalOpen && <EditAdminModal editUser={editUser} />}
       <div className="addAdminBody">
+        <span className="pageTitle">Portal Admins </span>
         <div className="addAdminControl">
           <div className="searchBar">
             <FaSistrix className="searchIcon" />

@@ -77,8 +77,8 @@ const EditEmployeeGuaModal = ({ editUser }) => {
   const { mutate: updateGuarantor, isLoading } = useMutation({
     mutationFn: async (updateGuarantor) =>
       axiosFetchFormData.patch("/admins/updateGuarantor", updateGuarantor),
-    onSuccess: (data) => {
-      console.log(data);
+    onSuccess: () => {
+      // console.log(data);
       reset();
       setFileName(null);
       setImgName(null);
@@ -127,7 +127,7 @@ const EditEmployeeGuaModal = ({ editUser }) => {
       formData.append("file", fileName);
       formData.append("img", imgName);
       formData.append("body", JSON.stringify(values));
-      console.log(formData);
+      // console.log(formData);
       updateGuarantor(formData);
     } catch (error) {
       console.log(error);

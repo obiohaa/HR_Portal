@@ -25,6 +25,11 @@ const TokenSchema = new mongoose.Schema(
     },
     lastLogin: {
       type: Date,
+      required: true,
+    },
+    expiredIn: {
+      type: Date,
+      required: true,
     },
   },
   { timestamps: true }

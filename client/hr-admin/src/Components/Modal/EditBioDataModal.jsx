@@ -11,15 +11,24 @@ import { FaRegEyeSlash, FaRegEye, FaX } from "react-icons/fa6";
 import { MdCloudUpload, MdDelete } from "react-icons/md";
 // import capitalizeFirstLetter from "../Components/ToUpperCase";
 
-import { stateCapital, genderOptions, maritalStatus, pension, levelOfEducation } from "../UserData";
+import {
+  stateCapital,
+  genderOptions,
+  maritalStatus,
+  pension,
+  levelOfEducation,
+  bank,
+  bankNames,
+} from "../UserData";
 
 const EditBioDataModal = ({ userBio }) => {
-  console.log(userBio);
+  // console.log(userBio);
   const { closeModal, saveUser } = useGlobalContext();
   const [fileName, setFileName] = useState(null);
   const [fileError, setFileError] = useState({ msg: "" });
   const [marriageStatus, setMarriageStatus] = useState("");
   const [pensionStatus, setPensionStatus] = useState("");
+  const [bankStatus, setBankStatus] = useState("");
 
   const {
     register,
@@ -75,7 +84,7 @@ const EditBioDataModal = ({ userBio }) => {
     mutationFn: async (updateBioData) =>
       axiosFetchFormData.patch("/users/updateBioData", updateBioData),
     onSuccess: (data) => {
-      console.log(data.data.user);
+      // console.log(data.data.user);
       saveUser(data.data.user);
       reset();
       setFileName(null);
@@ -116,7 +125,7 @@ const EditBioDataModal = ({ userBio }) => {
         const formData = new FormData();
         formData.append("file", fileName);
         formData.append("body", JSON.stringify(values));
-        console.log(formData);
+        // console.log(formData);
         updateBioData(formData);
         // reset();
       }
@@ -132,13 +141,14 @@ const EditBioDataModal = ({ userBio }) => {
   useEffect(() => {
     setPensionStatus(userBio.pension);
     setMarriageStatus(userBio.maritalStatus);
+    setBankStatus(userBio.bank);
     reset({
       firstName: userBio.firstName,
       lastName: userBio.lastName,
       middleName: userBio.middleName,
       jobLocation: userBio.jobLocation,
       jobName: userBio.jobName,
-
+      bank: userBio.bank,
       bankAccountNumber: userBio.bankAccountNumber,
       bankName: userBio.bankName,
       dateOfBirth: userBio.dateOfBirth.split("T")[0],
@@ -158,13 +168,17 @@ const EditBioDataModal = ({ userBio }) => {
 
   //handles marriage status state
   const handleChange = (event) => {
-    console.log(event.target.value);
     setMarriageStatus(event.target.value);
   };
 
   //handles pension status
   const handlePensionChange = (event) => {
     setPensionStatus(event.target.value);
+  };
+
+  //handles bank status state
+  const handleBankChange = (event) => {
+    setBankStatus(event.target.value);
   };
 
   if (isLoading) {
@@ -278,9 +292,13 @@ const EditBioDataModal = ({ userBio }) => {
                       id="jobLocation"
                       className="form_input"
                       autoComplete="off"
+                      defaultValue=""
                       {...register("jobLocation", {
                         required: "Job Location is required!",
                       })}>
+                      <option value="" disabled>
+                        Select a Location
+                      </option>
                       {data?.AllOutletLocations.map((location) => (
                         <option key={location.OutletName} value={location.OutletName}>
                           {location.OutletName}
@@ -529,62 +547,96 @@ const EditBioDataModal = ({ userBio }) => {
                       Email Address
                     </label>
                   </div>
-                  <div className="formBioData">
-                    <input
-                      type="text"
-                      id="bankName"
-                      name="bankName"
+                  <div className="formBioData selectFormBioData">
+                    <select
+                      name="bank"
+                      id="bank"
                       className="form_input"
-                      placeholder=" "
-                      autoComplete="off"
-                      {...register("bankName", {
-                        required: "Bank name is required!",
-                        minLength: {
-                          value: 3,
-                          message: "Minimum characters of 3 letters.",
-                        },
-                        maxLength: {
-                          value: 30,
-                          message: "Maximum characters of 30 letters.",
+                      // {...register("bank")}
+                      {...register("bank", {
+                        required: "bank status is required!",
+                        validate: {
+                          isValidState: () =>
+                            bank.some((bak) => bak.bank === bak.value) ||
+                            "Invalid bank status selected",
                         },
                       })}
-                    />
-                    {errors.bankName && <p className="bioError">{errors.bankName.message}</p>}
-                    <label htmlFor="bankName" className="form_label">
-                      Bank Name
+                      onChange={handleBankChange}>
+                      {bank.map((ban) => {
+                        return (
+                          <option key={ban.id} value={ban.value}>
+                            {ban.bank}
+                          </option>
+                        );
+                      })}
+                    </select>
+                    {errors.bank && <p className="bioError">{errors.bank.message}</p>}
+                    <label htmlFor="bank" className="form_label">
+                      Bank
                     </label>
                   </div>
 
-                  <div className="formBioData">
-                    <input
-                      type="number"
-                      id="bankAccountNumber"
-                      className="form_input"
-                      placeholder=" "
-                      autoComplete="off"
-                      {...register("bankAccountNumber", {
-                        required: "Bank account number is required!",
-                        minLength: {
-                          value: 10,
-                          message: "Minimum characters of 11 letters.",
-                        },
-                        maxLength: {
-                          value: 10,
-                          message: "Maximum characters of 11 letters.",
-                        },
-                        pattern: {
-                          value: /^[0-9]*$/,
-                          message: "Numbers only!",
-                        },
-                      })}
-                    />
-                    {errors.bankAccountNumber && (
-                      <p className="bioError">{errors.bankAccountNumber.message}</p>
-                    )}
-                    <label htmlFor="bankAccountNumber" className="form_label">
-                      Bank Account Number
-                    </label>
-                  </div>
+                  {bankStatus === "Yes" && (
+                    <div className="formBioData selectFormBioData">
+                      <select
+                        name="bankName"
+                        id="bankName"
+                        className="form_input"
+                        // {...register("bank")}
+                        {...register("bankName", {
+                          required: "Bank name status is required!",
+                          validate: {
+                            isValidState: () =>
+                              bankNames.some((bakName) => bakName.bank === bakName.value) ||
+                              "Invalid bank name selected",
+                          },
+                        })}>
+                        {bankNames.map((ban) => {
+                          return (
+                            <option key={ban.id} value={ban.value}>
+                              {ban.bank}
+                            </option>
+                          );
+                        })}
+                      </select>
+                      {errors.bankName && <p className="bioError">{errors.bankName.message}</p>}
+                      <label htmlFor="bankName" className="form_label">
+                        Bank Name
+                      </label>
+                    </div>
+                  )}
+                  {bankStatus === "Yes" && (
+                    <div className="formBioData">
+                      <input
+                        type="number"
+                        id="bankAccountNumber"
+                        className="form_input"
+                        placeholder=" "
+                        autoComplete="off"
+                        {...register("bankAccountNumber", {
+                          required: "Bank account number is required!",
+                          minLength: {
+                            value: 10,
+                            message: "Minimum characters of 10 letters.",
+                          },
+                          maxLength: {
+                            value: 10,
+                            message: "Maximum characters of 10 letters.",
+                          },
+                          pattern: {
+                            value: /^[0-9]*$/,
+                            message: "Numbers only!",
+                          },
+                        })}
+                      />
+                      {errors.bankAccountNumber && (
+                        <p className="bioError">{errors.bankAccountNumber.message}</p>
+                      )}
+                      <label htmlFor="bankAccountNumber" className="form_label">
+                        Bank Account Number
+                      </label>
+                    </div>
+                  )}
                   <div className="formBioData selectFormBioData">
                     <select
                       name="pension"

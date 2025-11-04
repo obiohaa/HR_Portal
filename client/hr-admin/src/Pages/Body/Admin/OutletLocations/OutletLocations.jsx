@@ -22,6 +22,7 @@ import ReactPaginate from "react-paginate";
 import { toast } from "react-toastify";
 import NoData from "../../../../Components/Modal/NoData";
 import TimeRangeDisplay from "./DisplayOpenTime";
+import ReadMore from "../../../../Components/ReadMore";
 import "../adminUser.css";
 
 const OutletLocations = () => {
@@ -65,7 +66,7 @@ const OutletLocations = () => {
     refetchIntervalInBackground: true, //do not refetch in background
     queryFn: async () => {
       const { data } = await axiosFetch.get("/admins/getAllOutletLocation");
-      console.log(data);
+      // console.log(data);
 
       setPaginationData(data.AllOutletLocations);
       setSelected([]);
@@ -203,7 +204,7 @@ const OutletLocations = () => {
 
   const handlePageClick = (event) => {
     const newOffset = (event.selected * itemsPerPage) % paginationData.length;
-    console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
+    // console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
     setItemOffset(newOffset);
   };
 
@@ -358,6 +359,7 @@ const OutletLocations = () => {
       {isViewModalOpen && <ViewLocationModal viewUser={viewUser} />}
       {isEditModalOpen && <EditLocation editUser={editUser} />}
       <div className="addAdminBody">
+        <span className="pageTitle">Outlet Locations </span>
         <div className="addAdminControl">
           <div className="searchBar">
             <FaSistrix className="searchIcon" />
@@ -436,7 +438,7 @@ const OutletLocations = () => {
                   </th>
                   <th>Outlet Name</th>
                   <th>Outlet Address</th>
-                  <th>Phone Number</th>
+                  <th> Number</th>
                   <th>Opening Time</th>
                   <th>State</th>
                   <th>Status</th>
@@ -470,7 +472,9 @@ const OutletLocations = () => {
                             updateValue={handleSelect}></Checkbox>
                         </td>
                         <td>{capitalizeFirstLetter(item?.OutletName)} </td>
-                        <td>{item.OutletAddress}</td>
+                        <td>
+                          <ReadMore description={item?.OutletAddress} />
+                        </td>
                         <td>{item.phoneNumber}</td>
                         <td>
                           {/* {item?.timeRange.start} - {item?.timeRange.end} */}

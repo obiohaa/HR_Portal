@@ -7,11 +7,12 @@ import { useQuery } from "@tanstack/react-query";
 import { axiosFetch } from "../../../../Utils/axiosFetch";
 import PageLoading from "../../../../Components/Checks/PageLoading";
 import "../profile.css";
+const PDForigin = import.meta.env.VITE_PDF;
 
 const NOK = () => {
   const { userStepState, openModal, isModalOpen } = useGlobalContext();
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["nokUser"],
     retryOnMount: true, //do not retry on mount
     refetchOnWindowFocus: true, //do not refetch on window focus
@@ -26,8 +27,8 @@ const NOK = () => {
     },
   });
 
-  console.log(error);
-  console.log(data);
+  // console.log(error);
+  // console.log(data);
 
   if (isLoading) {
     <PageLoading />;
@@ -91,7 +92,7 @@ const NOK = () => {
           <div className="btns profileBtn">
             <button
               className="btn"
-              onClick={() => window.open("https://hr-portal.theplace.com.ng/pdfPagenok", "_blank")}>
+              onClick={() => window.open(`${PDForigin}/pdfPagenok`, "_blank")}>
               Download
             </button>
             <button className="btn" onClick={openModal}>

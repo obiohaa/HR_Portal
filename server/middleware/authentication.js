@@ -5,7 +5,7 @@ const { attachCookiesToResponse } = require("../utils");
 
 const authenticateUser = async (req, res, next) => {
   const { refreshToken, accessToken } = req.signedCookies;
-
+  // console.log(req.signedCookies);
   try {
     if (accessToken) {
       const payload = isTokenValid(accessToken);
@@ -14,23 +14,30 @@ const authenticateUser = async (req, res, next) => {
     }
 
     const payload = isTokenValid(refreshToken);
+    console.log("here");
+    console.log(payload);
 
     const existingToken = await Token.findOne({
       user: payload.user.userId,
       refreshToken: payload.refreshToken,
     });
 
-    if (!existingToken || !existingToken?.isValid) {
-      throw new CustomError.UnauthenticatedError("Authentication Invalid");
+    if (!existingToken || existingToken.expiredIn < Date.now()) {
+      throw new CustomError.UnauthenticatedError();
     }
 
-    attachCookiesToResponse({ res, user: payload.user, refreshToken: existingToken.refreshToken });
+    attachCookiesToResponse({
+      res,
+      user: payload.user,
+      refreshToken: existingToken.refreshToken,
+      setRefreshToken: false,
+    });
 
     req.user = payload.user;
 
     next();
   } catch (error) {
-    throw new CustomError.UnauthenticatedError("Authentication Invalid");
+    throw new CustomError.UnauthenticatedError();
   }
 };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import Loading from "../../Components/Checks/Loading";
@@ -13,7 +13,7 @@ import { FaRegEyeSlash, FaRegEye } from "react-icons/fa6";
 
 function Login() {
   const navigate = useNavigate();
-  const { saveUser, user } = useGlobalContext();
+  const { saveUser } = useGlobalContext();
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => {
     setShowPassword((prevState) => !prevState);
@@ -35,7 +35,7 @@ function Login() {
   const {
     mutate: logUser,
     isLoading,
-    isSuccess,
+    // isSuccess,
   } = useMutation({
     mutationFn: async (logUser) => axiosFetch.post("/auth/login", { ...logUser }),
     onSuccess: (data) => {
@@ -50,6 +50,11 @@ function Login() {
         progress: undefined,
         className: "toastGood",
       });
+      if (data.data.user.role === "admin") {
+        navigate("/Admin_dashboard");
+      } else {
+        navigate("/dashboard");
+      }
     },
     onError: (error) => {
       toast.error(
@@ -72,17 +77,9 @@ function Login() {
     },
   });
 
-  useEffect(() => {
-    if (isSuccess) {
-      if (user.role === "admin") {
-        navigate("/Admin_dashboard");
-      } else if (user.role === "employee") {
-        navigate("/dashboard");
-      } else {
-        navigate("/login");
-      }
-    }
-  }, [isSuccess, user, navigate]);
+  // if (isLoading) {
+  //   return <PageLoading />;
+  // }
 
   const onSubmit = async (values) => {
     try {
@@ -96,10 +93,6 @@ function Login() {
       });
     }
   };
-
-  if (isLoading) {
-    return <PageLoading />;
-  }
 
   return (
     <section className="section">
@@ -157,7 +150,7 @@ function Login() {
             </p>
           </div>
           <button
-            disabled={isSubmitting}
+            disabled={isLoading || isSubmitting}
             type="submit"
             className="submitBtn"
             value="Login"

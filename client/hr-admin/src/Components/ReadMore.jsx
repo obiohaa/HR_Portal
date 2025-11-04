@@ -11,8 +11,8 @@ const ReadMore = ({ description }) => {
 
   return (
     <>
-      {expanded ? description : truncateText(description, 5)}
-      {description.split(" ").length > 5 && (
+      {expanded ? description : truncateText(description, 4)}
+      {description.split(" ").length > 4 && (
         <div
           onClick={() => setExpanded(!expanded)}
           style={{

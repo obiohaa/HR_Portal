@@ -17,7 +17,7 @@ const BioPDF = () => {
   const queryParams = new URLSearchParams(location.search);
   const userId = queryParams.get("id");
 
-  console.log(userId); // This gives you: 6862553af3f401309aaca379
+  // console.log(userId); // This gives you: 6862553af3f401309aaca379
 
   const { isLoading, error } = useQuery({
     queryKey: ["bioDataKey"],
@@ -29,9 +29,9 @@ const BioPDF = () => {
     refetchIntervalInBackground: true, //do not refetch in background
     queryFn: async () => {
       const { data } = await axiosFetch.get(`/admins/getAllBioDataPerUser/${userId}`);
-      console.log(data);
+      // console.log(data);
       setPDFData(data.AllBioDataPerUser[0]);
-      console.log(data.AllBioDataPerUser[0]);
+      // console.log(data.AllBioDataPerUser[0]);
       return data;
     },
   });

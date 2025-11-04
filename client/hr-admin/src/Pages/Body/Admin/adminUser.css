@@ -15,14 +15,14 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin-bottom: 25px;
+  margin-bottom: 10px;
 }
 
 .btnAdmin {
   outline: none;
   border: none;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 15px;
   font-family: inherit;
   border-radius: 35px;
   background-color: var(--clr-primary-2);
@@ -84,11 +84,12 @@
   /* overflow-y: auto; */
   /* display: flex;
   flex-direction: row; */
-  margin-bottom: 50px;
+  margin-bottom: 30px;
 }
 
 .tableBody {
   font-family: var(--ff-primary);
+  font-size: 14.5px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -104,7 +105,7 @@ table {
 
 th,
 td {
-  padding: 10px;
+  padding: 8px;
   text-align: center;
   /* border-bottom: 1px solid var(--clr-grey-8); */
 }
@@ -294,4 +295,14 @@ input[type="checkbox"] {
   border-style: solid;
   border-color: #fff transparent transparent transparent;
   /* filter: drop-shadow(0 -1px 1px rgba(0, 0, 0, 0.1)); */
+}
+
+/* PAGE TITLE */
+.pageTitle {
+  font-family: var(--ff-primary);
+  color: gray;
+  margin: 0 0 15px 10px;
+  /* text-decoration: underline; */
+  font-size: 1rem;
+  font-weight: 600;
 }

@@ -45,7 +45,6 @@ const DeleteAdminModal = ({ deletedItem }) => {
   //END SEND TO DATABASE
 
   const sendDelete = () => {
-    console.log(deletedItem);
     deleteUser(deletedItem);
   };
 

@@ -69,7 +69,7 @@ const EditEmployeeNOKModal = ({ editUser }) => {
   const { mutate: updateNOK, isLoading } = useMutation({
     mutationFn: async (updateNOK) => axiosFetchFormData.patch("/admins/updateNOKData", updateNOK),
     onSuccess: (data) => {
-      console.log(data.data.user);
+      // console.log(data.data.user);
       closeEditModal();
       //   reset();
       //   setFileName(null);
@@ -105,7 +105,7 @@ const EditEmployeeNOKModal = ({ editUser }) => {
   const onSubmit = async (values) => {
     values.id = editUser._id;
     try {
-      console.log(values);
+      // console.log(values);
       updateNOK(values);
     } catch (error) {
       console.log(error);

@@ -35,11 +35,12 @@ const errorHandlerMiddleware = require("./middleware/error-handler");
 
 //others
 const corOptions = {
-  origin: "http://localhost:5173",
+  origin: process.env.PRODUCTION_ORIGIN,
+  // origin: "http://localhost:5173",
   // origin: "https://hr-portal.theplace.com.ng",
   credentials: true,
-  methods: ["GET", "HEAD", "POST", "PATCH", "PUT", "DELETE", "UPDATE"],
-  allowedHeader: ["Content-Type", "Authorization"],
+  methods: ["GET", "HEAD", "POST", "PATCH", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 app.set("trust proxy", 1);
@@ -77,7 +78,9 @@ const start = async () => {
     const con = await connectDB(process.env.MONGO_URL);
     console.log();
     app.listen(port, () =>
-      console.log(`Server is listening on port ${port}...${con.connection.host}`)
+      console.log(
+        `Server is listening on port ${port}...${con.connection.host}..Origin:${process.env.PRODUCTION_ORIGIN}`
+      )
     );
   } catch (error) {
     console.log(error);

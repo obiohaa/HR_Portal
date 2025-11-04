@@ -10,7 +10,7 @@ import { Page, Text, View, Document, PDFViewer, Image, PDFDownloadLink } from "@
 const BDJSONpdf = () => {
   const { user } = useGlobalContext();
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["bioDataKey"],
     retryOnMount: true, //do not retry on mount
     refetchOnWindowFocus: true, //do not refetch on window focus
@@ -20,20 +20,20 @@ const BDJSONpdf = () => {
     refetchIntervalInBackground: true, //do not refetch in background
     queryFn: async () => {
       const { data } = await axiosFetch.get("/users/getSingleBioData");
-      console.log(data);
-      console.log(data.userBio);
+      // console.log(data);
+      // console.log(data.userBio);
       return data;
     },
   });
   //   console.log(user);
-  console.log(error);
-  if (data && data.userBio) {
-    console.log(data.userBio);
-  }
+  // console.log(error);
+  // if (data && data.userBio) {
+  //   console.log(data.userBio);
+  // }
 
-  if (user) {
-    console.log(user);
-  }
+  // if (user) {
+  //   console.log(user);
+  // }
 
   const InvoicePDF = () => (
     <Document>

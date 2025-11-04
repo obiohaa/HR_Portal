@@ -7,7 +7,7 @@ import PageLoading from "../Checks/PageLoading";
 import { Page, Text, View, Document, PDFViewer, Image, PDFDownloadLink } from "@react-pdf/renderer";
 
 const NOKJSON = () => {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["nokUser"],
     retryOnMount: true, //do not retry on mount
     refetchOnWindowFocus: true, //do not refetch on window focus
@@ -17,16 +17,16 @@ const NOKJSON = () => {
     refetchIntervalInBackground: true, //do not refetch in background
     queryFn: async () => {
       const { data } = await axiosFetch.get(`/users/getSingleNOK`);
-      console.log(data);
-      console.log(data.userNOK);
+      // console.log(data);
+      // console.log(data.userNOK);
       return data;
     },
   });
   //   console.log(user);
-  console.log(error);
-  if (data && data.userBio) {
-    console.log(data.userBio);
-  }
+  // console.log(error);
+  // if (data && data.userBio) {
+  //   console.log(data.userBio);
+  // }
 
   const InvoicePDF = () => (
     <Document>

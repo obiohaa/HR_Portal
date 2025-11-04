@@ -5,11 +5,12 @@ import "./Pages/Body/body.css";
 import { useQuery } from "@tanstack/react-query";
 import { axiosFetch } from "./Utils/axiosFetch";
 import { toast } from "react-toastify";
+import { useSessionExpiry } from "./Hooks/useSessionExpiry";
 import { useGlobalContext } from "./Context/userContext";
 
 const Junction = () => {
-  const { saveUser, removeUser } = useGlobalContext();
-
+  const { saveUser, removeUser, user } = useGlobalContext();
+  // console.log(user);
   useQuery({
     queryKey: ["currentUser"],
     retryOnMount: true, //do not retry on mount
@@ -25,8 +26,6 @@ const Junction = () => {
     },
     onError: (error) => {
       if (error.response?.status === 401) {
-        removeUser();
-        window.location.href = "/login";
         toast.error(
           <div>
             <span>
@@ -44,9 +43,14 @@ const Junction = () => {
             className: "toastBad",
           }
         );
+        removeUser();
+        window.location.href = "/login";
       }
     },
   });
+
+  // Automatically log out when session time expires
+  useSessionExpiry(user);
 
   return (
     <div className="generalContainer">

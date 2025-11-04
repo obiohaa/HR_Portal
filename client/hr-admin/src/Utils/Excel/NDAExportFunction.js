@@ -4,7 +4,7 @@ import { saveAs } from "file-saver";
 //EXPORT TO EXCEL
 export const exportToExcel = (data, fileName) => {
   if (!data || data.length === 0) return;
-  console.log(data);
+  // console.log(data);
   const headerMap = [
     { label: "First Name", key: "firstName" },
     { label: "Last Name", key: "lastName" },
@@ -25,7 +25,7 @@ export const exportToExcel = (data, fileName) => {
   });
 
   const worksheet = XLSX.utils.json_to_sheet(formattedData);
-  console.log(worksheet);
+  // console.log(worksheet);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
 

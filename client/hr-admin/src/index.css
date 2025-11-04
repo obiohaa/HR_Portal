@@ -72,11 +72,11 @@ Global Styles
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: "Roboto", sans-serif;
+  font-family: var(--ff-primary);
 }
 
 body {
-  font-family: var(--ff-secondary);
+  font-family: var(--ff-primary);
   background: var(--clr-grey-8);
   color: var(--clr-grey-1);
   line-height: 1.5;
@@ -143,4 +143,28 @@ p {
   h4 {
     line-height: 1;
   }
+}
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+::-webkit-scrollbar-thumb {
+  background: #34495e;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #34495e;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* removes background track */
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin; /* options: auto | thin | none */
+  scrollbar-color: #34495e #f1f1f1;
 }
