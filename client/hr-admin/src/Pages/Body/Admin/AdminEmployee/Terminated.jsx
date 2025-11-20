@@ -8,6 +8,7 @@ import {
   FaCheck,
   FaXmark,
   FaPlay,
+  FaCashRegister,
 } from "react-icons/fa6";
 import { useGlobalContext } from "../../../../Context/userContext";
 import DeleteEmployeeModal from "../../../../Components/Modal/DeleteEmployeeModal";
@@ -184,6 +185,40 @@ const Terminated = () => {
   });
   //END UPDATE EMPLOYEE STATUS TO RESUME
 
+  //UPDATE EMPLOYEE STATUS TO REGISTERED
+  const { mutate: updateStatusToRegistered, isLoading: isRegisteredLoading } = useMutation({
+    mutationFn: async (updateStatusToRegistered) =>
+      axiosFetch.patch("/admins/updateStatusToRegistered", { data: updateStatusToRegistered }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["adminEmployee"] });
+      toast.success(data.data.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastGood",
+      });
+      //   reset();
+      //   setFileName(null);
+    },
+    onError: (error) => {
+      toast.error(error.response.data.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastBad",
+      });
+    },
+  });
+  //END UPDATE EMPLOYEE STATUS TO REGISTERED
+
   // SEARCH SECTION
   const handleSearch = (e) => {
     e.preventDefault();
@@ -345,6 +380,12 @@ const Terminated = () => {
     setSelectedItemId(null);
     setStatusClicked(!statusClicked);
   };
+
+  const registeredEmployee = () => {
+    updateStatusToRegistered(selected);
+    setSelectedItemId(null);
+    setStatusClicked(!statusClicked);
+  };
   //END UPDATE LOCATION STATUS
 
   // VIEW THIS USER
@@ -362,7 +403,7 @@ const Terminated = () => {
   };
   //END EDIT THIS USER
   // console.log(selected);
-  if (isLoading || isLoadingStatus || isLocationLoading || isResumeLoading) {
+  if (isLoading || isLoadingStatus || isLocationLoading || isResumeLoading || isRegisteredLoading) {
     return <PageLoading />;
   }
 
@@ -413,6 +454,9 @@ const Terminated = () => {
                 </button>
                 <button className="sideButton" onClick={resumeEmployee}>
                   <FaPlay /> Resume
+                </button>
+                <button className="sideButton" onClick={registeredEmployee}>
+                  <FaCashRegister /> Registered
                 </button>
               </div>
             )}

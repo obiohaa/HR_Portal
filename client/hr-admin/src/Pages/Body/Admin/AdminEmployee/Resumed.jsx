@@ -8,6 +8,7 @@ import {
   FaCheck,
   FaXmark,
   FaLock,
+  FaCashRegister,
 } from "react-icons/fa6";
 import { useGlobalContext } from "../../../../Context/userContext";
 import DeleteEmployeeModal from "../../../../Components/Modal/DeleteEmployeeModal";
@@ -184,6 +185,40 @@ const Resumed = () => {
   });
   //END UPDATE EMPLOYEE STATUS TO TERMINATE
 
+  //UPDATE EMPLOYEE STATUS TO REGISTERED
+  const { mutate: updateStatusToRegistered, isLoading: isRegisteredLoading } = useMutation({
+    mutationFn: async (updateStatusToRegistered) =>
+      axiosFetch.patch("/admins/updateStatusToRegistered", { data: updateStatusToRegistered }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["adminEmployee"] });
+      toast.success(data.data.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastGood",
+      });
+      //   reset();
+      //   setFileName(null);
+    },
+    onError: (error) => {
+      toast.error(error.response.data.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastBad",
+      });
+    },
+  });
+  //END UPDATE EMPLOYEE STATUS TO REGISTERED
+
   // SEARCH SECTION
   const handleSearch = (e) => {
     e.preventDefault();
@@ -345,6 +380,12 @@ const Resumed = () => {
     setSelectedItemId(null);
     setStatusClicked(!statusClicked);
   };
+
+  const registeredEmployee = () => {
+    updateStatusToRegistered(selected);
+    setSelectedItemId(null);
+    setStatusClicked(!statusClicked);
+  };
   //END UPDATE LOCATION STATUS
 
   // VIEW THIS USER
@@ -362,7 +403,13 @@ const Resumed = () => {
   };
   //END EDIT THIS USER
   // console.log(selected);
-  if (isLoading || isLoadingStatus || isLocationLoading || isTerminateLoading) {
+  if (
+    isLoading ||
+    isLoadingStatus ||
+    isLocationLoading ||
+    isTerminateLoading ||
+    isRegisteredLoading
+  ) {
     return <PageLoading />;
   }
 
@@ -410,6 +457,9 @@ const Resumed = () => {
                 </button>
                 <button className="sideButton" onClick={deActivateLocation}>
                   <FaXmark /> Deactivate
+                </button>
+                <button className="sideButton" onClick={registeredEmployee}>
+                  <FaCashRegister /> Registered
                 </button>
                 <button className="sideButton" onClick={terminate}>
                   <FaLock /> Exit

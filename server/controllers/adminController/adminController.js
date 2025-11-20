@@ -726,6 +726,38 @@ const updateStatusToResume = async (req, res) => {
   }
 };
 
+//UPDATE USER STATUS, REGISTERED
+const updateStatusToRegistered = async (req, res) => {
+  const updateThisStatus = req.body.data;
+  const neverUpdate = "6881e99a77338227e497193d"; //Protected Admin Id
+
+  if (updateThisStatus.includes(neverUpdate)) {
+    throw new CustomError.BadRequestError("You cannot update Administrator");
+  }
+  //$in matches document where _id match (or is in) any of the values in array filteredArray
+  //can also be used in array of objects
+  try {
+    // Get users whose status should be toggled
+    const users = await User.find({ _id: { $in: updateThisStatus } });
+    // console.log(users);
+    // Toggle each user's active status and update them
+    const updateAdminUserStatus = users.map((user) =>
+      User.findByIdAndUpdate(
+        user._id,
+        { employeeStatus: "registered" },
+        { new: true, runValidators: true }
+      )
+    );
+
+    //update all users concurrently. Collect all these individual promises into an array or takes an iterable (like an array) of promises and returns a single Promise. This returned Promise resolves when all the input promises have resolved, or rejects as soon as any of the input promises reject.
+    await Promise.all(updateAdminUserStatus);
+
+    res.status(StatusCodes.OK).json({ msg: "Success! Employee(s) back to Registered" });
+  } catch (error) {
+    throw new CustomError.BadRequestError("Please contact Admin: " + error.message);
+  }
+};
+
 //UPDATE USER STATUS, TERMINATE
 const updateStatusToTerminate = async (req, res) => {
   const updateThisStatus = req.body.data;
@@ -752,7 +784,7 @@ const updateStatusToTerminate = async (req, res) => {
     //update all users concurrently. Collect all these individual promises into an array or takes an iterable (like an array) of promises and returns a single Promise. This returned Promise resolves when all the input promises have resolved, or rejects as soon as any of the input promises reject.
     await Promise.all(updateAdminUserStatus);
 
-    res.status(StatusCodes.OK).json({ msg: "Success! Employee(s) resumed" });
+    res.status(StatusCodes.OK).json({ msg: "Success! Employee(s) Exited" });
   } catch (error) {
     throw new CustomError.BadRequestError("Please contact Admin: " + error.message);
   }
@@ -1448,4 +1480,5 @@ module.exports = {
   deleteJob,
   deactivateJobStatus,
   activateJobStatus,
+  updateStatusToRegistered,
 };

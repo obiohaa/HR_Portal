@@ -1,11 +1,13 @@
 require("dotenv").config();
 require("express-async-errors");
 // express
-
 const express = require("express");
 const app = express();
-// rest of the packages
+const fs = require("fs");
+const path = require("path");
+// morgan http logger
 const morgan = require("morgan");
+const logger = require("./utils/logger");
 const cookieParser = require("cookie-parser");
 const fileUpload = require("express-fileupload");
 const cloudinary = require("cloudinary").v2;
@@ -33,7 +35,7 @@ const adminRouter = require("./routes/adminUserRoute");
 const notFoundMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 
-//others
+//CORS OPTIONS
 const corOptions = {
   origin: process.env.PRODUCTION_ORIGIN,
   // origin: "http://localhost:5173",
@@ -42,6 +44,12 @@ const corOptions = {
   methods: ["GET", "HEAD", "POST", "PATCH", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
+
+// STREAMS FOR MORGAN LOGGING
+//create a write stream (in append mode)
+// const accessLogStream = fs.createWriteStream(path.join(__dirname, "./logs/access.log"), {
+//   flags: "a",
+// });
 
 app.set("trust proxy", 1);
 // app.use(
@@ -54,7 +62,7 @@ app.use(cors(corOptions));
 app.use(helmet());
 app.use(xss());
 app.use(mongoSanitize());
-
+app.use(morgan("combined", { stream: logger.stream }));
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
 

@@ -46,6 +46,7 @@ const {
   deleteJob,
   activateJobStatus,
   deactivateJobStatus,
+  updateStatusToRegistered,
 } = require("../controllers/adminController/adminController");
 
 router.route("/dashboard").get(authenticateUser, authorizePermissions("admin"), dashboard);
@@ -101,6 +102,10 @@ router
 router
   .route("/updateStatusToResume")
   .patch(authenticateUser, authorizePermissions("admin"), updateStatusToResume);
+
+router
+  .route("/updateStatusToRegistered")
+  .patch(authenticateUser, authorizePermissions("admin"), updateStatusToRegistered);
 
 router
   .route("/updateStatusToTerminate")

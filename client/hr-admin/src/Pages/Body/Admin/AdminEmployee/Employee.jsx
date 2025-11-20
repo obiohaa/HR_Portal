@@ -8,6 +8,7 @@ import {
   FaCheck,
   FaXmark,
   FaPlay,
+  FaLock,
 } from "react-icons/fa6";
 import { useGlobalContext } from "../../../../Context/userContext";
 import DeleteEmployeeModal from "../../../../Components/Modal/DeleteEmployeeModal";
@@ -184,6 +185,40 @@ const Employee = () => {
   });
   //END UPDATE EMPLOYEE STATUS TO RESUME
 
+  //UPDATE EMPLOYEE STATUS TO TERMINATE
+  const { mutate: updateStatusToTerminate, isLoading: isTerminateLoading } = useMutation({
+    mutationFn: async (updateStatusToTerminate) =>
+      axiosFetch.patch("/admins/updateStatusToTerminate", { data: updateStatusToTerminate }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["adminEmployee"] });
+      toast.success(data.data.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastGood",
+      });
+      //   reset();
+      //   setFileName(null);
+    },
+    onError: (error) => {
+      toast.error(error.response.data.msg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: "toastBad",
+      });
+    },
+  });
+  //END UPDATE EMPLOYEE STATUS TO TERMINATE
+
   // SEARCH SECTION
   const handleSearch = (e) => {
     e.preventDefault();
@@ -344,6 +379,12 @@ const Employee = () => {
     setSelectedItemId(null);
     setStatusClicked(!statusClicked);
   };
+
+  const terminate = () => {
+    updateStatusToTerminate(selected);
+    setSelectedItemId(null);
+    setStatusClicked(!statusClicked);
+  };
   //END UPDATE LOCATION STATUS
 
   // VIEW THIS USER
@@ -361,7 +402,7 @@ const Employee = () => {
   };
   //END EDIT THIS USER
   // console.log(selected);
-  if (isLoading || isLoadingStatus || isLocationLoading || isResumeLoading) {
+  if (isLoading || isLoadingStatus || isLocationLoading || isResumeLoading || isTerminateLoading) {
     return <PageLoading />;
   }
 
@@ -412,6 +453,9 @@ const Employee = () => {
                 </button>
                 <button className="sideButton" onClick={resumeEmployee}>
                   <FaPlay /> Resume
+                </button>
+                <button className="sideButton" onClick={terminate}>
+                  <FaLock /> Exit
                 </button>
               </div>
             )}
